@@ -7,7 +7,7 @@
   "homepage": "https://shots.run",
   "repository": "https://github.com/hitSlop/shots",
   "license": "MIT",
-  "logo": "assets/icon.png",
+  "logo": "assets/logo.png",
   "category": "design",
   "keywords": ["screenshots", "app-store", "aso", "marketing"],
   "skills": "./skills/"
