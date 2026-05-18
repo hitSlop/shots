@@ -1,6 +1,6 @@
 {
   "name": "hitslop",
-  "interface": { "displayName": "hitSlop" },
+  "interface": { "displayName": "Shots" },
   "plugins": [{
     "name": "shots",
     "source": {
