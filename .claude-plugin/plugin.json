@@ -8,5 +8,14 @@
   },
   "homepage": "https://shots.run",
   "repository": "https://github.com/hitSlop/shots",
-  "license": "MIT"
+  "license": "MIT",
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Shots",
+    "shortDescription": "Generate App Store screenshots with AI",
+    "brandColor": "#0F969C",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  }
 }
