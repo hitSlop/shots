@@ -1,0 +1,12 @@
+{
+  "name": "shots",
+  "version": "0.1.0",
+  "description": "Generate, revise, translate, and manage App Store marketing screenshots through hosted Shots MCP tools.",
+  "author": {
+    "name": "hitSlop",
+    "url": "https://hitslop.com"
+  },
+  "homepage": "https://shots.run",
+  "repository": "https://github.com/hitSlop/shots",
+  "license": "MIT"
+}

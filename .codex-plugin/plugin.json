@@ -1,0 +1,41 @@
+{
+  "name": "shots",
+  "version": "0.1.0",
+  "description": "AI-powered App Store screenshot generation through hosted Shots MCP tools.",
+  "author": {
+    "name": "hitSlop",
+    "url": "https://hitslop.com"
+  },
+  "homepage": "https://shots.run",
+  "repository": "https://github.com/hitSlop/shots",
+  "license": "MIT",
+  "keywords": [
+    "screenshots",
+    "app-store",
+    "aso",
+    "marketing",
+    "image-generation"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Shots",
+    "shortDescription": "Generate App Store screenshots with AI",
+    "longDescription": "Research an app, draft conversion-focused screenshot strategy, generate App Store panels, revise jobs, and localize screenshot copy through hosted Shots MCP tools.",
+    "developerName": "hitSlop",
+    "category": "Design",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://shots.run",
+    "defaultPrompt": [
+      "Generate App Store screenshots",
+      "Scrape my App Store listing",
+      "Revise my latest screenshots"
+    ],
+    "brandColor": "#0F969C",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
+  }
+}

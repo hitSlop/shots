@@ -1,0 +1,16 @@
+{
+  "name": "hitslop",
+  "interface": { "displayName": "hitSlop" },
+  "plugins": [{
+    "name": "shots",
+    "source": {
+      "source": "url",
+      "url": "https://github.com/hitSlop/shots.git"
+    },
+    "policy": {
+      "installation": "AVAILABLE",
+      "authentication": "ON_INSTALL"
+    },
+    "category": "Design"
+  }]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "shots",
+  "version": "0.1.0",
+  "description": "Generate App Store screenshots with AI through hosted MCP tools.",
+  "mcpServers": {
+    "shots": {
+      "command": "npx",
+      "args": ["mcp-remote@latest", "https://shots.run/api/mcp"]
+    }
+  }
+}
