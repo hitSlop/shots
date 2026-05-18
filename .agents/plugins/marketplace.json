@@ -11,8 +11,8 @@
       "displayName": "Shots",
       "shortDescription": "Generate App Store screenshots with AI",
       "brandColor": "#0F969C",
-      "logo": "https://raw.githubusercontent.com/hitSlop/shots/master/assets/logo.png",
-      "composerIcon": "https://raw.githubusercontent.com/hitSlop/shots/master/assets/logo.png"
+      "logo": "../../assets/logo.png",
+      "composerIcon": "../../assets/logo.png"
     },
     "policy": {
       "installation": "AVAILABLE",

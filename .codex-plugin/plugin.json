@@ -35,7 +35,7 @@
       "Revise my latest screenshots"
     ],
     "brandColor": "#0F969C",
-    "composerIcon": "https://raw.githubusercontent.com/hitSlop/shots/master/assets/logo.png",
-    "logo": "https://raw.githubusercontent.com/hitSlop/shots/master/assets/logo.png"
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
   }
 }
