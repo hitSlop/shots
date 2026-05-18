@@ -36,6 +36,45 @@ plus stable screenshot ids.
 | `upgrade_plan` | Get a checkout URL after the user confirms they want to subscribe |
 | `cancel_plan` | Get the billing portal URL for plan management |
 
+## Typical Session
+
+1. **Collect context upfront.** First check for `.shots/app.json` — if it
+   exists, load the app with `get_app_context` and skip to step 3. Otherwise
+   ask the user:
+   - App name
+   - What it does / what problem it solves (1-2 sentences)
+   - App Store URL (if published — enables auto-import of metadata, icon,
+     screenshots)
+   - How many screenshots they want (default: 3)
+   - Any visual inspiration — competitor URLs, existing screenshots, brand
+     guidelines
+   - Target platform (iPhone / iPad / Android, default: iPhone)
+
+   Ask these as a batch, not one-by-one. If the user provides an App Store URL
+   or the workspace is an app repo, you can infer most of these.
+
+2. **Store everything you learn.** Save structured data to Convex via
+   `upsert_app`, `update_app_research`, and `update_app_store_listing`.
+   Use `researchMarkdown` as a catch-all for freeform notes.
+
+3. **Build the prompt and generate.** Use the research context, reference
+   images, and listing copy to build the generation prompt. Call
+   `generate_screenshots`.
+
+4. **Set timing expectations.** Tell the user generation takes 1-2 minutes.
+   Wait 60 seconds before the first poll, then poll `get_job` every 15 seconds.
+   Don't poll more often than every 10 seconds.
+
+5. **Present results and offer next steps.** Show the panels, link to Studio,
+   offer to revise, generate more, or localize.
+
+## Reference Images
+
+Do NOT resize or compress reference images before uploading. The server accepts
+native resolution. Resizing locally degrades quality and produces tiny thumbnails
+on the dashboard. Upload images as-is via `upload_app_asset` or
+`import_app_asset_from_url`.
+
 ## Required Setup
 
 1. Call `get_usage`.
@@ -46,6 +85,26 @@ plus stable screenshot ids.
    they confirm.
 4. Do not proceed to `generate_screenshots` until the account is active and has
    available screenshots, fair-use access, or accepted overage.
+
+## Project Config
+
+On session start, check for `.shots/app.json` in the project root.
+
+- **If found:** Read the `appId`, call `get_app_context`, and skip the onboarding
+  questions in "Typical Session" step 1. Jump directly to whatever the user is
+  asking for (generate, revise, translate, etc.).
+- **If not found:** Run the normal "Typical Session" flow. After creating the app
+  (via `upsert_app` or `import_app_store_listing`), write `.shots/app.json` to
+  the project root:
+
+  ```json
+  {
+    "appId": "<the returned appId>"
+  }
+  ```
+
+Always create the `.shots/` directory if it doesn't exist. Add `.shots/` to the
+project's `.gitignore` if a `.gitignore` exists and doesn't already ignore it.
 
 ## Billing Failures
 
@@ -112,7 +171,6 @@ fields:
 - `asoAudit`
 - `keywordStrategy`
 - `competitorAnalysis`
-- `screenshotStrategy`
 - `iconAudit`
 - `localizationPlan`
 
@@ -167,7 +225,8 @@ Follow the reference docs:
    copy.
 6. Call `generate_screenshots` with `appId`, `locale`, `prompt`, `platform`,
    `panelCount`, and `quality`.
-7. Call `get_job` every few seconds until status is `"complete"` or `"failed"`.
+7. Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds
+   until status is `"complete"` or `"failed"`.
 8. When complete, present screenshots side by side using the HTML table gallery
    format described in [reference/create.md](reference/create.md) step 6, with
    a deep link to `https://shots.run/studio?app={appId}&tab=generations`.

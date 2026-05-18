@@ -230,7 +230,6 @@ independent keyword research because users search differently:
     "asoAudit": {},
     "keywordStrategy": {},
     "competitorAnalysis": {},
-    "screenshotStrategy": {},
     "iconAudit": {},
     "localizationPlan": {}
   },
@@ -247,7 +246,6 @@ independent keyword research because users search differently:
     "asoAudit": {},
     "keywordStrategy": {},
     "competitorAnalysis": {},
-    "screenshotStrategy": {},
     "iconAudit": {},
     "localizationPlan": {}
   }

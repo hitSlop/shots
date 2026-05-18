@@ -32,8 +32,8 @@ subtitle copy.
 
 ### 4. Generate And Present
 
-Call `generate_screenshots` with the target `locale`, poll with `get_job`, then
-present the localized panels side by side in an HTML table with screenshot ids:
+Call `generate_screenshots` with the target `locale`. Wait 60 seconds, then poll
+`get_job` every 15 seconds until complete. Present the localized panels side by side in an HTML table with screenshot ids:
 
 ```
 <table><tr>

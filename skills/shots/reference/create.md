@@ -13,6 +13,10 @@ Only call `upgrade_plan` after they confirm.
 
 ### 2. Gather Inputs
 
+First check for `.shots/app.json` in the project root. If it contains an
+`appId`, call `get_app_context` to load the existing app and skip the
+onboarding questions below.
+
 If the user provides an App Store URL or app id, call
 `import_app_store_listing` to create or update the durable app record and save
 the public icon/screenshots to R2. Pass the target locale when known. If the
@@ -66,8 +70,8 @@ Call `generate_screenshots` with:
 - `panelCount`
 - `quality`
 
-Then call `get_job` every few seconds until the job is `"complete"` or
-`"failed"`.
+Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds
+until the job is `"complete"` or `"failed"`.
 
 ### 6. Present Output
 

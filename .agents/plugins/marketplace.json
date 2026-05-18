@@ -7,6 +7,13 @@
       "source": "url",
       "url": "https://github.com/hitSlop/shots.git"
     },
+    "interface": {
+      "displayName": "Shots",
+      "shortDescription": "Generate App Store screenshots with AI",
+      "brandColor": "#0F969C",
+      "logo": "https://raw.githubusercontent.com/hitSlop/shots/master/assets/logo.png",
+      "composerIcon": "https://raw.githubusercontent.com/hitSlop/shots/master/assets/logo.png"
+    },
     "policy": {
       "installation": "AVAILABLE",
       "authentication": "ON_INSTALL"

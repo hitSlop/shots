@@ -30,8 +30,8 @@ explicitly changing it. Append a clear revision block:
 ### 4. Generate
 
 Call `generate_screenshots` with the revised prompt and the same platform and
-panel count as the base job unless the user asks otherwise. Poll with `get_job`
-until complete.
+panel count as the base job unless the user asks otherwise. Wait 60 seconds, then
+poll `get_job` every 15 seconds until complete.
 
 ### 5. Present Output
 
