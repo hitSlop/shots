@@ -26,7 +26,13 @@ README/docs/source files if the current workspace is the app repo.
 If there is no App Store URL, find an app icon in the local repo before
 generation when possible. Check Xcode app icon sets, Expo config icon fields,
 React Native iOS/Android icons, then PWA/public icon fallbacks. Upload it with
-`upload_app_asset` as `kind: "icon"`.
+the bundled helper when the client/runtime can upload local files:
+
+```bash
+node {{scripts_path}}/upload-asset.mjs --file ./path/to/icon.png --app-id <appId> --kind icon
+```
+
+Use `import_app_asset_from_url` for HTTPS image URLs.
 
 Minimum signal:
 
@@ -51,15 +57,37 @@ Get approval or targeted edits before generation.
 
 Save approved strategy back to the app with `update_app_research`.
 
-### 4. Build Prompt
+### 4. Present Screenshot Plan
+
+Before generation, show a markdown table with one row per requested screenshot.
+Do not call `generate_screenshots` until the user approves or edits the table.
+
+```markdown
+| # | Headline | Subtitle | Image/UI direction | Reference assets | Purpose |
+| --- | --- | --- | --- | --- | --- |
+| 1 |  |  |  |  |  |
+| 2 |  |  |  |  |  |
+| 3 |  |  |  |  |  |
+```
+
+If the user asks for a specific count, plan exactly that count. If the user asks
+for more than 3 screenshots, keep all rows in one table but generate them in
+batches of up to 3 panels.
+
+If there is not enough context to choose the panels confidently, propose 5-10
+candidate panel concepts in the same table format and ask the user which ones to
+generate.
+
+### 5. Build Prompt
 
 Follow [prompting.md](prompting.md). Expand each approved benefit into exact
 panel instructions: headline, subtitle, visible product UI, background
 treatment, device framing, and any proof points.
 
-Use up to three panels per generation job.
+Use up to three panels per generation job. For larger requests, make one
+crop-safe composite prompt per batch.
 
-### 5. Generate
+### 6. Generate
 
 Call `generate_screenshots` with:
 
@@ -70,21 +98,27 @@ Call `generate_screenshots` with:
 - `panelCount`
 - `quality`
 
+For 4+ requested screenshots, submit multiple jobs:
+
+- 4 screenshots: 3-panel batch, then 1-panel batch
+- 5 screenshots: 3-panel batch, then 2-panel batch
+- 6 screenshots: two 3-panel batches
+- 7-9 screenshots: three batches
+
 Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds
 until the job is `"complete"` or `"failed"`.
 
-### 6. Present Output
+### 7. Present Output
 
-When complete, present the panels side by side in an HTML table so they render
-as an inline gallery. Place each panel's CDN URL in an `<img>` tag and its
-stable screenshot id beneath it:
+When complete, present the panels in a markdown gallery first, because not all
+MCP clients render inline HTML. Include each CDN URL and stable screenshot id:
 
-```
-<table><tr>
-<td align="center"><img src="cdn-url-1" width="280"/><br/><sub>scr_abc123</sub></td>
-<td align="center"><img src="cdn-url-2" width="280"/><br/><sub>scr_def456</sub></td>
-<td align="center"><img src="cdn-url-3" width="280"/><br/><sub>scr_ghi789</sub></td>
-</tr></table>
+```markdown
+| # | Preview | Screenshot ID | URL |
+| --- | --- | --- | --- |
+| 1 | ![](cdn-url-1) | scr_abc123 | cdn-url-1 |
+| 2 | ![](cdn-url-2) | scr_def456 | cdn-url-2 |
+| 3 | ![](cdn-url-3) | scr_ghi789 | cdn-url-3 |
 
 [Open in Shots Studio →](https://shots.run/studio?app={appId}&tab=generations)
 ```

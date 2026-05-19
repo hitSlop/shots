@@ -6,6 +6,11 @@ Turn the saved `strategyBrief` and chosen `benefits` into one crop-safe composit
 
 Create one wide App Store composite that becomes three standalone ads after cropping. Optimize for small-screen clarity and install intent first.
 
+Shots generates a composite image and then crops it into individual App Store
+screenshots. Do not ask the model for separate framed screenshots inside one
+image. Do not add rounded panel corners, panel borders, gutters, dividers, or
+mock App Store chrome. The crop itself supplies the final screenshot boundary.
+
 ## Rules
 
 - use visual facts, not praise words
@@ -17,6 +22,9 @@ Create one wide App Store composite that becomes three standalone ads after crop
 - optimize for browse-feed stopping power before full-size polish
 - treat panel 1 like it may be the only panel the user really notices
 - existing screenshots are visual reference, not copy reference
+- generate exactly the approved screenshot count, batched into composites of up
+  to 3 panels
+- preserve crop safety: every panel must stand alone after cropping
 
 Avoid words like:
 
@@ -159,7 +167,8 @@ Panels:
 Constraints:
 - each panel crops cleanly to {targetWidth}x{targetHeight}
 - keep text at least 80px from crop edges
-- no borders, dividers, seams, App Store badges, or fake marketplace chrome
+- no borders, dividers, seams, gutters, rounded crop corners, App Store badges,
+  download buttons, or fake marketplace chrome
 - device screens must show believable UI, never blank placeholders
 ```
 
@@ -212,6 +221,19 @@ Bad:
 - `Shows the app`
 
 If real screenshots exist, idealize them rather than inventing unrelated screens.
+
+## Reference Image Usage
+
+When reference images are available, call them out explicitly in the prompt:
+
+```text
+Reference image usage:
+- Use reference image 1 for the real app UI layout and visual hierarchy.
+- Use reference image 2 for brand color and icon style.
+- Use reference image 3 only as mood/inspiration, not literal UI.
+```
+
+Never say only "use references"; specify what each reference should influence.
 
 ## Revision Pattern
 

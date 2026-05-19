@@ -7,6 +7,8 @@ description: >
   listing scraping. Do not use for generic image generation.
 user-invocable: true
 argument-hint: "[app store url, job id, locale, or description]"
+allowed-tools:
+  - Bash(node *)
 ---
 
 # Shots
@@ -14,6 +16,9 @@ argument-hint: "[app store url, job id, locale, or description]"
 Shots runs through hosted MCP tools. Durable state lives in Convex, generated
 screenshots are uploaded to the Shots CDN, and completed jobs return CDN URLs
 plus stable screenshot ids.
+
+`{{scripts_path}}` is the `scripts/` directory next to this file. Resolve it
+relative to `SKILL.md`.
 
 ## Tools
 
@@ -26,7 +31,6 @@ plus stable screenshot ids.
 | `get_app_context` | Fetch app metadata, locale listings, R2 assets, research, screenshots, and jobs |
 | `import_app_store_listing` | Save App Store metadata, icon, and screenshots to an app |
 | `update_app_store_listing` | Save locale-specific App Store title, subtitle, description, keywords, and suggestion arrays |
-| `upload_app_asset` | Save user-provided app screenshots, inspiration, icons, or references to R2, optionally tagged by locale |
 | `import_app_asset_from_url` | Fetch an HTTPS image URL, save it to R2, and attach it to an app, optionally tagged by locale |
 | `update_app_research` | Write structured research back to the app |
 | `generate_screenshots` | Submit a hosted screenshot generation job, optionally linked to an app |
@@ -38,7 +42,8 @@ plus stable screenshot ids.
 
 ## Typical Session
 
-1. **Collect context upfront.** First check for `.shots/app.json` — if it
+1. **Collect context upfront.** This step is mandatory before generation.
+   First check for `.shots/app.json` — if it
    exists, load the app with `get_app_context` and skip to step 3. Otherwise
    ask the user:
    - App name
@@ -57,23 +62,59 @@ plus stable screenshot ids.
    `upsert_app`, `update_app_research`, and `update_app_store_listing`.
    Use `researchMarkdown` as a catch-all for freeform notes.
 
-3. **Build the prompt and generate.** Use the research context, reference
-   images, and listing copy to build the generation prompt. Call
-   `generate_screenshots`.
+3. **Plan before generation.** Before calling `generate_screenshots`, present a
+   markdown table with one row per requested screenshot and get user approval or
+   targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`,
+   `reference assets`, and `purpose`. If context is thin, propose 5-10 panel
+   options first and let the user choose.
 
-4. **Set timing expectations.** Tell the user generation takes 1-2 minutes.
+4. **Build the prompt and generate.** Use the approved table, research context,
+   reference images, and listing copy to build crop-safe composite prompts. Each
+   generation job supports up to 3 panels; if the user asks for more than 3
+   screenshots, create multiple jobs in batches of 3 until the requested count
+   is reached.
+
+5. **Set timing expectations.** Tell the user generation takes 1-2 minutes per
+   batch.
    Wait 60 seconds before the first poll, then poll `get_job` every 15 seconds.
    Don't poll more often than every 10 seconds.
 
-5. **Present results and offer next steps.** Show the panels, link to Studio,
+6. **Present results and offer next steps.** Show the panels, link to Studio,
    offer to revise, generate more, or localize.
 
 ## Reference Images
 
 Do NOT resize or compress reference images before uploading. The server accepts
 native resolution. Resizing locally degrades quality and produces tiny thumbnails
-on the dashboard. Upload images as-is via `upload_app_asset` or
-`import_app_asset_from_url`.
+on the dashboard.
+
+Preferred reference image paths:
+
+1. If the image is already available at an HTTPS URL, use
+   `import_app_asset_from_url`.
+2. If the image is a local file and the client/runtime can perform multipart
+   HTTP uploads, use the bundled helper:
+
+   ```bash
+   node {{scripts_path}}/upload-asset.mjs --file ./path/to/image.png --app-id <appId> --kind reference
+   ```
+
+   Add `--locale en-US` for locale-specific assets and `--kind icon` for app
+   icons. The helper calls `POST https://shots.run/api/upload` by default; set
+   `SHOTS_BASE_URL` or pass `--base-url` for another deployment.
+
+`/api/upload` multipart fields:
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `file` | Yes | PNG, JPEG, or WebP image file |
+| `appId` | Yes | Convex app id returned by `upsert_app`, `import_app_store_listing`, or `.shots/app.json` |
+| `kind` | Yes | `app_screenshot`, `inspo`, `app_store_screenshot`, `icon`, or `reference` |
+| `locale` | No | App Store locale tag |
+| `userId` | No | Optional owner check; omit when unknown |
+
+The endpoint returns `{ assetId, cdnUrl }`. Use returned `assetId` in
+`referenceAssetIds` when generating.
 
 ## Required Setup
 
@@ -221,19 +262,22 @@ Follow the reference docs:
    locale listings, and the app research object as context.
 4. Update listing copy with `update_app_store_listing` when the user asks for
    ASO metadata, import cleanup, localization, or title/subtitle alternatives.
-5. Build the final prompt using the approved strategy and visible screenshot
+5. Present the screenshot plan as a markdown table and wait for user approval
+   or edits. Do not call `generate_screenshots` before this approval step unless
+   the user explicitly asks to skip planning.
+6. Build the final prompt using the approved strategy and visible screenshot
    copy.
-6. Call `generate_screenshots` with `appId`, `locale`, `prompt`, `platform`,
-   `panelCount`, and `quality`.
-7. Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds
+7. Call `generate_screenshots` with `appId`, `locale`, `prompt`, `platform`,
+   `panelCount`, and `quality`. For more than 3 requested screenshots, submit
+   multiple 3-panel-or-smaller jobs.
+8. Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds
    until status is `"complete"` or `"failed"`.
-8. When complete, present screenshots side by side using the HTML table gallery
-   format described in [reference/create.md](reference/create.md) step 6, with
-   a deep link to `https://shots.run/studio?app={appId}&tab=generations`.
+9. When complete, present screenshots with a markdown gallery and a deep link to
+   `https://shots.run/studio?app={appId}&tab=generations`.
 
 Saved assets and prior screenshots returned by `get_app_context` should inform
-the prompt and visual direction. Prefer `import_app_asset_from_url` for normal
-image URLs and `upload_app_asset` only for small inline/base64 images.
+the prompt and visual direction. Prefer `import_app_asset_from_url` for HTTPS
+image URLs and `/api/upload` for local files.
 
 ## App Icon Discovery
 
@@ -242,7 +286,7 @@ it imports the public icon from iTunes artwork and saves it as an app icon
 asset.
 
 If there is no App Store URL, inspect the local app repo and upload the best
-source icon with `upload_app_asset` using `kind: "icon"`:
+source icon with the bundled `upload-asset.mjs` helper using `--kind icon`:
 
 - iOS/Xcode: `*.xcassets/AppIcon.appiconset/Contents.json`, then referenced
   PNG files in the same app icon set.
