@@ -10,9 +10,8 @@
  * Options:
  *   --file <path>        Local PNG, JPEG, or WebP file to upload (required)
  *   --app-id <id>        Convex app id returned by Shots tools or .shots/app.json (required)
- *   --kind <kind>        app_screenshot | inspo | app_store_screenshot | icon | reference (required)
+ *   --kind <kind>        app_screenshot | inspo | app_store_screenshot | icon | reference (default: reference)
  *   --locale <locale>    Optional App Store locale tag
- *   --user-id <id>       Optional owner check; omit when unknown
  *   --base-url <url>     Shots app base URL (default: SHOTS_BASE_URL or https://shots.run)
  */
 
@@ -39,9 +38,8 @@ const { values: args } = parseArgs({
   options: {
     file: { type: "string" },
     "app-id": { type: "string" },
-    kind: { type: "string" },
+    kind: { type: "string", default: "reference" },
     locale: { type: "string" },
-    "user-id": { type: "string" },
     "base-url": { type: "string" },
   },
 });
@@ -53,7 +51,6 @@ function fail(message) {
 
 if (!args.file) fail("--file is required");
 if (!args["app-id"]) fail("--app-id is required");
-if (!args.kind) fail("--kind is required");
 if (!VALID_KINDS.has(args.kind)) {
   fail(`--kind must be one of: ${Array.from(VALID_KINDS).join(", ")}`);
 }
@@ -81,7 +78,6 @@ form.set("file", new Blob([bytes], { type: contentType }), path.basename(filePat
 form.set("appId", args["app-id"]);
 form.set("kind", args.kind);
 if (args.locale) form.set("locale", args.locale);
-if (args["user-id"]) form.set("userId", args["user-id"]);
 
 const response = await fetch(uploadUrl, {
   method: "POST",

@@ -13,12 +13,9 @@ allowed-tools:
 
 # Shots
 
-Shots runs through hosted MCP tools. Durable state lives in Convex, generated
-screenshots are uploaded to the Shots CDN, and completed jobs return CDN URLs
-plus stable screenshot ids.
+Shots runs through hosted MCP tools. Durable state lives in Convex, generated screenshots are uploaded to the Shots CDN, and completed jobs return CDN URLs plus stable screenshot ids.
 
-`{{scripts_path}}` is the `scripts/` directory next to this file. Resolve it
-relative to `SKILL.md`.
+`{{scripts_path}}` is the `scripts/` directory next to this file. Resolve it relative to `SKILL.md`.
 
 ## Tools
 
@@ -42,101 +39,67 @@ relative to `SKILL.md`.
 
 ## Typical Session
 
-1. **Collect context upfront.** This step is mandatory before generation.
-   First check for `.shots/app.json` — if it
-   exists, load the app with `get_app_context` and skip to step 3. Otherwise
-   ask the user:
+1. **Collect context upfront.** This step is mandatory before generation. First check for `.shots/app.json` — if it exists, load the app with `get_app_context` and skip to step 3. Otherwise ask the user:
    - App name
    - What it does / what problem it solves (1-2 sentences)
-   - App Store URL (if published — enables auto-import of metadata, icon,
-     screenshots)
+   - App Store URL (if published — enables auto-import of metadata, icon, screenshots)
    - How many screenshots they want (default: 3)
-   - Any visual inspiration — competitor URLs, existing screenshots, brand
-     guidelines
+   - Any visual inspiration — competitor URLs, existing screenshots, brand guidelines
    - Target platform (iPhone / iPad / Android, default: iPhone)
 
-   Ask these as a batch, not one-by-one. If the user provides an App Store URL
-   or the workspace is an app repo, you can infer most of these.
+   Ask these as a batch, not one-by-one. If the user provides an App Store URL or the workspace is an app repo, you can infer most of these.
 
-2. **Store everything you learn.** Save structured data to Convex via
-   `upsert_app`, `update_app_research`, and `update_app_store_listing`.
-   Use `researchMarkdown` as a catch-all for freeform notes.
+2. **Store everything you learn.** Save structured data to Convex via `upsert_app`, `update_app_research`, and `update_app_store_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
 
-3. **Plan before generation.** Before calling `generate_screenshots`, present a
-   markdown table with one row per requested screenshot and get user approval or
-   targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`,
-   `reference assets`, and `purpose`. If context is thin, propose 5-10 panel
-   options first and let the user choose.
+3. **Plan before generation.** Before calling `generate_screenshots`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. If context is thin, propose 5-10 panel options first and let the user choose.
 
-4. **Build the prompt and generate.** Use the approved table, research context,
-   reference images, and listing copy to build crop-safe composite prompts. Each
-   generation job supports up to 3 panels; if the user asks for more than 3
-   screenshots, create multiple jobs in batches of 3 until the requested count
-   is reached.
+4. **Build the prompt and generate.** Use the approved table, research context, reference images, and listing copy to build crop-safe composite prompts. Each generation job supports up to the platform's max panel count (see Platform Dimensions); if the user asks for more screenshots, create multiple jobs in batches until the requested count is reached.
 
-5. **Set timing expectations.** Tell the user generation takes 1-2 minutes per
-   batch.
-   Wait 60 seconds before the first poll, then poll `get_job` every 15 seconds.
-   Don't poll more often than every 10 seconds.
+5. **Set timing expectations.** Tell the user generation takes 1-2 minutes per batch. Wait 60 seconds before the first poll, then poll `get_job` every 15 seconds. Don't poll more often than every 10 seconds.
 
-6. **Present results and offer next steps.** Show the panels, link to Studio,
-   offer to revise, generate more, or localize.
+6. **Present results and offer next steps.** Show the panels, link to Studio, offer to revise, generate more, or localize.
 
 ## Reference Images
 
-Do NOT resize or compress reference images before uploading. The server accepts
-native resolution. Resizing locally degrades quality and produces tiny thumbnails
-on the dashboard.
+Do NOT resize or compress reference images before uploading. The server accepts native resolution. Resizing locally degrades quality and produces tiny thumbnails on the dashboard.
 
 Preferred reference image paths:
 
-1. If the image is already available at an HTTPS URL, use
-   `import_app_asset_from_url`.
-2. If the image is a local file and the client/runtime can perform multipart
-   HTTP uploads, use the bundled helper:
+1. If the image is already available at an HTTPS URL, use `import_app_asset_from_url`.
+2. If the image is a local file and the client/runtime can perform multipart HTTP uploads, use the bundled helper:
 
    ```bash
    node {{scripts_path}}/upload-asset.mjs --file ./path/to/image.png --app-id <appId> --kind reference
    ```
 
-   Add `--locale en-US` for locale-specific assets and `--kind icon` for app
-   icons. The helper calls `POST https://shots.run/api/upload` by default; set
-   `SHOTS_BASE_URL` or pass `--base-url` for another deployment.
+   Add `--locale en-US` for locale-specific assets and `--kind icon` for app icons. The helper calls `POST https://shots.run/api/upload` by default; set `SHOTS_BASE_URL` or pass `--base-url` for another deployment.
 
-`/api/upload` multipart fields:
+`/api/upload` is open and unauthenticated. Multipart fields:
 
 | Field | Required | Notes |
 | --- | --- | --- |
 | `file` | Yes | PNG, JPEG, or WebP image file |
 | `appId` | Yes | Convex app id returned by `upsert_app`, `import_app_store_listing`, or `.shots/app.json` |
-| `kind` | Yes | `app_screenshot`, `inspo`, `app_store_screenshot`, `icon`, or `reference` |
+| `kind` | No | Defaults to `reference`; accepts `app_screenshot`, `inspo`, `app_store_screenshot`, `icon`, or `reference` |
 | `locale` | No | App Store locale tag |
-| `userId` | No | Optional owner check; omit when unknown |
 
-The endpoint returns `{ assetId, cdnUrl }`. Use returned `assetId` in
-`referenceAssetIds` when generating.
+The endpoint returns `{ assetId, cdnUrl }`. Use returned `assetId` in `referenceAssetIds` when generating.
+
+If an upload fails, stop and report the upload error. Do not proceed to generation while treating required local references as unavailable unless the user explicitly approves continuing without them.
 
 ## Required Setup
 
 1. Call `get_usage`.
-2. If the call fails with an auth error, the MCP OAuth flow needs to be
-   completed by the client.
-3. If the response has no active subscription, tell the user they need an
-   active Shots plan before generation. Offer to call `upgrade_plan` only after
-   they confirm.
-4. Do not proceed to `generate_screenshots` until the account is active and has
-   available screenshots, fair-use access, or accepted overage.
+2. If the call fails with an auth error, the MCP OAuth flow needs to be completed by the client.
+3. If the response has no active subscription, tell the user they need an active Shots plan before generation. Offer to call `upgrade_plan` only after they confirm.
+4. Do not proceed to `generate_screenshots` until the account is active and has available screenshots, fair-use access, or accepted overage.
 
 ## Project Config
 
 On session start, check for `.shots/app.json` in the project root.
 
-- **If found:** Read the `appId`, call `get_app_context`, and skip the onboarding
-  questions in "Typical Session" step 1. Jump directly to whatever the user is
-  asking for (generate, revise, translate, etc.).
-- **If not found:** Run the normal "Typical Session" flow. After creating the app
-  (via `upsert_app` or `import_app_store_listing`), write `.shots/app.json` to
-  the project root:
+- **If found:** Read the `appId`, call `get_app_context`, and skip the onboarding questions in "Typical Session" step 1. Jump directly to whatever the user is asking for (generate, revise, translate, etc.).
+- **If not found:** Run the normal "Typical Session" flow. After creating the app (via `upsert_app` or `import_app_store_listing`), write `.shots/app.json` to the project root:
 
   ```json
   {
@@ -144,25 +107,17 @@ On session start, check for `.shots/app.json` in the project root.
   }
   ```
 
-Always create the `.shots/` directory if it doesn't exist. Add `.shots/` to the
-project's `.gitignore` if a `.gitignore` exists and doesn't already ignore it.
+Always create the `.shots/` directory if it doesn't exist. Add `.shots/` to the project's `.gitignore` if a `.gitignore` exists and doesn't already ignore it.
 
 ## Billing Failures
 
-`generate_screenshots` can return a structured JSON error instead of queueing a
-job:
+`generate_screenshots` can return a structured JSON error instead of queueing a job:
 
-- `code: "subscription_required"` — tell the user they need an active Shots
-  plan before generating. Mention the returned `upgradeUrl` or offer to call
-  `upgrade_plan` only after they confirm.
-- `code: "credits_exhausted"` with `overageAllowed: false` — tell the user they
-  are out of screenshots and need to upgrade or wait for reset.
-- `code: "credits_exhausted"` with `overageAllowed: true` — tell the user this
-  generation needs extra usage acceptance. Ask before opening the returned
-  `acceptOverageUrl` or billing flow.
+- `code: "subscription_required"` — tell the user they need an active Shots plan before generating. Mention the returned `upgradeUrl` or offer to call `upgrade_plan` only after they confirm.
+- `code: "credits_exhausted"` with `overageAllowed: false` — tell the user they are out of screenshots and need to upgrade or wait for reset.
+- `code: "credits_exhausted"` with `overageAllowed: true` — tell the user this generation needs extra usage acceptance. Ask before opening the returned `acceptOverageUrl` or billing flow.
 
-Do not retry generation after one of these responses until the user has taken
-the billing action.
+Do not retry generation after one of these responses until the user has taken the billing action.
 
 ## Intent Router
 
@@ -185,15 +140,11 @@ Before generating, build a concise strategy from:
 2. Local README/docs/source files if the current workspace is an app repo
 3. User-provided audience, feature, visual, or brand constraints
 
-Write the resulting strategy back with `update_app_research` so future agents
-and Studio see the same source of truth. Keep durable generated state in Convex
-by using the MCP tools.
+Write the resulting strategy back with `update_app_research` so future agents and Studio see the same source of truth. Keep durable generated state in Convex by using the MCP tools.
 
 ## Listing Copy
 
-When importing or researching an app, generate App Store listing copy in the
-client and persist it with `update_app_store_listing`. Always pass the target
-App Store locale, defaulting to `en-US` when the user did not specify one:
+When importing or researching an app, generate App Store listing copy in the client and persist it with `update_app_store_listing`. Always pass the target App Store locale, defaulting to `en-US` when the user did not specify one:
 
 - `title`
 - `subtitle`
@@ -202,12 +153,9 @@ App Store locale, defaulting to `en-US` when the user did not specify one:
 - `titleSuggestions`
 - `subtitleSuggestions`
 
-Use the current App Store title and description as the starting point, then
-draft concise alternatives from the strategy brief. Keep keywords comma-safe
-and avoid claiming unavailable features.
+Use the current App Store title and description as the starting point, then draft concise alternatives from the strategy brief. Keep keywords comma-safe and avoid claiming unavailable features.
 
-Store ASO dashboard context in `update_app_research` rather than in listing
-fields:
+Store ASO dashboard context in `update_app_research` rather than in listing fields:
 
 - `asoAudit`
 - `keywordStrategy`
@@ -220,26 +168,19 @@ fields:
 When the user asks for keyword research, ASO optimization, or metadata work:
 
 1. Import or load the app via `import_app_store_listing` or `get_app_context`.
-2. Run the keyword research process from
-   [reference/strategy.md](reference/strategy.md) (Seed Expansion, Evaluation,
-   Opportunity Scoring, Grouping).
-3. Store `keywordStrategy` (primaryKeywords, secondaryKeywords, longTailKeywords,
-   keywordField, scored opportunities) via `update_app_research`.
-4. Generate optimized listing copy (title, subtitle, description, keywords) and
-   store via `update_app_store_listing`.
+2. Run the keyword research process from [reference/strategy.md](reference/strategy.md) (Seed Expansion, Evaluation, Opportunity Scoring, Grouping).
+3. Store `keywordStrategy` (primaryKeywords, secondaryKeywords, longTailKeywords, keywordField, scored opportunities) via `update_app_research`.
+4. Generate optimized listing copy (title, subtitle, description, keywords) and store via `update_app_store_listing`.
 
 Metadata rules to enforce when generating listing copy:
 
-- Never repeat keywords across title, subtitle, and keyword field — Apple
-  indexes each field separately.
+- Never repeat keywords across title, subtitle, and keyword field — Apple indexes each field separately.
 - Singular forms only in keyword field — Apple indexes both singular and plural.
 - No spaces after commas in keyword field — saves characters.
 - Do not include the app name, category name, "app", or "free" in keyword field.
-- Character limits: Title 30, Subtitle 30, Keyword Field 100 (iOS); Title 30,
-  Short Description 80 (Android).
+- Character limits: Title 30, Subtitle 30, Keyword Field 100 (iOS); Title 30, Short Description 80 (Android).
 - Generate 3 title and 3 subtitle variants with character counts.
-- Output a Keyword Coverage Matrix showing where each keyword lives (title vs
-  subtitle vs keyword field).
+- Output a Keyword Coverage Matrix showing where each keyword lives (title vs subtitle vs keyword field).
 
 ## Prompt Rules
 
@@ -255,47 +196,27 @@ Follow the reference docs:
 ## Generation Flow
 
 1. Call `get_usage`.
-2. Call `list_apps`, `upsert_app`, or `import_app_store_listing` to establish
-   the app record when the user is working on a specific app. Pass a locale
-   when the user is working outside the app's primary App Store locale.
-3. Call `get_app_context` and use saved R2 assets, generated screenshot ids,
-   locale listings, and the app research object as context.
-4. Update listing copy with `update_app_store_listing` when the user asks for
-   ASO metadata, import cleanup, localization, or title/subtitle alternatives.
-5. Present the screenshot plan as a markdown table and wait for user approval
-   or edits. Do not call `generate_screenshots` before this approval step unless
-   the user explicitly asks to skip planning.
-6. Build the final prompt using the approved strategy and visible screenshot
-   copy.
-7. Call `generate_screenshots` with `appId`, `locale`, `prompt`, `platform`,
-   `panelCount`, and `quality`. For more than 3 requested screenshots, submit
-   multiple 3-panel-or-smaller jobs.
-8. Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds
-   until status is `"complete"` or `"failed"`.
-9. When complete, present screenshots with a markdown gallery and a deep link to
-   `https://shots.run/studio?app={appId}&tab=generations`.
+2. Call `list_apps`, `upsert_app`, or `import_app_store_listing` to establish the app record when the user is working on a specific app. Pass a locale when the user is working outside the app's primary App Store locale.
+3. Call `get_app_context` and use saved R2 assets, generated screenshot ids, locale listings, and the app research object as context.
+4. Update listing copy with `update_app_store_listing` when the user asks for ASO metadata, import cleanup, localization, or title/subtitle alternatives.
+5. Present the screenshot plan as a markdown table and wait for user approval or edits. Do not call `generate_screenshots` before this approval step unless the user explicitly asks to skip planning.
+6. Build the final prompt using the approved strategy and visible screenshot copy.
+7. Call `generate_screenshots` with `appId`, `locale`, `prompt`, `platform`, `panelCount`, and `quality`. For more screenshots than the platform's max panel count, submit multiple jobs (see Platform Dimensions for per-platform limits).
+8. Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds until status is `"complete"` or `"failed"`.
+9. When complete, present screenshots with a markdown gallery and a deep link to `https://shots.run/studio?app={appId}&tab=generations`.
 
-Saved assets and prior screenshots returned by `get_app_context` should inform
-the prompt and visual direction. Prefer `import_app_asset_from_url` for HTTPS
-image URLs and `/api/upload` for local files.
+Saved assets and prior screenshots returned by `get_app_context` should inform the prompt and visual direction. Prefer `import_app_asset_from_url` for HTTPS image URLs and `/api/upload` for local files.
 
 ## App Icon Discovery
 
-If the user gives an App Store URL or app id, prefer `import_app_store_listing`;
-it imports the public icon from iTunes artwork and saves it as an app icon
-asset.
+If the user gives an App Store URL or app id, prefer `import_app_store_listing`; it imports the public icon from iTunes artwork and saves it as an app icon asset.
 
-If there is no App Store URL, inspect the local app repo and upload the best
-source icon with the bundled `upload-asset.mjs` helper using `--kind icon`:
+If there is no App Store URL, inspect the local app repo and upload the best source icon with the bundled `upload-asset.mjs` helper using `--kind icon`:
 
-- iOS/Xcode: `*.xcassets/AppIcon.appiconset/Contents.json`, then referenced
-  PNG files in the same app icon set.
-- Expo: `app.json`, `app.config.js`, `app.config.ts`, or `app.js` fields
-  `expo.icon`, `ios.icon`, `android.icon`, and adaptive icon images.
-- React Native: iOS `Images.xcassets/AppIcon.appiconset` and Android
-  `android/app/src/main/res/mipmap-*` icons.
-- Web/PWA fallback: `public/manifest.json` icons, `public/icon.png`,
-  `public/app-icon.png`, then favicon files.
+- iOS/Xcode: `*.xcassets/AppIcon.appiconset/Contents.json`, then referenced PNG files in the same app icon set.
+- Expo: `app.json`, `app.config.js`, `app.config.ts`, or `app.js` fields `expo.icon`, `ios.icon`, `android.icon`, and adaptive icon images.
+- React Native: iOS `Images.xcassets/AppIcon.appiconset` and Android `android/app/src/main/res/mipmap-*` icons.
+- Web/PWA fallback: `public/manifest.json` icons, `public/icon.png`, `public/app-icon.png`, then favicon files.
 
 ## MCP Resources
 
@@ -308,8 +229,9 @@ When the MCP client supports resources, use:
 
 ## Platform Dimensions
 
-| Platform | Final screenshot |
-| --- | --- |
-| iphone | 1284x2778 |
-| ipad | 2048x2732 |
-| android | 1080x1920 |
+| Platform | Max panels | Layout | Final screenshot | Composite |
+| --- | --- | --- | --- | --- |
+| iphone | 3 | vertical strip | 1290×2796 | 1120×panelCount × 2432 |
+| ipad | 2 | vertical strip | 2064×2752 | 1920×panelCount × 2560 |
+| android | 3 | vertical strip | 1080×1920 | 1082×panelCount × 1920 |
+| watch | 4 | 2×2 grid | 416×496 | 1920×1920 |

@@ -6,8 +6,7 @@ Revise a hosted screenshot job with targeted change instructions.
 
 ### 1. Resolve The Base Job
 
-Ask for a job id if the user did not provide one. Call `get_job` and confirm
-that it is complete before revising.
+Ask for a job id if the user did not provide one. Call `get_job` and confirm that it is complete before revising.
 
 ### 2. Capture Feedback
 
@@ -20,8 +19,7 @@ Ask for precise revision feedback:
 
 ### 3. Rebuild The Prompt
 
-Use [prompting.md](prompting.md). Keep the original strategy unless the user is
-explicitly changing it. Append a clear revision block:
+Use [prompting.md](prompting.md). Keep the original strategy unless the user is explicitly changing it. Append a clear revision block:
 
 - `Change`
 - `Preserve`
@@ -29,9 +27,7 @@ explicitly changing it. Append a clear revision block:
 
 ### 4. Generate
 
-Call `generate_screenshots` with the revised prompt and the same platform and
-panel count as the base job unless the user asks otherwise. Wait 60 seconds, then
-poll `get_job` every 15 seconds until complete.
+Call `generate_screenshots` with the revised prompt and the same platform and panel count as the base job unless the user asks otherwise. Wait 60 seconds, then poll `get_job` every 15 seconds until complete.
 
 ### 5. Present Output
 
@@ -47,5 +43,4 @@ Present the revised panels side by side in an HTML table with screenshot ids:
 [Open in Shots Studio →](https://shots.run/studio?app={appId}&tab=generations)
 ```
 
-Replace the placeholder URLs, ids, and `{appId}` with actual values from the
-job result. Then ask whether the user wants another targeted pass.
+Replace the placeholder URLs, ids, and `{appId}` with actual values from the job result. Then ask whether the user wants another targeted pass.

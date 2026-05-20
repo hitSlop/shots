@@ -1,18 +1,13 @@
 # Shots Strategy Brief And Benefits
 
-Build this research pass once per app, then reuse it until the positioning
-changes. Store it in the app's `research` object with `update_app_research` so
-Studio and future MCP sessions share the same source of truth.
+Build this research pass once per app, then reuse it until the positioning changes. Store it in the app's `research` object with `update_app_research` so Studio and future MCP sessions share the same source of truth.
 
-When the pass produces App Store listing copy, store that separately with
-`update_app_store_listing` for the target locale. Do not hide title/subtitle
-alternatives in `researchMarkdown`.
+When the pass produces App Store listing copy, store that separately with `update_app_store_listing` for the target locale. Do not hide title/subtitle alternatives in `researchMarkdown`.
 
 ## Source Priority
 
 1. user-provided positioning, audience, and brand constraints
-2. saved app context from `get_app_context` or imported App Store listing
-   screenshots from `import_app_store_listing`
+2. saved app context from `get_app_context` or imported App Store listing screenshots from `import_app_store_listing`
 3. local repo README/docs/source files
 4. competitor listings and review language
 
@@ -36,8 +31,7 @@ Capture:
 
 ### Visual System
 
-Infer theme from brand colors, design tokens, assets, app icon, screenshots,
-and user constraints. Pick one style family:
+Infer theme from brand colors, design tokens, assets, app icon, screenshots, and user constraints. Pick one style family:
 
 | Family | Best fit |
 | --- | --- |
@@ -61,8 +55,7 @@ Identify 3-5 direct competitors. For each, capture:
 
 ### Language Bank
 
-Pull repeated phrases from listing copy, reviews, competitor screenshots, and
-repo copy. Distill:
+Pull repeated phrases from listing copy, reviews, competitor screenshots, and repo copy. Distill:
 
 - `voice.tone`
 - `voice.marketWords`
@@ -71,9 +64,7 @@ repo copy. Distill:
 
 ## Keyword Research Process
 
-Run this process when the user asks for keyword research, ASO optimization, or
-metadata work. Without an external keyword API, volume and difficulty are LLM
-estimates on a 1-100 scale — label them as estimates.
+Run this process when the user asks for keyword research, ASO optimization, or metadata work. Without an external keyword API, volume and difficulty are LLM estimates on a 1-100 scale — label them as estimates.
 
 ### 1. Seed Expansion
 
@@ -81,8 +72,7 @@ Generate 30-50 keyword candidates from:
 
 - **App description and features** — core functionality terms
 - **Competitor titles, subtitles, and descriptions** — terms they rank for
-- **Problem-based terms** — how users describe the pain, not the solution
-  (e.g. "can't sleep" not "sleep tracker")
+- **Problem-based terms** — how users describe the pain, not the solution (e.g. "can't sleep" not "sleep tracker")
 - **Synonyms and related terms** — alternate phrasings for the same intent
 - **Category terms** — words users browse by in the App Store
 
@@ -97,8 +87,7 @@ For each candidate keyword, estimate:
 | Relevance | 1-100 | How well it matches the app's core value proposition |
 | Intent | download / informational | Whether the searcher is ready to install |
 
-Prefer download-intent keywords. Informational keywords belong in long-tail or
-description copy, not title/subtitle.
+Prefer download-intent keywords. Informational keywords belong in long-tail or description copy, not title/subtitle.
 
 ### 3. Opportunity Scoring
 
@@ -114,12 +103,10 @@ Store the computed score in the `score` field of each opportunity object.
 
 Sort scored keywords into the existing schema buckets:
 
-- **`primaryKeywords`** (3-5): highest opportunity score, must appear in title
-  or subtitle
+- **`primaryKeywords`** (3-5): highest opportunity score, must appear in title or subtitle
 - **`secondaryKeywords`** (5-10): target in subtitle and keyword field
 - **`longTailKeywords`** (10-20): fill keyword field, easier to rank for
-- **`opportunities[]`**: all evaluated candidates with volume, difficulty,
-  relevance, priority, score, and notes
+- **`opportunities[]`**: all evaluated candidates with volume, difficulty, relevance, priority, score, and notes
 
 ### 5. Keyword Field Construction
 
@@ -136,15 +123,11 @@ Pack `keywordField` to use all 100 characters (iOS):
 
 When competitor apps are known (from `competitorAnalysis.competitors`), produce:
 
-1. **Gap keywords** — terms competitors use that the app does not → opportunities
-   to fill
-2. **Advantage keywords** — terms the app uses that competitors do not → protect
-   these positions
-3. **Outranked keywords** — terms where competitors have stronger placement →
-   improvement targets
+1. **Gap keywords** — terms competitors use that the app does not → opportunities to fill
+2. **Advantage keywords** — terms the app uses that competitors do not → protect these positions
+3. **Outranked keywords** — terms where competitors have stronger placement → improvement targets
 
-Store gap findings in `competitorAnalysis.competitors[].keywordGaps` and surface
-the top opportunities in `keywordStrategy.opportunities[].notes`.
+Store gap findings in `competitorAnalysis.competitors[].keywordGaps` and surface the top opportunities in `keywordStrategy.opportunities[].notes`.
 
 ## Metadata Rules
 
@@ -174,9 +157,7 @@ expense log      |       |    ✓     |
 money manager    |       |          |      ✓
 ```
 
-Every primary keyword must appear in at least one field. No keyword should appear
-in more than one field — Apple indexes title, subtitle, and keyword field
-separately.
+Every primary keyword must appear in at least one field. No keyword should appear in more than one field — Apple indexes title, subtitle, and keyword field separately.
 
 ### Variant Generation
 
@@ -188,9 +169,7 @@ Generate 3 title options and 3 subtitle options, each with:
 
 ### Localization
 
-When generating listing copy for non-primary locales: **do NOT translate English
-keywords.** Research what local users actually search for. Each locale needs
-independent keyword research because users search differently:
+When generating listing copy for non-primary locales: **do NOT translate English keywords.** Research what local users actually search for. Each locale needs independent keyword research because users search differently:
 
 - English "budget tracker" → German "Haushaltsbuch" → Japanese "家計簿"
 
