@@ -8,8 +8,24 @@ Generate, revise, translate, and manage App Store marketing screenshots through 
 
 ### Codex
 
+Add the marketplace:
+
 ```
 codex plugin marketplace add hitSlop/shots
+```
+
+Install the plugin from inside Codex:
+
+```
+codex
+# Then run /plugins, select Shots, and install
+/plugins
+```
+
+Or install directly from the command line:
+
+```
+codex plugin add shots@shots
 ```
 
 ### Claude Code
