@@ -58,7 +58,7 @@ All generation happens on the Shots server. The plugin contains no executable co
 
 The plugin provides:
 
-- **MCP server config** (`.mcp.json`) — points to `https://shots.run/api/mcp`
+- **MCP server config** (`.mcp.json`) — points to `https://shots.run/mcp`
 - **Skill definitions** (`skills/`) — teach agents the Shots workflow, prompting rules, and tool usage
 - **Editor manifests** — metadata for Codex, Claude Code, Cursor, and Gemini CLI
 
