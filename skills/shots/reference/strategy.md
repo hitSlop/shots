@@ -1,13 +1,13 @@
 # Shots Strategy Brief And Benefits
 
-Build this research pass once per app, then reuse it until the positioning changes. Store it in the app's `research` object with `update_app_research` so Studio and future MCP sessions share the same source of truth.
+Build this research pass once per app, then reuse it until the positioning changes. Store it in the app's `research` object with `apps.update_research` so Studio and future MCP sessions share the same source of truth.
 
-When the pass produces App Store listing copy, store that separately with `update_app_store_listing` for the target locale. Do not hide title/subtitle alternatives in `researchMarkdown`.
+When the pass produces App Store listing copy, store that separately with `apps.update_listing` for the target locale. Do not hide title/subtitle alternatives in `researchMarkdown`.
 
 ## Source Priority
 
 1. user-provided positioning, audience, and brand constraints
-2. saved app context from `get_app_context` or imported App Store listing screenshots from `import_app_store_listing`
+2. saved app context from `apps.get` or imported App Store listing screenshots from `apps.import`
 3. local repo README/docs/source files
 4. competitor listings and review language
 

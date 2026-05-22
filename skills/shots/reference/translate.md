@@ -1,16 +1,16 @@
 # Shots Localization Flow
 
-Translate an existing screenshot job into a target locale while preserving the approved visual system.
+Translate an existing screenshot into a target locale while preserving the approved visual system.
 
 ## Steps
 
 ### 1. Resolve Job And Locale
 
-Ask for the base job id or target locale if missing. Call `get_job` for the base job and confirm it is complete.
+Ask for the source screenshot id and target locale if missing. If the user provides a job id instead, call `jobs.get`, confirm that it is complete, and choose the relevant generated screenshot id.
 
 ### 2. Translate Visible Copy
 
-Translate the screenshot campaign copy and, when the user asks for App Store metadata, save localized title/subtitle/description/keywords with `update_app_store_listing` for the target locale:
+Translate the screenshot campaign copy and, when the user asks for App Store metadata, save localized title/subtitle/description/keywords with `apps.update_listing` for the target locale:
 
 - keep the same panel roles
 - preserve the emotional job of each panel
@@ -25,14 +25,12 @@ Follow [prompting.md](prompting.md). Preserve the visual theme, device framing, 
 
 ### 4. Generate And Present
 
-Call `generate_screenshots` with the target `locale`. Wait 60 seconds, then poll `get_job` every 15 seconds until complete. Present the localized panels side by side in an HTML table with screenshot ids:
+Call `shots` with `screenshots.translate` using the source screenshot id and target `locale`. Wait 60 seconds, then poll the returned job with `jobs.get` every 15 seconds until complete. Present the localized panels in a markdown gallery with screenshot ids:
 
-```
-<table><tr>
-<td align="center"><img src="cdn-url-1" width="280"/><br/><sub>scr_abc123</sub></td>
-<td align="center"><img src="cdn-url-2" width="280"/><br/><sub>scr_def456</sub></td>
-<td align="center"><img src="cdn-url-3" width="280"/><br/><sub>scr_ghi789</sub></td>
-</tr></table>
+```markdown
+| # | Preview | Screenshot ID | URL |
+| --- | --- | --- | --- |
+| 1 | ![](cdn-url-1) | scr_abc123 | cdn-url-1 |
 
 [Open in Shots Studio →](https://shots.run/studio?app={appId}&tab=generations)
 ```

@@ -17,45 +17,68 @@ Shots runs through hosted MCP tools. Durable state lives in Convex, generated sc
 
 `{{scripts_path}}` is the `scripts/` directory next to this file. Resolve it relative to `SKILL.md`.
 
-## Tools
+## MCP Surface
 
-| Tool | Purpose |
+Use the compact command-mode MCP surface by default:
+
+| MCP tool | Purpose |
 | --- | --- |
-| `get_usage` | Check plugin connectivity, plan status, and remaining screenshots |
-| `lookup_app_store_listing` | Fetch public iTunes metadata and screenshot groups |
-| `list_apps` | List existing app records in Convex |
-| `upsert_app` | Create or update an app record |
-| `get_app_context` | Fetch app metadata, locale listings, R2 assets, research, screenshots, and jobs |
-| `import_app_store_listing` | Save App Store metadata, icon, and screenshots to an app |
-| `update_app_store_listing` | Save locale-specific App Store title, subtitle, description, keywords, and suggestion arrays |
-| `import_app_asset_from_url` | Fetch an HTTPS image URL, save it to R2, and attach it to an app, optionally tagged by locale |
-| `update_app_research` | Write structured research back to the app |
-| `generate_screenshots` | Submit a hosted screenshot generation job, optionally linked to an app |
-| `get_job` | Poll job status, CDN asset URLs, and generated screenshot ids |
-| `list_screenshots` | List generated screenshot rows with stable ids |
-| `get_screenshot` | Fetch one generated screenshot row |
-| `upgrade_plan` | Get a checkout URL after the user confirms they want to subscribe |
-| `cancel_plan` | Get the billing portal URL for plan management |
+| `shots` | Run one command with `{ command, args }` |
+| `shots_batch` | Run up to 10 independent commands in one roundtrip |
+| `generate_screenshots` | Submit screenshot generation using a `screenshots` array |
+| `billing` | Create checkout URLs or open the billing portal |
+
+Command discovery is part of the API. Use `shots` with:
+
+- `help.search` to find commands by name, description, args, or tags
+- `help.schema` to fetch the exact JSON Schema for one command
+- `help.examples` to fetch examples stored on each command
+
+Do not guess command args for unfamiliar commands. Call `help.schema` first.
+
+Common commands:
+
+| Command | Use |
+| --- | --- |
+| `usage.get` | Check account status and screenshot availability |
+| `apps.list`, `apps.get`, `apps.upsert`, `apps.import` | Resolve, load, create, or import app context |
+| `apps.update_research`, `apps.update_listing` | Persist strategy and App Store metadata |
+| `assets.import_url` | Import HTTPS reference images into R2 |
+| `search.app_images` | Full-text search uploaded app screenshots, inspo, and brand references by generated description |
+| `jobs.get` | Poll generation jobs |
+| `screenshots.list`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated screenshots |
+| `gallery.browse`, `gallery.search_apps`, `gallery.search_similar` | Find public gallery inspiration |
+| `packs.list`, `packs.get`, `packs.create` | Curate gallery screenshots into inspo packs |
+
+Search rule:
+
+- Uploaded app assets use `search.app_images`; this is full-text search over generated description text.
+- Public gallery inspiration can use semantic/vector commands: `gallery.search_similar` for screenshots and `gallery.search_apps` for apps.
+- Do not expect vector search for uploaded app images.
 
 ## Typical Session
 
-1. **Collect context upfront.** This step is mandatory before generation. First check for `.shots/app.json` — if it exists, load the app with `get_app_context` and skip to step 3. Otherwise ask the user:
-   - App name
-   - What it does / what problem it solves (1-2 sentences)
-   - App Store URL (if published — enables auto-import of metadata, icon, screenshots)
-   - How many screenshots they want (default: 3)
-   - Any visual inspiration — competitor URLs, existing screenshots, brand guidelines
-   - Target platform (iPhone / iPad / Android, default: iPhone)
+1. **Collect context upfront.** Mandatory before generation.
+   - Check for `.shots/app.json` — if it exists, call `shots` with `apps.get` and skip to step 3.
+   - If the user pastes a raw appId, validate with `apps.get`, write `.shots/app.json`, skip to step 3.
+   - If no config exists, call `apps.list`. If apps exist, present a numbered list and ask if they want to link to one. If they pick one, write `.shots/app.json` and skip to step 3.
+   - If no existing app is selected, ask the user:
+     - App name
+     - What it does (1-2 sentences)
+     - App Store URL (if published)
+     - Screenshot count (default: 3)
+     - Visual inspiration
+     - Target platform (default: iPhone)
 
-   Ask these as a batch, not one-by-one. If the user provides an App Store URL or the workspace is an app repo, you can infer most of these.
+   Ask as a batch. Infer from App Store URL or workspace when possible.
 
-2. **Store everything you learn.** Save structured data to Convex via `upsert_app`, `update_app_research`, and `update_app_store_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
+2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
 
 3. **Plan before generation.** Before calling `generate_screenshots`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. If context is thin, propose 5-10 panel options first and let the user choose.
 
-4. **Build the prompt and generate.** Use the approved table, research context, reference images, and listing copy to build crop-safe composite prompts. Each generation job supports up to the platform's max panel count (see Platform Dimensions); if the user asks for more screenshots, create multiple jobs in batches until the requested count is reached.
+4. **Build the prompts and generate.** Use the approved table, research context, reference images, and listing copy to build one crop-safe prompt per screenshot. Pass all approved panels to `generate_screenshots`; the server batches them into jobs.
 
-5. **Set timing expectations.** Tell the user generation takes 1-2 minutes per batch. Wait 60 seconds before the first poll, then poll `get_job` every 15 seconds. Don't poll more often than every 10 seconds.
+5. **Set timing expectations.** Tell the user generation takes 1-2 minutes per batch. Wait 60 seconds before the first poll, then poll `jobs.get` every 15 seconds. Don't poll more often than every 10 seconds.
 
 6. **Present results and offer next steps.** Show the panels, link to Studio, offer to revise, generate more, or localize.
 
@@ -65,7 +88,7 @@ Do NOT resize or compress reference images before uploading. The server accepts 
 
 Preferred reference image paths:
 
-1. If the image is already available at an HTTPS URL, use `import_app_asset_from_url`.
+1. If the image is already available at an HTTPS URL, call `shots` with `assets.import_url`.
 2. If the image is a local file and the client/runtime can perform multipart HTTP uploads, use the bundled helper:
 
    ```bash
@@ -79,7 +102,7 @@ Preferred reference image paths:
 | Field | Required | Notes |
 | --- | --- | --- |
 | `file` | Yes | PNG, JPEG, or WebP image file |
-| `appId` | Yes | Convex app id returned by `upsert_app`, `import_app_store_listing`, or `.shots/app.json` |
+| `appId` | Yes | Convex app id returned by `apps.upsert`, `apps.import`, or `.shots/app.json` |
 | `kind` | No | Defaults to `reference`; accepts `app_screenshot`, `inspo`, `app_store_screenshot`, `icon`, or `reference` |
 | `locale` | No | App Store locale tag |
 
@@ -89,31 +112,36 @@ If an upload fails, stop and report the upload error. Do not proceed to generati
 
 ## Required Setup
 
-1. Call `get_usage`.
+1. Call `shots` with `usage.get`.
 2. If the call fails with an auth error, the MCP OAuth flow needs to be completed by the client.
-3. If the response has no active subscription, tell the user they need an active Shots plan before generation. Offer to call `upgrade_plan` only after they confirm.
+3. If the response has no active subscription, tell the user they need an active Shots plan before generation. Offer to call `billing` with `action: "checkout"` only after they confirm.
 4. Do not proceed to `generate_screenshots` until the account is active and has available screenshots, fair-use access, or accepted overage.
 
 ## Project Config
 
 On session start, check for `.shots/app.json` in the project root.
 
-- **If found:** Read the `appId`, call `get_app_context`, and skip the onboarding questions in "Typical Session" step 1. Jump directly to whatever the user is asking for (generate, revise, translate, etc.).
-- **If not found:** Run the normal "Typical Session" flow. After creating the app (via `upsert_app` or `import_app_store_listing`), write `.shots/app.json` to the project root:
+- **If found:** Read the `appId`, call `shots` with `apps.get`, and skip onboarding. Jump to whatever the user is asking for.
+- **If the user provides a raw appId** (e.g. pasted from the Shots dashboard Settings tab): call `apps.get` to validate it, write `.shots/app.json`, and proceed as above.
+- **If not found and no appId provided:** Call `apps.list`.
+  - If the user has existing apps, present a numbered list (name, App Store URL if any) and ask: "Link this project to one of these apps, or create a new one?"
+  - If they pick one, write `.shots/app.json` with that appId, call `apps.get`, and skip onboarding.
+  - If they decline or have no apps, proceed with normal "Typical Session" onboarding.
+- **After creating a new app** (via `apps.upsert` or `apps.import`), write `.shots/app.json`:
 
   ```json
-  {
-    "appId": "<the returned appId>"
-  }
+  { "appId": "<the returned appId>" }
   ```
 
-Always create the `.shots/` directory if it doesn't exist. Add `.shots/` to the project's `.gitignore` if a `.gitignore` exists and doesn't already ignore it.
+The user can also copy this config from the Shots dashboard Settings tab.
+
+Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists and doesn't already ignore it.
 
 ## Billing Failures
 
 `generate_screenshots` can return a structured JSON error instead of queueing a job:
 
-- `code: "subscription_required"` — tell the user they need an active Shots plan before generating. Mention the returned `upgradeUrl` or offer to call `upgrade_plan` only after they confirm.
+- `code: "subscription_required"` — tell the user they need an active Shots plan before generating. Mention the returned `upgradeUrl` or offer to call `billing` checkout only after they confirm.
 - `code: "credits_exhausted"` with `overageAllowed: false` — tell the user they are out of screenshots and need to upgrade or wait for reset.
 - `code: "credits_exhausted"` with `overageAllowed: true` — tell the user this generation needs extra usage acceptance. Ask before opening the returned `acceptOverageUrl` or billing flow.
 
@@ -124,27 +152,27 @@ Do not retry generation after one of these responses until the user has taken th
 | Intent | Detection | Execution |
 | --- | --- | --- |
 | Create | "generate", "create", an App Store URL, or no existing job | Resolve or create an app, build a strategy prompt, then call `generate_screenshots` |
-| Scrape | "scrape", "fetch metadata", "import listing" | Call `import_app_store_listing` when durable app context is needed; call `lookup_app_store_listing` for transient lookup |
-| Revise | "revise", "change", "fix", "redo", or a job id | Build a targeted revision prompt, then call `generate_screenshots` |
-| Translate | "translate", "localize", or a locale name | Build localized copy, then call `generate_screenshots` |
-| Keyword Research | "keywords", "keyword research", "ASO", "metadata", "optimize listing" | Import/load app, run keyword research process, store results via `update_app_research` + `update_app_store_listing` |
-| View | "view", "open", "show latest" | Call `get_job`, `list_screenshots`, or `get_app_context`; open returned CDN URLs |
-| Account | "usage", "plan", "subscription", "screenshots", "account" | Call `get_usage` |
-| Upgrade | "upgrade", "subscribe", "buy" | Confirm intent, then call `upgrade_plan` |
+| Scrape | "scrape", "fetch metadata", "import listing" | Call `apps.import` when durable app context is needed; call `appstore.lookup` for transient lookup |
+| Revise | "revise", "change", "fix", "redo", or a screenshot id | Build targeted feedback, then call `screenshots.revise` |
+| Translate | "translate", "localize", or a locale name | Build localized copy, then call `screenshots.translate` |
+| Keyword Research | "keywords", "keyword research", "ASO", "metadata", "optimize listing" | Import/load app, run keyword research process, store results via `apps.update_research` + `apps.update_listing` |
+| View | "view", "open", "show latest" | Call `jobs.get`, `screenshots.list`, or `apps.get`; open returned CDN URLs |
+| Account | "usage", "plan", "subscription", "screenshots", "account" | Call `usage.get` |
+| Upgrade | "upgrade", "subscribe", "buy" | Confirm intent, then call `billing` checkout |
 
 ## Research Workflow
 
 Before generating, build a concise strategy from:
 
-1. App Store metadata and screenshots from `get_app_context` or `import_app_store_listing`
+1. App Store metadata and screenshots from `apps.get` or `apps.import`
 2. Local README/docs/source files if the current workspace is an app repo
 3. User-provided audience, feature, visual, or brand constraints
 
-Write the resulting strategy back with `update_app_research` so future agents and Studio see the same source of truth. Keep durable generated state in Convex by using the MCP tools.
+Write the resulting strategy back with `apps.update_research` so future agents and Studio see the same source of truth. Keep durable generated state in Convex by using the MCP tools.
 
 ## Listing Copy
 
-When importing or researching an app, generate App Store listing copy in the client and persist it with `update_app_store_listing`. Always pass the target App Store locale, defaulting to `en-US` when the user did not specify one:
+When importing or researching an app, generate App Store listing copy in the client and persist it with `apps.update_listing`. Always pass the target App Store locale, defaulting to `en-US` when the user did not specify one:
 
 - `title`
 - `subtitle`
@@ -155,7 +183,7 @@ When importing or researching an app, generate App Store listing copy in the cli
 
 Use the current App Store title and description as the starting point, then draft concise alternatives from the strategy brief. Keep keywords comma-safe and avoid claiming unavailable features.
 
-Store ASO dashboard context in `update_app_research` rather than in listing fields:
+Store ASO dashboard context in `apps.update_research` rather than in listing fields:
 
 - `asoAudit`
 - `keywordStrategy`
@@ -167,10 +195,10 @@ Store ASO dashboard context in `update_app_research` rather than in listing fiel
 
 When the user asks for keyword research, ASO optimization, or metadata work:
 
-1. Import or load the app via `import_app_store_listing` or `get_app_context`.
+1. Import or load the app via `apps.import` or `apps.get`.
 2. Run the keyword research process from [reference/strategy.md](reference/strategy.md) (Seed Expansion, Evaluation, Opportunity Scoring, Grouping).
-3. Store `keywordStrategy` (primaryKeywords, secondaryKeywords, longTailKeywords, keywordField, scored opportunities) via `update_app_research`.
-4. Generate optimized listing copy (title, subtitle, description, keywords) and store via `update_app_store_listing`.
+3. Store `keywordStrategy` (primaryKeywords, secondaryKeywords, longTailKeywords, keywordField, scored opportunities) via `apps.update_research`.
+4. Generate optimized listing copy (title, subtitle, description, keywords) and store via `apps.update_listing`.
 
 Metadata rules to enforce when generating listing copy:
 
@@ -195,21 +223,21 @@ Follow the reference docs:
 
 ## Generation Flow
 
-1. Call `get_usage`.
-2. Call `list_apps`, `upsert_app`, or `import_app_store_listing` to establish the app record when the user is working on a specific app. Pass a locale when the user is working outside the app's primary App Store locale.
-3. Call `get_app_context` and use saved R2 assets, generated screenshot ids, locale listings, and the app research object as context.
-4. Update listing copy with `update_app_store_listing` when the user asks for ASO metadata, import cleanup, localization, or title/subtitle alternatives.
+1. Call `shots` with `usage.get`.
+2. Call `apps.list`, `apps.upsert`, or `apps.import` to establish the app record when the user is working on a specific app. Pass a locale when the user is working outside the app's primary App Store locale.
+3. Call `apps.get` and use saved R2 assets, generated screenshot ids, locale listings, and the app research object as context.
+4. Update listing copy with `apps.update_listing` when the user asks for ASO metadata, import cleanup, localization, or title/subtitle alternatives.
 5. Present the screenshot plan as a markdown table and wait for user approval or edits. Do not call `generate_screenshots` before this approval step unless the user explicitly asks to skip planning.
 6. Build the final prompt using the approved strategy and visible screenshot copy.
-7. Call `generate_screenshots` with `appId`, `locale`, `prompt`, `platform`, `panelCount`, and `quality`. For more screenshots than the platform's max panel count, submit multiple jobs (see Platform Dimensions for per-platform limits).
-8. Wait 60 seconds before the first `get_job` poll, then poll every 15 seconds until status is `"complete"` or `"failed"`.
+7. Call `generate_screenshots` with `appId`, optional `referenceAssetIds` / `referenceScreenshotIds`, `quality`, and a `screenshots` array. Each array item is one approved panel: `{ prompt, platform, locale }`. The server groups panels by platform and locale and creates one or more jobs as needed.
+8. Wait 60 seconds before the first `jobs.get` poll, then poll each returned job every 15 seconds until status is `"complete"` or `"failed"`.
 9. When complete, present screenshots with a markdown gallery and a deep link to `https://shots.run/studio?app={appId}&tab=generations`.
 
-Saved assets and prior screenshots returned by `get_app_context` should inform the prompt and visual direction. Prefer `import_app_asset_from_url` for HTTPS image URLs and `/api/upload` for local files.
+Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `assets.import_url` for HTTPS image URLs and `/api/upload` for local files.
 
 ## App Icon Discovery
 
-If the user gives an App Store URL or app id, prefer `import_app_store_listing`; it imports the public icon from iTunes artwork and saves it as an app icon asset.
+If the user gives an App Store URL or app id, prefer `apps.import`; it imports the public icon from iTunes artwork and saves it as an app icon asset.
 
 If there is no App Store URL, inspect the local app repo and upload the best source icon with the bundled `upload-asset.mjs` helper using `--kind icon`:
 

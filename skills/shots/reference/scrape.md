@@ -10,7 +10,7 @@ Accept an App Store URL or app id. If neither is available, ask for one.
 
 ### 2. Lookup Listing
 
-Call `lookup_app_store_listing` with the app id or URL, the user's country code if specified, and the target locale if known.
+Call `shots` with `appstore.lookup` using the app id or URL, the user's country code if specified, and the target locale if known.
 
 ### 3. Summarize
 
@@ -25,7 +25,7 @@ Report:
 
 ### 4. Save Listing Copy
 
-When durable app context exists, draft the App Store listing object and call `update_app_store_listing` with the target locale:
+When durable app context exists, draft the App Store listing object and call `apps.update_listing` with the target locale:
 
 - keep the imported title unless a stronger title is obvious
 - add one selected subtitle
