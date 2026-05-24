@@ -69,7 +69,7 @@ Do not poll more often than every 10 seconds for any job type.
 
 ## Typical Session
 
-1. **Collect context upfront.** Check for `.shots/app.json` in the project root. If found, read the `appId` and call `apps.get` to load the app — skip onboarding. If not found, call `apps.list`; if apps exist, show a numbered list and ask the user to link one or create a new one. If they pick one, write `.shots/app.json` and call `apps.get`. If they choose "new" or have no apps, proceed with normal onboarding (see Project Config below).
+1. **Collect context upfront.** Check for `.shots/app.json` in the project root. If found, read the `appId` and call `apps.get` to load the app — skip onboarding. If not found, call `apps.list`; if apps exist, show a numbered list and ask the user to link one or create a new one. If they pick one, write `.shots/app.json` and call `apps.get`. If they choose "new" or have no apps, proceed with normal onboarding (see Project Config below). Always ask the user to confirm the app name and what it does before creating an app record. Never auto-detect the app name from local files.
 
 2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
 
@@ -124,6 +124,12 @@ On session start, check for `.shots/app.json` in the project root.
   - If the user has existing apps, present a numbered list (name, App Store URL if any) and ask: "Link this project to one of these apps, or create a new one?"
   - If they pick one, write `.shots/app.json` with that appId, call `apps.get`, and skip onboarding.
   - If they decline or have no apps, proceed with normal "Typical Session" onboarding.
+  - **Before creating any app record, you MUST ask the user for:**
+    1. App name (required — never infer from local files or plugin metadata)
+    2. What the app does (required)
+    3. App Store URL (if published — enables metadata import via `apps.import`)
+    4. Target platform (iphone/ipad/android/watch)
+  - Do NOT proceed to `apps.upsert` or `apps.import` until the user has confirmed these details.
 - **After creating a new app** (via `apps.upsert` or `apps.import`), write `.shots/app.json`:
 
   ```json
@@ -165,6 +171,8 @@ Before generating, build a concise strategy from:
 1. App Store metadata and screenshots from `apps.get` or `apps.import`
 2. Local README/docs/source files if the current workspace is an app repo
 3. User-provided audience, feature, visual, or brand constraints
+
+"Local README/docs/source files" means the user's app project files, not the Shots plugin's own documentation. If the working directory contains Shots plugin files (`.claude-plugin/`, `skills/shots/`, etc.), skip those — they describe the tool, not the target app.
 
 Write the resulting strategy back with `apps.update_research` so future agents and Studio see the same source of truth. Keep durable generated state in Convex by using the MCP tools.
 
