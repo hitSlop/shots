@@ -239,6 +239,58 @@ Screenshots should form a cohesive Value -> Flow -> Trust narrative:
 2. Flow: show the solution in action with concrete product UI.
 3. Trust: build confidence with proof, ratings, privacy, awards, or user count.
 
+## Screenshot Title Strategy
+
+Screenshot headlines are conversion hooks, not labels. Write the smallest emotional promise that makes a browsing user stop, understand the value, and inspect the UI. The best headline usually names the benefit, relief, identity shift, curiosity gap, or before/after transformation the user wants.
+
+Use these patterns:
+
+- Outcome: what the user gets now, e.g. "Sleep Better Tonight"
+- Pain relief: what friction disappears, e.g. "Never Miss a Receipt"
+- Identity/permission: who the user gets to feel like, e.g. "Feel Ready for Anything"
+- Personal relevance: why this is about them, e.g. "See What Fits You"
+- Transformation: the before/after state, e.g. "From Chaos to Clarity"
+- Proof: only when supplied by app context, e.g. "Trusted by 50K Teams"
+
+Before -> after examples:
+
+| Weak title | Better screenshot title |
+| --- | --- |
+| AI Meal Planner | Know Dinner by 5 |
+| Track Your Sleep | Wake Up Actually Rested |
+| Budgeting Dashboard | Stop Wondering Where It Went |
+| Color Analysis Scan | Find Your Best Colors |
+| Job Auto Apply | Apply Before They Close |
+| Habit Reminders | Make Progress Feel Automatic |
+| Calendar Sync | See Your Day Clearly |
+| Photo Filters | Make Every Shot Pop |
+| Workout Library | Train Without Overthinking |
+| Invoice Generator | Get Paid Without Chasing |
+
+Quality bar:
+
+- 3-6 words whenever possible.
+- Meaningful at thumbnail size without reading the subtitle.
+- Concrete enough to visualize; avoid vague SaaS or AI language.
+- Uses customer language, not internal product terminology.
+- Pairs with real UI so the screenshot visually proves the claim.
+- Subtitle clarifies the feature, but the headline carries the hook.
+
+Avoid:
+
+- Generic feature labels: "AI Dashboard", "Smart Tracking", "Advanced Analytics".
+- Empty hype: "Ultimate", "Revolutionary", "Game-Changing", "Best".
+- Unsupported claims: #1, top rated, millions of users, awards, testimonials, revenue, or ranking unless supplied by app context.
+- Shame, insecurity exploitation, gender stereotypes, or making users feel broken.
+- CTA headlines like "Download Now", especially for Google Play.
+
+Ethical emotional framing:
+
+- Recognize the user's problem without insulting them.
+- Make the desired action feel clear, easy, and attainable.
+- Create curiosity with personally relevant results or transformations.
+- Prefer recognition over persuasion: the title should feel like "this app gets me."
+
 ## Benefits
 
 Draft 6-8 benefits from the brief, not from a feature list. Each benefit needs:
@@ -260,8 +312,10 @@ Draft 6-8 benefits from the brief, not from a feature list. Each benefit needs:
 Rules:
 
 - one promise per headline
-- 3-5 words per line
+- 3-6 words per headline
 - concrete verbs and outcomes
 - category-native words when useful
 - no empty AI adjectives
 - avoid `and` in headlines when possible
+- headline must be a user benefit or emotional hook, not the feature name
+- use the before -> after examples above as rewrite patterns

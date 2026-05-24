@@ -38,6 +38,8 @@ Save approved strategy back to the app with `apps.update_research`.
 
 Before generation, show a markdown table with one row per requested screenshot. Do not call `generate_screenshot` until the user approves or edits the table.
 
+Draft the `Headline` column using the Screenshot Title Strategy in [strategy.md](strategy.md): 3-6 word benefit, relief, identity, curiosity, or transformation promises. Do not use feature labels like "AI Dashboard" or "Calendar Sync" unless the user explicitly requests literal feature names. The headline should make sense at thumbnail size without reading the subtitle.
+
 ```markdown
 | # | Headline | Subtitle | Image/UI direction | Reference assets | Purpose |
 | --- | --- | --- | --- | --- | --- |

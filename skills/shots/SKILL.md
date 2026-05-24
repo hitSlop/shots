@@ -75,7 +75,7 @@ Do not poll more often than every 10 seconds for any job type.
 
 2b. **Discover and upload the app icon.** If `apps.import` was used (App Store URL provided), the icon is imported automatically. Otherwise, search the local project for the app icon per the "App Icon Discovery" section below and upload it with the bundled helper using `--kind icon`. This gives the generation pipeline a real icon to reference in screenshots.
 
-3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. If context is thin, propose 5-10 panel options first and let the user choose.
+3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. Headlines are conversion hooks: write 3-6 word benefit, relief, identity, curiosity, or transformation promises, not feature labels. Use the "Screenshot Title Strategy" in [reference/strategy.md](reference/strategy.md) before filling the table. If context is thin, propose 5-10 panel options first and let the user choose.
 
 4. **Build the prompts and generate.** Use the approved table, research context, reference images, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
 

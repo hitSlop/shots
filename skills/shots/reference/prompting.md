@@ -14,6 +14,8 @@ Create App Store screenshots that read clearly after server-side compositing and
 - use market-native wording from `strategyBrief.voice`
 - do not copy competitor claims verbatim
 - keep copy short and verbatim
+- headlines must follow the Screenshot Title Strategy in `strategy.md`: 3-6 word benefit, relief, identity, curiosity, or transformation promises
+- do not use feature-label headlines when a benefit rewrite is possible
 - device screens must show specific UI
 - decorative elements must support the promise, not distract from it
 - optimize for browse-feed stopping power before full-size polish
@@ -264,6 +266,7 @@ panels[]:         (one per panel, count must match platform)
 - headlines should create recognition, tension, or a clear outcome
 - subtitles should support the headline by reframing, calming doubt, or granting permission
 - match the visual style to the app's brand and category (see Visual Style table)
+- before sending prompts, rewrite weak feature titles into stronger outcomes, e.g. "AI Meal Planner" -> "Know Dinner by 5", "Budgeting Dashboard" -> "Stop Wondering Where It Went", "Calendar Sync" -> "See Your Day Clearly"
 
 ## Device Content
 
