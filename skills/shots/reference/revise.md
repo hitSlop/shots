@@ -27,7 +27,7 @@ Use [prompting.md](prompting.md). Keep the original strategy unless the user is 
 
 ### 4. Generate
 
-Call `shots` with `screenshots.revise` using the screenshot id and concise feedback. Wait 60 seconds, then poll the returned job with `jobs.get` every 15 seconds until complete.
+Call `shots` with `screenshots.revise` using the screenshot id and concise feedback. Poll per SKILL.md Polling.
 
 ### 5. Present Output
 

@@ -25,7 +25,7 @@ Follow [prompting.md](prompting.md). Preserve the visual theme, device framing, 
 
 ### 4. Generate And Present
 
-Call `shots` with `screenshots.translate` using the source screenshot id and target `locale`. Wait 60 seconds, then poll the returned job with `jobs.get` every 15 seconds until complete. Present the localized panels in a markdown gallery with screenshot ids:
+Call `shots` with `screenshots.translate` using the source screenshot id and target `locale`. Poll per SKILL.md Polling. Present the localized panels in a markdown gallery with screenshot ids:
 
 ```markdown
 | # | Preview | Screenshot ID | URL |

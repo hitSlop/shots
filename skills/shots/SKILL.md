@@ -1,10 +1,11 @@
 ---
 name: shots
 description: >
-  Generate, revise, translate, and manage App Store marketing screenshots
-  through the hosted Shots MCP tools. Use for App Store screenshot creation,
-  ASO screenshot strategy, screenshot revisions, localization, and App Store
-  listing scraping. Do not use for generic image generation.
+  Generate, revise, translate, and manage App Store marketing screenshots and
+  app icon candidates through the hosted Shots MCP tools. Use for App Store
+  screenshot creation, app icon generation, ASO screenshot strategy,
+  screenshot revisions, localization, and App Store listing scraping. Do not
+  use for generic image generation.
 user-invocable: true
 argument-hint: "[app store url, job id, locale, or description]"
 allowed-tools:
@@ -13,7 +14,7 @@ allowed-tools:
 
 # Shots
 
-Shots runs through hosted MCP tools. Durable state lives in Convex, generated screenshots are uploaded to the Shots CDN, and completed jobs return CDN URLs plus stable screenshot ids.
+Shots runs through hosted MCP tools. Durable state lives in Convex, generated screenshots and icons are uploaded to the Shots CDN, and completed jobs return CDN URLs plus stable ids.
 
 `{{scripts_path}}` is the `scripts/` directory next to this file. Resolve it relative to `SKILL.md`.
 
@@ -25,8 +26,10 @@ Use the compact command-mode MCP surface by default:
 | --- | --- |
 | `shots` | Run one command with `{ command, args }` |
 | `shots_batch` | Run up to 10 independent commands in one roundtrip |
-| `generate_screenshots` | Submit screenshot generation using a `screenshots` array |
-| `billing` | Create checkout URLs or open the billing portal |
+| `generate_screenshot` | Generate one App Store screenshot per call (3 credits) |
+| `generate_icon_moodboard` | Brainstorm ~20 icon concepts (5 credits) |
+| `generate_icon` | Generate one 1024×1024 app icon (3 credits) |
+| `billing` | Create checkout URLs, open the billing portal, or buy credit boosts |
 
 Command discovery is part of the API. Use `shots` with:
 
@@ -47,6 +50,7 @@ Common commands:
 | `search.app_images` | Full-text search uploaded app screenshots, inspo, and brand references by generated description |
 | `jobs.get` | Poll generation jobs |
 | `screenshots.list`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated screenshots |
+| `icons.list`, `icons.get`, `icons.set_current`, `icons.delete` | Manage generated app icon candidates |
 | `gallery.browse`, `gallery.search_apps`, `gallery.search_similar` | Find public gallery inspiration |
 | `packs.list`, `packs.get`, `packs.create` | Curate gallery screenshots into inspo packs |
 
@@ -56,31 +60,24 @@ Search rule:
 - Public gallery inspiration can use semantic/vector commands: `gallery.search_similar` for screenshots and `gallery.search_apps` for apps.
 - Do not expect vector search for uploaded app images.
 
+## Polling
+
+- **`generate_screenshot` / `generate_icon_moodboard` / `generate_icon`:** Wait 60 seconds before the first `jobs.get` poll, then every 15 seconds.
+- **`screenshots.revise` / `screenshots.translate`:** Wait 60 seconds before the first poll, then every 15 seconds.
+
+Do not poll more often than every 10 seconds for any job type.
+
 ## Typical Session
 
-1. **Collect context upfront.** Mandatory before generation.
-   - Check for `.shots/app.json` — if it exists, call `shots` with `apps.get` and skip to step 3.
-   - If the user pastes a raw appId, validate with `apps.get`, write `.shots/app.json`, skip to step 3.
-   - If no config exists, call `apps.list`. If apps exist, present a numbered list and ask if they want to link to one. If they pick one, write `.shots/app.json` and skip to step 3.
-   - If no existing app is selected, ask the user:
-     - App name
-     - What it does (1-2 sentences)
-     - App Store URL (if published)
-     - Screenshot count (default: 3)
-     - Visual inspiration
-     - Target platform (default: iPhone)
-
-   Ask as a batch. Infer from App Store URL or workspace when possible.
+1. **Collect context upfront.** Check for `.shots/app.json` in the project root. If found, read the `appId` and call `apps.get` to load the app — skip onboarding. If not found, call `apps.list`; if apps exist, show a numbered list and ask the user to link one or create a new one. If they pick one, write `.shots/app.json` and call `apps.get`. If they choose "new" or have no apps, proceed with normal onboarding (see Project Config below).
 
 2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
 
-3. **Plan before generation.** Before calling `generate_screenshots`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. If context is thin, propose 5-10 panel options first and let the user choose.
+3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. If context is thin, propose 5-10 panel options first and let the user choose.
 
-4. **Build the prompts and generate.** Use the approved table, research context, reference images, and listing copy to build one crop-safe prompt per screenshot. Pass all approved panels to `generate_screenshots`; the server batches them into jobs.
+4. **Build the prompts and generate.** Use the approved table, research context, reference images, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
 
-5. **Set timing expectations.** Tell the user generation takes 1-2 minutes per batch. Wait 60 seconds before the first poll, then poll `jobs.get` every 15 seconds. Don't poll more often than every 10 seconds.
-
-6. **Present results and offer next steps.** Show the panels, link to Studio, offer to revise, generate more, or localize.
+5. **Present results and offer next steps.** Show the screenshots or icons, link to Studio, offer to revise, generate more, localize, or set the current icon. For icons, use `generate_icon_moodboard` to brainstorm concepts, then `generate_icon` for individual finals.
 
 ## Reference Images
 
@@ -115,7 +112,7 @@ If an upload fails, stop and report the upload error. Do not proceed to generati
 1. Call `shots` with `usage.get`.
 2. If the call fails with an auth error, the MCP OAuth flow needs to be completed by the client.
 3. If the response has no active subscription, tell the user they need an active Shots plan before generation. Offer to call `billing` with `action: "checkout"` only after they confirm.
-4. Do not proceed to `generate_screenshots` until the account is active and has available screenshots, fair-use access, or accepted overage.
+4. Do not proceed to `generate_screenshot`, `generate_icon_moodboard`, or `generate_icon` until the account is active and has enough design credits.
 
 ## Project Config
 
@@ -139,11 +136,11 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 
 ## Billing Failures
 
-`generate_screenshots` can return a structured JSON error instead of queueing a job:
+`generate_screenshot`, `generate_icon_moodboard`, and `generate_icon` can return a structured JSON error instead of queueing a job:
 
 - `code: "subscription_required"` — tell the user they need an active Shots plan before generating. Mention the returned `upgradeUrl` or offer to call `billing` checkout only after they confirm.
-- `code: "credits_exhausted"` with `overageAllowed: false` — tell the user they are out of screenshots and need to upgrade or wait for reset.
-- `code: "credits_exhausted"` with `overageAllowed: true` — tell the user this generation needs extra usage acceptance. Ask before opening the returned `acceptOverageUrl` or billing flow.
+- `code: "insufficient_credits"` — tell the user the returned `requiredCredits`, current balance, and shortfall. Offer to open Billing or buy credits.
+- `code: "billing_unavailable"` or `code: "rate_limited"` — tell the user to retry later and do not start a duplicate job.
 
 Do not retry generation after one of these responses until the user has taken the billing action.
 
@@ -151,7 +148,8 @@ Do not retry generation after one of these responses until the user has taken th
 
 | Intent | Detection | Execution |
 | --- | --- | --- |
-| Create | "generate", "create", an App Store URL, or no existing job | Resolve or create an app, build a strategy prompt, then call `generate_screenshots` |
+| Create | "generate", "create", an App Store URL, or no existing job | Resolve or create an app, build a strategy prompt, then call `generate_screenshot` |
+| App Icons | "icon", "app icon", "generate icon", "ASO icon" | Resolve or create an app, brainstorm with `generate_icon_moodboard`, then produce finals with `generate_icon` |
 | Scrape | "scrape", "fetch metadata", "import listing" | Call `apps.import` when durable app context is needed; call `appstore.lookup` for transient lookup |
 | Revise | "revise", "change", "fix", "redo", or a screenshot id | Build targeted feedback, then call `screenshots.revise` |
 | Translate | "translate", "localize", or a locale name | Build localized copy, then call `screenshots.translate` |
@@ -215,6 +213,7 @@ Metadata rules to enforce when generating listing copy:
 Follow the reference docs:
 
 - [reference/create.md](reference/create.md)
+- [reference/icons.md](reference/icons.md)
 - [reference/strategy.md](reference/strategy.md)
 - [reference/prompting.md](reference/prompting.md)
 - [reference/revise.md](reference/revise.md)
@@ -223,17 +222,26 @@ Follow the reference docs:
 
 ## Generation Flow
 
-1. Call `shots` with `usage.get`.
-2. Call `apps.list`, `apps.upsert`, or `apps.import` to establish the app record when the user is working on a specific app. Pass a locale when the user is working outside the app's primary App Store locale.
-3. Call `apps.get` and use saved R2 assets, generated screenshot ids, locale listings, and the app research object as context.
-4. Update listing copy with `apps.update_listing` when the user asks for ASO metadata, import cleanup, localization, or title/subtitle alternatives.
-5. Present the screenshot plan as a markdown table and wait for user approval or edits. Do not call `generate_screenshots` before this approval step unless the user explicitly asks to skip planning.
-6. Build the final prompt using the approved strategy and visible screenshot copy.
-7. Call `generate_screenshots` with `appId`, optional `referenceAssetIds` / `referenceScreenshotIds`, `quality`, and a `screenshots` array. Each array item is one approved panel: `{ prompt, platform, locale }`. The server groups panels by platform and locale and creates one or more jobs as needed.
-8. Wait 60 seconds before the first `jobs.get` poll, then poll each returned job every 15 seconds until status is `"complete"` or `"failed"`.
-9. When complete, present screenshots with a markdown gallery and a deep link to `https://shots.run/studio?app={appId}&tab=generations`.
+1. Check access per Required Setup. Resolve the app per Project Config and load with `apps.get`.
+2. Present the screenshot plan as a markdown table and wait for user approval.
+3. Call `generate_screenshot` once per approved screenshot, passing a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`. Each call queues one job.
+4. Poll per Polling. When complete, present a markdown gallery and a deep link to `https://shots.run/studio?app={appId}&tab=generations`.
 
 Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `assets.import_url` for HTTPS image URLs and `/api/upload` for local files.
+
+## App Icon Generation Flow
+
+Use [reference/icons.md](reference/icons.md) when the user asks for app icons, ASO icon concepts, or icon candidates.
+
+Key rules:
+
+- **Step 1 — Moodboard:** Call `generate_icon_moodboard` to produce a 2048×2048 moodboard with ~20 numbered icon concepts (5 credits). Present the moodboard and ask the user to pick favorites by number.
+- **Step 2 — Finals:** Call `generate_icon` once per chosen concept to produce an individual 1024×1024 PNG icon (3 credits each).
+- Treat both steps as paid generation: check usage, plan directions, and get approval before calling either tool.
+- Prompt for square, full-bleed, upload-ready Xcode/App Store source artwork. Apple/Xcode applies rounded corner masks later.
+- Do not ask for rounded icon tiles, preview cards, frames, outer backgrounds, black corner voids, text, labels, or watermarks.
+- Do not send safe-zone guidance for icons. Safe-zone references are only for screenshot generation.
+- Poll per Polling. Call `icons.list` when complete and use `icons.set_current` only after the user chooses a candidate.
 
 ## App Icon Discovery
 
@@ -257,9 +265,4 @@ When the MCP client supports resources, use:
 
 ## Platform Dimensions
 
-| Platform | Max panels | Layout | Final screenshot | Composite |
-| --- | --- | --- | --- | --- |
-| iphone | 3 | vertical strip | 1290×2796 | 1120×panelCount × 2432 |
-| ipad | 2 | vertical strip | 2064×2752 | 1920×panelCount × 2560 |
-| android | 3 | vertical strip | 1080×1920 | 1082×panelCount × 1920 |
-| watch | 4 | 2×2 grid | 416×496 | 1920×1920 |
+Each `generate_screenshot` call produces one screenshot. The server computes dimensions automatically per platform.

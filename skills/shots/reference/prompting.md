@@ -163,44 +163,7 @@ Avoid when: Each panel needs fully independent context
 
 ## Structured JSON Prompt
 
-Prompts are now structured JSON objects built by the server from agent input via `composeGenerationPrompt()`. The agent sends structured fields through `generate_screenshots`; the server injects dimensions, format, app context, reference image metadata, safe-zone guidance, and constraints.
-
-### Output Shape
-
-The composed prompt is a JSON object with these top-level keys:
-
-```json
-{
-  "task": "Create one 3360x2432 App Store marketing composite for \"AppName\".",
-  "format": {
-    "canvas": "3360x2432",
-    "layout": "3 equal-width vertical panels, left-to-right",
-    "panel_crop": "Each panel crops cleanly to 1120x2432.",
-    "seams": "No visible seams, dividers, borders, or gutters."
-  },
-  "campaign": { "goal": "...", "audience": "...", "app_name": "...", "..." : "..." },
-  "visual_direction": { "style_family": "...", "mood": "...", "palette": {}, "motifs": [] },
-  "typography": { "headline_style": "...", "subtitle_style": "...", "text_accuracy": "..." },
-  "reference_images": { "total_count": 3, "user_images": [], "safe_zone_guide": {} },
-  "panels": [ { "panel": 1, "position": "left third", "headline": "...", "..." : "..." } ],
-  "constraints": [ "Keep text at least 80px from crop edges...", "..." ]
-}
-```
-
-### Server-Injected Fields
-
-These fields are controlled by the server — the agent does **not** send them:
-
-| Field | Source |
-|-------|--------|
-| `task` | Built from app name + canvas dimensions |
-| `format` | Computed from platform + panel count |
-| `campaign.app_name`, `campaign.developer`, `campaign.app_description`, `campaign.listing` | App record in database |
-| `campaign.platform`, `campaign.target_locale` | Generation request |
-| `reference_images` | Resolved from `referenceAssetIds` + `referenceScreenshotIds` |
-| `reference_images.safe_zone_guide` | Always appended as last reference image |
-| Panel `position` | Computed from platform + panel index (e.g. "left third", "center third") |
-| `constraints` | Platform-specific margin, Apple Guideline 2.3.3, safe-zone rules |
+Prompts are structured JSON. Send fields via `generate_screenshots`; the server handles the rest.
 
 ### Agent Schema
 
@@ -327,75 +290,18 @@ Reference image usage:
 
 Never say only "use references"; specify what each reference should influence.
 
-## Safe-Zone Reference Image (Optional)
+## Safe-Zone Reference Image (Screenshots)
 
-For tighter crop safety, pass a reference image at the composite dimensions
-that visually marks safe zones and bleed zones:
+The server appends a safe-zone guide as the last reference image. Do not reproduce its labels, colors, or overlays in the artwork.
 
-- **Safe zones**: lighter rectangles inset 120px from each panel's left/right
-  crop edges — all text and text-bearing breakout elements go here
-- **Bleed zones**: tinted margins near panel crop boundaries — fill with
-  background gradients and decorative elements only, never text or UI cards
+## Platform Notes
 
-When using a safe-zone reference, add to the prompt:
-"A reference image is provided showing safe zones (lighter areas) and bleed
-zones (tinted margins near panel edges). Place all text and text-bearing
-breakout elements within the safe zones only. Fill bleed zones with
-background color and decorative elements."
+Panel count limits are in SKILL.md. The server computes composite and final screenshot dimensions automatically.
 
-## Platform-Specific Rules
-
-### Panel count limits
-
-| Platform | Max panels | Composite layout |
-| --- | --- | --- |
-| iPhone | 3 | vertical strip |
-| iPad | 2 | vertical strip |
-| Android | 3 | vertical strip |
-| Watch | 4 | 2×2 grid |
-
-The MCP server enforces these limits by splitting the `screenshots` array into multiple jobs when needed.
-
-### iPhone (1290×2796)
-
-- Default platform. Use "iPhone 15 Pro" or "iPhone 16 Pro" device frames.
-- Server composite: `1120*panelCount × 2432` (e.g. 3 panels → 3360×2432).
-
-### iPad (2064×2752)
-
-- Wider columns mean more horizontal space per panel.
-- Server composite: `1920*panelCount × 2560` (e.g. 2 panels → 3840×2560).
-- Use "iPad Pro" device frames — larger bezels, bigger device. Scale up UI elements and text to fill the wider panel.
-- Landscape device orientation often works better for iPad since many iPad apps run landscape.
-- Headlines and subtitles need to be proportionally larger than iPhone to avoid looking lost in the wider panel.
-
-### Android (1080×1920)
-
-- Server composite: `1082*panelCount × 1920` (e.g. 3 panels → 3246×1920).
-- Aspect ratio is 9:16 (shorter and wider than iPhone's ~9:19.5).
-- Use Android device language: "Pixel 9 Pro" or "Samsung Galaxy S25", punch-hole camera (not notch), Material Design UI.
-- Do NOT say "iPhone", "notch", "Dynamic Island", or iOS-specific terms in the prompt.
-- Android screenshots appear in Google Play, which has a different browse layout — optimize for the Google Play grid.
-
-### Watch (416×496)
-
-- Server composite is always `1920×1920` for a 4-screenshot watch job. The 4 panels are arranged in a **2×2 grid**, not a vertical strip.
-- For individual screenshot prompts, do not say "4 equal vertical panels".
-- Each cell crops to 416×496 (roughly 5:6 aspect ratio).
-- Tiny screens demand minimal text: one short headline per cell, no subtitles. 3-5 words max.
-- No device frames — watch screenshots are shown without bezels.
-- Use large, bold iconography and high-contrast colors. Fine detail is invisible at watch scale.
-
-### Composite dimensions quick reference
-
-Use these exact values in the `{width}x{height}` template slot:
-
-| Platform | 1 panel | 2 panels | 3 panels | 4 panels |
-| --- | --- | --- | --- | --- |
-| iPhone | 1120×2432 | 2240×2432 | 3360×2432 | — |
-| iPad | 1920×2560 | 3840×2560 | — | — |
-| Android | 1082×1920 | 2164×1920 | 3246×1920 | — |
-| Watch | — | — | — | 1920×1920 |
+- **iPhone** — Default platform. Use "iPhone 15 Pro" or "iPhone 16 Pro" device frames.
+- **iPad** — Wider panels, scale up text and UI. Landscape orientation often works better. Use "iPad Pro" device frames.
+- **Android** — Use "Pixel 9 Pro" or "Samsung Galaxy S25", punch-hole camera, Material Design UI. Do NOT say "iPhone", "notch", "Dynamic Island", or iOS-specific terms.
+- **Watch** — Tiny screens: 3-5 word headlines, no subtitles, no device frames. Use large bold iconography and high-contrast colors.
 
 ## Full Prompt Examples
 
@@ -426,35 +332,6 @@ Use these exact values in the `{width}x{height}` template slot:
         "screen": "a live focus timer at 23:41, a pulsing ring animation, session streak counter showing '12 days', and a green 'In the Zone' status badge"
       },
       "background": "deep navy gradient with subtle radial glow behind the device"
-    }
-  ]
-}
-```
-
-### Android — structured input
-
-```json
-{
-  "campaign": {
-    "category": "Finance",
-    "audience": "young professionals managing their first budget",
-    "core_promise": "spending insights that actually change your habits"
-  },
-  "visual_direction": {
-    "style_family": "clean Material Design, friendly fintech",
-    "palette": { "primary": "#0D1B2A", "secondary": "#1B263B", "accent": "#00C896", "text": "#FFFFFF" }
-  },
-  "panels": [
-    {
-      "headline": "Know Before You Spend",
-      "subtitle": "Smart nudges. Real savings.",
-      "layout": "top-center text, centered device",
-      "device": {
-        "model": "Pixel 9 Pro",
-        "frame": "matte black, punch-hole camera top center",
-        "screen": "a notification card reading 'Coffee budget 80% used - 6 days left' over a dashboard with a weekly spending ring at 72%, three category rows, and a green 'On Track' badge"
-      },
-      "background": "dark navy gradient with a subtle upward curve of green light at the bottom"
     }
   ]
 }

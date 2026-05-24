@@ -1,6 +1,6 @@
 # Shots
 
-Generate, revise, translate, and manage App Store marketing screenshots through hosted MCP tools.
+Generate, revise, translate, and manage App Store marketing screenshots and app icon candidates through hosted MCP tools.
 
 **[shots.run](https://shots.run)**
 
@@ -47,6 +47,7 @@ Copy `gemini-extension.json` into your project root, then restart Gemini CLI.
 Shots connects your AI coding agent to the hosted Shots MCP server. Once installed, run `/shots` to:
 
 - **Create** — research an app, build a screenshot strategy, and generate App Store panels
+- **App Icons** — generate 6 premium iOS icon candidates and set the selected app icon
 - **Scrape** — import App Store metadata and existing screenshots
 - **Revise** — iterate on generated screenshots with targeted feedback
 - **Translate** — localize screenshot copy for any App Store locale
