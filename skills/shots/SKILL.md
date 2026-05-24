@@ -73,6 +73,8 @@ Do not poll more often than every 10 seconds for any job type.
 
 2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
 
+2b. **Discover and upload the app icon.** If `apps.import` was used (App Store URL provided), the icon is imported automatically. Otherwise, search the local project for the app icon per the "App Icon Discovery" section below and upload it with the bundled helper using `--kind icon`. This gives the generation pipeline a real icon to reference in screenshots.
+
 3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. If context is thin, propose 5-10 panel options first and let the user choose.
 
 4. **Build the prompts and generate.** Use the approved table, research context, reference images, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
@@ -93,6 +95,8 @@ Preferred reference image paths:
    ```
 
    Add `--locale en-US` for locale-specific assets and `--kind icon` for app icons. The helper calls `POST https://shots.run/api/upload` by default; set `SHOTS_BASE_URL` or pass `--base-url` for another deployment.
+
+The helper requires only Node.js — no R2 credentials, API keys, or environment variables are needed locally. All authentication is handled server-side by the `/api/upload` endpoint. Do NOT skip uploads because of missing R2 or cloud storage configuration.
 
 `/api/upload` is open and unauthenticated. Multipart fields:
 
@@ -135,6 +139,8 @@ On session start, check for `.shots/app.json` in the project root.
   ```json
   { "appId": "<the returned appId>" }
   ```
+
+- **After linking or creating the app**, run icon discovery per the "App Icon Discovery" section. For unpublished apps, inspect the local project and upload the icon via the helper script. This ensures the app has a real icon before screenshot generation.
 
 The user can also copy this config from the Shots dashboard Settings tab.
 
