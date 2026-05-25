@@ -16,7 +16,15 @@ Minimum signal:
 
 - `appName` or a clearly identified product
 - app description or category
-- at least one visual cue: App Store screenshots, app icon, brand colors, or existing product UI in the repo
+- at least one real app UI screenshot as a reference image (uploaded via `assets.import_url`, the bundled upload helper, or scraped from the App Store via `apps.import`)
+
+An app icon or brand colors alone are not sufficient. Apple requires App Store screenshots to show real app usage, so the generation pipeline needs at least one real screen from the app to reproduce accurate UI in the device frames.
+
+If no app UI screenshots are available:
+1. Search the local project for screenshots (e.g. `screenshots/`, `fastlane/screenshots/`, preview images in `assets/` or `docs/`).
+2. If found, upload them with the bundled helper using `--kind app_screenshot`.
+3. If still none, tell the user: "I need at least one screenshot of your app to use as reference. Please share a screenshot, a URL to one, or point me to a local directory. Apple requires screenshots to show real app usage."
+4. Do NOT proceed to step 3 (Build Strategy) or generation until at least one real UI reference is uploaded.
 
 Ask only for missing information that would materially change the panels.
 
@@ -59,6 +67,8 @@ Follow [prompting.md](prompting.md). Expand each approved benefit into a structu
 ### 6. Generate
 
 Call `generate_screenshot` once per approved row. Each call takes a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`.
+
+Select only the reference assets each screenshot actually needs. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots. Map each selected reference in `screenshot.references` with specific usage instructions. Maximum 4 reference images per call.
 
 ```json
 {
@@ -103,4 +113,11 @@ When complete, present the panels in a markdown gallery first, because not all M
 [Open in Shots Studio →](https://shots.run/studio?app={appId}&tab=generations)
 ```
 
-Replace the placeholder URLs, ids, and `{appId}` with actual values from the job result. After the deep link, offer concise next options: revise, generate another set, or localize.
+Replace the placeholder URLs, ids, and `{appId}` with actual values from the job result.
+
+After all jobs complete, build a review URL with all screenshot IDs:
+`https://shots.run/review?ids={id1},{id2},{id3}`
+
+Share this URL — it opens a no-auth review page showing all generated screenshots.
+
+After the deep link, offer concise next options: revise, generate another set, or localize.

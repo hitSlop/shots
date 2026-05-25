@@ -280,6 +280,8 @@ Bad:
 
 If real screenshots exist, idealize them rather than inventing unrelated screens.
 
+If NO real screenshots or UI references exist, do not generate. Ask the user to provide at least one real app screenshot first. Apple requires screenshots to depict actual app usage — inventing fictional UI risks App Store rejection.
+
 ## Reference Image Usage
 
 When reference images are available, call them out explicitly in the prompt:
