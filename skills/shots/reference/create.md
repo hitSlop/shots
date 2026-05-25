@@ -68,7 +68,7 @@ Follow [prompting.md](prompting.md). Expand each approved benefit into a structu
 
 Call `generate_screenshot` once per approved row. Each call takes a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`.
 
-Select only the reference assets each screenshot actually needs. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots. Map each selected reference in `screenshot.references` with specific usage instructions. Maximum 4 reference images per call.
+Select only the reference assets each screenshot actually needs. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots. Map each selected reference in `screenshot.references` with specific usage instructions. Maximum 8 reference images per call.
 
 ```json
 {
@@ -118,6 +118,6 @@ Replace the placeholder URLs, ids, and `{appId}` with actual values from the job
 After all jobs complete, build a review URL with all screenshot IDs:
 `https://shots.run/review?ids={id1},{id2},{id3}`
 
-Share this URL — it opens a no-auth review page showing all generated screenshots.
+Share this URL — it opens a no-auth review page showing all generated screenshots. After sharing, use your embedded browser plugin to navigate to the review URL so the user can see the results immediately inside the app.
 
 After the deep link, offer concise next options: revise, generate another set, or localize.

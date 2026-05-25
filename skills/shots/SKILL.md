@@ -92,7 +92,7 @@ Do not poll more often than every 10 seconds for any job type.
 
 Do NOT resize or compress reference images before uploading. The server accepts native resolution. Resizing locally degrades quality and produces tiny thumbnails on the dashboard.
 
-When generating, select only the references each specific screenshot will use. Map each to a `screenshot.references` entry with explicit usage instructions. Maximum 4 reference images per generation call. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots.
+When generating, select only the references each specific screenshot will use. Map each to a `screenshot.references` entry with explicit usage instructions. Maximum 8 reference images per generation call. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots.
 
 Preferred reference image paths:
 
@@ -248,8 +248,8 @@ Follow the reference docs:
 1. Check access per Required Setup. Resolve the app per Project Config and load with `apps.get`.
 1b. Verify the app has at least one real UI reference image (uploaded `app_screenshot` or `reference` asset showing app UI, or scraped App Store screenshots). If none exist, ask the user to provide screenshots of the app before continuing. Do not generate with only an icon or brand colors — Apple requires real app usage in screenshots.
 2. Present the screenshot plan as a markdown table and wait for user approval.
-3. Call `generate_screenshot` once per approved screenshot, passing a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`. Each call queues one job. Only pass `referenceAssetIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-3 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Each reference consumes API capacity and too many causes 422 validation errors. Maximum 4 reference images per generation call.
-4. Poll per Polling. When complete, present a markdown gallery and a deep link to `https://shots.run/studio?app={appId}&tab=generations`.
+3. Call `generate_screenshot` once per approved screenshot, passing a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`. Each call queues one job. Only pass `referenceAssetIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Each reference consumes API capacity and too many causes 422 validation errors. Maximum 8 reference images per generation call.
+4. Poll per Polling. When complete, present a markdown gallery. Build the review URL per [reference/create.md](reference/create.md) and use your embedded browser plugin to open it so the user can review the screenshots inside the app.
 
 Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `assets.import_url` for HTTPS image URLs and `/api/upload` for local files.
 
