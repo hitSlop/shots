@@ -71,7 +71,7 @@ Do not poll more often than every 10 seconds for any job type.
 
 1. **Collect context upfront.** Check for `.shots/app.json` in the project root. If found, read the `appId` and call `apps.get` to load the app — skip onboarding. If not found, call `apps.list`; if apps exist, show a numbered list and ask the user to link one or create a new one. If they pick one, write `.shots/app.json` and call `apps.get`. If they choose "new" or have no apps, proceed with normal onboarding (see Project Config below). Always ask the user to confirm the app name and what it does before creating an app record. Never auto-detect the app name from local files.
 
-2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` as a catch-all for freeform notes.
+2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` to store the App Experience section as its primary content — branding & aesthetic details (colors, typography, shape language), core problem & solution, critical user flows (step-by-step with screens involved), critical screen descriptions (layout, UI elements, data, emotional payload), and user achievement framing. This structured detail is what makes generated screenshot prompts accurate rather than generic.
 
 2b. **Discover and upload the app icon.** If `apps.import` was used (App Store URL provided), the icon is imported automatically. Otherwise, search the local project for the app icon per the "App Icon Discovery" section below and upload it with the bundled helper using `--kind icon`. This gives the generation pipeline a real icon to reference in screenshots.
 
@@ -189,6 +189,16 @@ Before generating, build a concise strategy from:
 
 "Local README/docs/source files" means the user's app project files, not the Shots plugin's own documentation. If the working directory contains Shots plugin files (`.claude-plugin/`, `skills/shots/`, etc.), skip those — they describe the tool, not the target app.
 
+### App Experience Pass
+
+After gathering basic product context, build the App Experience section from [reference/strategy.md](reference/strategy.md):
+
+- **When in a project repo:** Explore screen/view components (SwiftUI views, React components, Activity layouts), navigation structure (routers, tab bars, nav stacks), design tokens and theme files (color constants, typography scales, spacing), and preview fixtures or storybook stories. Extract branding details, map critical user flows step-by-step, and describe each marketable screen in detail (layout, elements, data, states).
+- **When the app is published:** Analyze imported App Store screenshots from `apps.import` to describe each screen in detail — what UI elements are visible, what data is shown, what layout structure is used, and what emotional payload each screen carries.
+- **Always:** Capture the core problem/solution, the "aha moment", and the user achievement framing (identity shift, capability gained, pain removed).
+
+Store the full App Experience as structured markdown in `researchMarkdown` via `apps.update_research`. This is the primary content for that field — not freeform notes, but detailed screen-level descriptions that feed directly into accurate `device.screen` prompts during generation.
+
 Write the resulting strategy back with `apps.update_research` so future agents and Studio see the same source of truth. Keep durable generated state in Convex by using the MCP tools.
 
 ## Listing Copy
@@ -248,7 +258,7 @@ Follow the reference docs:
 1. Check access per Required Setup. Resolve the app per Project Config and load with `apps.get`.
 1b. Verify the app has at least one real UI reference image (uploaded `app_screenshot` or `reference` asset showing app UI, or scraped App Store screenshots). If none exist, ask the user to provide screenshots of the app before continuing. Do not generate with only an icon or brand colors — Apple requires real app usage in screenshots.
 2. Present the screenshot plan as a markdown table and wait for user approval.
-3. Call `generate_screenshot` once per approved screenshot, passing a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`. Each call queues one job. Only pass `referenceAssetIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Each reference consumes API capacity and too many causes 422 validation errors. Maximum 8 reference images per generation call.
+3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceAssetIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Maximum 4 reference images per generation call.
 4. Poll per Polling. When complete, present a markdown gallery. Build the review URL per [reference/create.md](reference/create.md) and use your embedded browser plugin to open it so the user can review the screenshots inside the app.
 
 Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `assets.import_url` for HTTPS image URLs and `/api/upload` for local files.

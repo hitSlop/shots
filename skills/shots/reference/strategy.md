@@ -29,6 +29,84 @@ Capture:
 - who it is for
 - which moments, pains, and outcomes matter most
 
+### App Experience
+
+Deep-dive into how the app actually looks, works, and feels. This section becomes the primary content for `researchMarkdown` and feeds directly into screenshot prompt accuracy.
+
+#### Sources
+
+Research material priority depends on app status:
+
+**Published apps:**
+1. App Store screenshots (imported via `apps.import`) — analyze each screen in detail
+2. App Store description and release notes
+3. Source code (screens, components, navigation)
+
+**Unpublished apps:**
+1. Screen/view components (SwiftUI views, React components, Activity/Fragment layouts)
+2. Navigation files (router, tab bar, nav stack definitions)
+3. Design tokens and theme files (colors, typography, spacing constants)
+4. Preview fixtures and storybook stories
+5. README and docs
+
+#### Branding & Aesthetic
+
+Capture the full visual identity beyond the style family:
+
+- **Color system** — hex values for: primary, secondary, accent, background, surface, text (light and dark variants if applicable)
+- **Typography** — font families, weights used, size hierarchy (heading, subheading, body, caption)
+- **Shape language** — corner radii (e.g. 12px cards, 8px buttons), card styles, shadow values
+- **Iconography style** — outlined, filled, duotone, custom illustrations, SF Symbols usage
+- **Dark/light mode** — which is the primary presentation; differences between modes
+- **Brand personality through UI** — minimal? information-dense? playful? clinical? warm?
+- **Distinctive visual signatures** — what makes this app recognizable at a glance (e.g. gradient headers, bottom sheet navigation, floating action button style)
+
+#### Core Problem & Solution
+
+- **The problem in the user's words** — how the target user describes their frustration before finding this app
+- **How the app solves it** — the mechanism, not the feature list (e.g. "automated categorization" not "AI-powered tags")
+- **The "aha moment"** — when the user first feels the value (e.g. "seeing their first weekly spending breakdown")
+- **What success looks like** — the outcome with regular use (e.g. "never overdrafts, always knows where money goes")
+
+#### Critical User Flows
+
+Document 3-5 key flows that represent the app's core value:
+
+```
+Flow: [Name]
+Trigger: [What starts this flow — e.g. "user taps + button on home screen"]
+Steps:
+  1. [Screen name] — [what the user sees and does]
+  2. [Screen name] — [what the user sees and does]
+  3. [Screen name] — [what the user sees and does]
+Marketing highlight: Step [N] — [why this step shows the most compelling UI]
+```
+
+Mark which steps show the most compelling UI for marketing screenshots.
+
+#### Critical Screens
+
+For each screen that could appear in a marketing screenshot (aim for 4-8 screens):
+
+```
+Screen: [Name]
+Layout: [top-to-bottom structure — e.g. "nav bar → search field → filter chips → scrollable card grid → tab bar"]
+Key UI elements: [specific components — e.g. "circular progress ring at 73%, streak counter showing '12 days', category pills"]
+Data shown: [representative content — e.g. "3 expense entries totaling $47.50, 'Groceries' category selected"]
+Interactive elements: [buttons, toggles, sliders and their current states — e.g. "green toggle ON for 'Auto-categorize', disabled 'Export' button"]
+Emotional payload: [what feeling the screen evokes — e.g. "accomplishment, control, clarity"]
+Marketing value: [what benefit this screen proves — e.g. "proves the app surfaces spending patterns effortlessly"]
+```
+
+These descriptions feed directly into `device.screen` fields during prompt building. The more specific and visual the description, the more accurate the generated screenshot.
+
+#### User Achievement
+
+- **Identity shift** — "I am someone who [has control over my finances / meditates daily / ships on time]"
+- **Capability gained** — "I can now [see where my money goes without manual tracking]"
+- **Pain removed** — "I no longer [worry about surprise charges / forget important tasks]"
+- **Social proof moment** — "Others notice that I [always know my numbers / seem less stressed]"
+
 ### Visual System
 
 Infer theme from brand colors, design tokens, assets, app icon, screenshots, and user constraints. Pick one style family:
@@ -230,6 +308,8 @@ When generating listing copy for non-primary locales: **do NOT translate English
   }
 }
 ```
+
+**Note on `researchMarkdown`:** The `researchMarkdown` field should contain the structured App Experience section as its primary content — branding & aesthetic details, core problem & solution, critical user flows with step-by-step screen descriptions, critical screen layouts with specific UI elements and data, and user achievement framing. This gives the generation pipeline enough detail to produce accurate device screen descriptions without inventing UI.
 
 ## Story Flow
 

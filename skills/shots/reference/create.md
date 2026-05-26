@@ -37,6 +37,8 @@ Follow [strategy.md](strategy.md). Summarize:
 - visual theme and palette
 - 3-5 market words
 - first 6-8 benefits
+- critical screens available (list which screens have detailed descriptions from the App Experience research — e.g. "Home dashboard, Workout detail, Progress chart, Settings")
+- reference asset mapping (which uploaded screenshot or reference image corresponds to which critical screen — e.g. "asset_abc → Home dashboard, asset_def → Workout detail")
 
 Get approval or targeted edits before generation.
 
@@ -62,13 +64,13 @@ If there is not enough context to choose the panels confidently, propose 5-10 ca
 
 ### 5. Build Prompt
 
-Follow [prompting.md](prompting.md). Expand each approved benefit into a structured panel: `headline`, `subtitle`, `role`, `layout`, `device`/`devices` with specific screen content, `background`, and optional `breakout_elements` and `references` (mapping reference images by index to usage instructions).
+Follow [prompting.md](prompting.md). Write a complete JSON prompt for each approved screenshot. Include `task`, `campaign`, `typography`, `visual_direction`, and `screenshot` (with `headline`, `subtitle`, `role`, `layout`, `device`/`devices` with specific screen content, `background`, and optional `breakout_elements`). See the example prompts in prompting.md for the exact format.
 
 ### 6. Generate
 
-Call `generate_screenshot` once per approved row. Each call takes a single `screenshot` object with optional `campaign`, `visual_direction`, and `typography`.
+Call `generate_screenshot` once per approved row. Pass the complete prompt as a JSON string in the `prompt` field. The server appends dimensions, constraints, and reference image metadata.
 
-Select only the reference assets each screenshot actually needs. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots. Map each selected reference in `screenshot.references` with specific usage instructions. Maximum 8 reference images per call.
+Select only the reference assets each screenshot actually needs. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots. Maximum 4 reference images per call.
 
 ```json
 {
@@ -76,24 +78,7 @@ Select only the reference assets each screenshot actually needs. For example, if
   "platform": "iphone",
   "quality": "high",
   "referenceAssetIds": ["ASSET_ID"],
-  "campaign": {
-    "goal": "Drive downloads from App Store search",
-    "audience": "Men 22-38 wanting better dating photos",
-    "core_promise": "Dating-specific AI photos that look real",
-    "differentiator": "37 themed photo scenes, not generic AI headshots"
-  },
-  "visual_direction": {
-    "style_family": "clean-premium",
-    "mood": "dark, confident, aspirational",
-    "palette": { "primary": "#0F1416", "accent": "#119DA4", "text": "#FFFFFF" }
-  },
-  "screenshot": {
-    "headline": "37 Scenes. Pick Your Story.",
-    "subtitle": "Dinner. Travel. Fitness. More.",
-    "role": "Show variety of photo packs",
-    "device": { "model": "iPhone 15 Pro", "screen": "Browse scenes grid - dark theme" },
-    "background": "Dark charcoal with soft teal radial glow"
-  }
+  "prompt": "{\"task\":\"Create one App Store screenshot for \\\"MyApp\\\".\",\"campaign\":{\"goal\":\"Drive downloads from App Store search\",\"audience\":\"Men 22-38 wanting better dating photos\",\"core_promise\":\"Dating-specific AI photos that look real\",\"differentiator\":\"37 themed photo scenes, not generic AI headshots\"},\"visual_direction\":{\"style_family\":\"clean-premium\",\"mood\":\"dark, confident, aspirational\",\"palette\":{\"primary\":\"#0F1416\",\"accent\":\"#119DA4\",\"text\":\"#FFFFFF\"}},\"typography\":{\"headline_style\":\"Large, bold, white sans-serif, high-contrast.\",\"subtitle_style\":\"Smaller, regular weight, light gray.\",\"text_accuracy\":\"Render all quoted text verbatim. >95% accuracy.\"},\"screenshot\":{\"headline\":\"37 Scenes. Pick Your Story.\",\"subtitle\":\"Dinner. Travel. Fitness. More.\",\"role\":\"Show variety of photo packs\",\"device\":{\"model\":\"iPhone 15 Pro\",\"screen\":\"Browse scenes grid - dark theme\"},\"background\":\"Dark charcoal with soft teal radial glow\"}}"
 }
 ```
 
