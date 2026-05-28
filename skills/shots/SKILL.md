@@ -157,13 +157,39 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 
 ## Billing Failures
 
-`generate_screenshot`, `generate_icon_moodboard`, and `generate_icon` can return a structured JSON error instead of queueing a job:
+`generate_screenshot`, `generate_icon_moodboard`, `generate_icon`, `screenshots.revise`, and `screenshots.translate` can return a structured JSON error (`isError: true`) instead of queueing a job. The error payload contains:
 
-- `code: "subscription_required"` — tell the user they need an active Shots plan before generating. Mention the returned `upgradeUrl` or offer to call `billing` checkout only after they confirm.
-- `code: "insufficient_credits"` — tell the user the returned `requiredCredits`, current balance, and shortfall. Offer to open Billing or buy credits.
-- `code: "billing_unavailable"` or `code: "rate_limited"` — tell the user to retry later and do not start a duplicate job.
+| Field | Type | Description |
+| --- | --- | --- |
+| `ok` | `false` | Always false for errors |
+| `code` | string | One of the error codes below |
+| `message` | string | Human-readable error description |
+| `nextAction` | string | Machine hint: `subscribe`, `buy_credits`, `upgrade`, `retry`, or `wait` |
+| `suggestion` | string | Plain-English recovery instruction — follow this |
+| `requiredCredits` | number | Credits the action would have cost |
+| `creditsBalance` | number \| null | Current credit balance |
+| `shortfall` | number \| null | Credits needed beyond the balance |
+| `plan` | string | User's current plan id |
+| `billingUrl` | string | Direct URL to the billing dashboard |
+| `upgradeUrl` | string | Direct URL to the upgrade page |
+| `retryAfter` | number \| undefined | Seconds to wait (rate_limited only) |
 
-Do not retry generation after one of these responses until the user has taken the billing action.
+### Error codes and recovery
+
+| Code | Meaning | Recovery |
+| --- | --- | --- |
+| `billing_access_required` | No active subscription (free trial expired) | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"`, `"pro"`, or `"unlimited"`. |
+| `insufficient_credits` | Not enough design credits for the action | Tell the user the `requiredCredits`, `creditsBalance`, and `shortfall`. Offer to buy a boost pack via `billing` with `action: "boost"` and `pack: "small"` (20 credits), `"medium"` (50 credits), or `"large"` (125 credits). Or offer a plan upgrade via `action: "checkout"`. |
+| `app_limit_reached` | User has hit the app limit for their plan | Tell the user they've reached their app limit. Offer to upgrade via `billing` with `action: "checkout"`. |
+| `rate_limited` | Too many requests — temporary cooldown | Wait `retryAfter` seconds, then retry. Do not start a duplicate job. |
+| `billing_unavailable` | Billing service is temporarily down | Tell the user billing is temporarily unavailable. Do not retry automatically. |
+
+### Recovery rules
+
+- Always ask the user before spending money — never auto-purchase a plan or boost pack.
+- Do not retry a failed billable action until the user resolves the billing issue.
+- Follow the `suggestion` field in the error payload — it contains the exact recovery instruction.
+- After the user completes checkout or buys a boost, call `usage.get` to verify the account is active and has sufficient credits before retrying the original action.
 
 ## Intent Router
 
