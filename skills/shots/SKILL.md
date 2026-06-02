@@ -104,7 +104,7 @@ Preferred reference image paths:
 
    Add `--locale en-US` for locale-specific assets and `--kind icon` for app icons. The helper calls `POST https://shots.run/api/upload` by default; set `SHOTS_BASE_URL` or pass `--base-url` for another deployment.
 
-The helper requires only Node.js — no R2 credentials, API keys, or environment variables are needed locally. All authentication is handled server-side by the `/api/upload` endpoint. Do NOT skip uploads because of missing R2 or cloud storage configuration.
+The helper requires only Node.js — no R2 credentials, API keys, or environment variables are needed locally. `/api/upload` is intentionally open and unauthenticated; it only needs the target `appId` and enforces server-side upload safety checks. Do NOT skip uploads because of missing R2 or cloud storage configuration.
 
 `/api/upload` is open and unauthenticated. Multipart fields:
 
