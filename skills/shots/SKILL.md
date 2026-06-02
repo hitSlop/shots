@@ -52,7 +52,6 @@ Common commands:
 | `screenshots.list`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated screenshots |
 | `icons.list`, `icons.get`, `icons.set_current`, `icons.delete` | Manage generated app icon candidates |
 | `gallery.browse`, `gallery.search_apps`, `gallery.search_similar` | Find public gallery inspiration |
-| `packs.list`, `packs.get`, `packs.create` | Curate gallery screenshots into inspo packs |
 
 Search rule:
 
