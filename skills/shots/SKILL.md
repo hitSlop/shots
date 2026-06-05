@@ -48,7 +48,7 @@ Common commands:
 | `apps.update_research`, `apps.update_listing` | Persist strategy and App Store metadata |
 | `assets.import_url` | Import HTTPS reference images into R2 |
 | `search.app_images` | Full-text search uploaded app screenshots, inspo, and brand references by generated description |
-| `jobs.get` | Poll generation jobs |
+| `jobs.list`, `jobs.get` | List and poll generation jobs |
 | `screenshots.list`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated screenshots |
 | `icons.list`, `icons.get`, `icons.set_current`, `icons.delete` | Manage generated app icon candidates |
 | `gallery.browse`, `gallery.search_apps`, `gallery.search_similar` | Find public gallery inspiration |
@@ -200,7 +200,7 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 | Revise | "revise", "change", "fix", "redo", or a screenshot id | Build targeted feedback, then call `screenshots.revise` |
 | Translate | "translate", "localize", or a locale name | Build localized copy, then call `screenshots.translate` |
 | Keyword Research | "keywords", "keyword research", "ASO", "metadata", "optimize listing" | Import/load app, run keyword research process, store results via `apps.update_research` + `apps.update_listing` |
-| View | "view", "open", "show latest" | Call `jobs.get`, `screenshots.list`, or `apps.get`; open returned CDN URLs |
+| View | "view", "open", "show latest" | Call `jobs.list`, `jobs.get`, `screenshots.list`, or `apps.get`; open returned CDN URLs |
 | Account | "usage", "plan", "subscription", "screenshots", "account" | Call `usage.get` |
 | Upgrade | "upgrade", "subscribe", "buy" | Confirm intent, then call `billing` checkout |
 
