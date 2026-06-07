@@ -1,11 +1,11 @@
 {
   "name": "shots",
   "version": "0.1.0",
-  "description": "Generate App Store screenshots, app icons, and localized listing copy from natural language through hosted Shots MCP tools. Supports iPhone, iPad, Android, and Apple Watch formats with 50+ locale localization and ASO listing copy generation.",
+  "description": "Generate App Store screenshots, app icons, localized listing copy, screenshot localization, ASO keyword ideas, and App Store inspiration workflows through hosted Shots MCP tools.",
   "mcpServers": {
     "shots": {
       "command": "npx",
-      "args": ["mcp-remote@latest", "https://shots.run/mcp"]
+      "args": ["mcp-remote@latest", "https://shots.run/api/mcp"]
     }
   }
 }

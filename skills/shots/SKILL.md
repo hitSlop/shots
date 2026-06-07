@@ -4,8 +4,8 @@ description: >
   Generate, revise, translate, and manage App Store marketing screenshots and
   app icon candidates through the hosted Shots MCP tools. Use for App Store
   screenshot creation, app icon generation, ASO screenshot strategy,
-  screenshot revisions, localization, and App Store listing scraping. Do not
-  use for generic image generation.
+  screenshot revisions, localization, App Store listing scraping, and public
+  App Store screenshot inspiration. Do not use for generic image generation.
 user-invocable: true
 argument-hint: "[app store url, job id, locale, or description]"
 allowed-tools:
@@ -46,17 +46,17 @@ Common commands:
 | `usage.get` | Check account status and screenshot availability |
 | `apps.list`, `apps.get`, `apps.upsert`, `apps.import` | Resolve, load, create, or import app context |
 | `apps.update_research`, `apps.update_listing` | Persist strategy and App Store metadata |
-| `assets.import_url` | Import HTTPS reference images into R2 |
+| `media.import_url` | Import HTTPS reference images into R2 |
 | `search.app_images` | Full-text search uploaded app screenshots, inspo, and brand references by generated description |
 | `jobs.list`, `jobs.get` | List and poll generation jobs |
 | `screenshots.list`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated screenshots |
 | `icons.list`, `icons.get`, `icons.set_current`, `icons.delete` | Manage generated app icon candidates |
-| `gallery.browse`, `gallery.search_apps`, `gallery.search_similar` | Find public gallery inspiration |
+| `gallery.browse`, `gallery.search_apps`, `gallery.search_similar`, `gallery.get_app`, `gallery.ensure_app` | Find or import public gallery inspiration |
 
 Search rule:
 
 - Uploaded app assets use `search.app_images`; this is full-text search over generated description text.
-- Public gallery inspiration can use semantic/vector commands: `gallery.search_similar` for screenshots and `gallery.search_apps` for apps.
+- Public gallery inspiration can use semantic/vector commands: `gallery.search_similar` for screenshots, `gallery.search_apps` for apps, `gallery.get_app` for one gallery app, and `gallery.ensure_app` for an App Store URL.
 - Do not expect vector search for uploaded app images.
 
 ## Polling
@@ -81,9 +81,11 @@ Do not poll more often than every 10 seconds for any job type.
      "Apple requires App Store screenshots to show real app usage. Before generating, please provide screenshots of your app — either upload them, share URLs, or point me to a local directory containing app screenshots. I need at least one real screen from the app to use as a reference so the generated screenshots show accurate UI."
    - Do NOT proceed to generation without at least one real app UI reference. The app icon and brand colors alone are not sufficient — Apple will reject screenshots with fictional UI.
 
+2d. **Resolve public inspiration separately from the user's app.** If the user says they want screenshots like, inspired by, similar to, or in the style of another App Store URL, treat that URL as inspiration, not as the user's app. Call `gallery.ensure_app` with the inspiration URL; if it already exists in the gallery, it returns the existing app, otherwise it imports the listing and screenshots into the public gallery. Then call `gallery.get_app` and inspect the returned screenshots. Do not call `apps.import` for the inspiration listing unless the user clearly says it is their own app.
+
 3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. Headlines are conversion hooks: write 3-6 word benefit, relief, identity, curiosity, or transformation promises, not feature labels. Use the "Screenshot Title Strategy" in [reference/strategy.md](reference/strategy.md) before filling the table. If context is thin, propose 5-10 panel options first and let the user choose.
 
-4. **Build the prompts and generate.** Use the approved table, research context, reference images, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
+4. **Build the prompts and generate.** Use the approved table, research context, reference images, public gallery inspiration, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
 
 5. **Present results and offer next steps.** Show the screenshots or icons, link to Studio, offer to revise, generate more, localize, or set the current icon. For icons, use `generate_icon_moodboard` to brainstorm concepts, then `generate_icon` for individual finals.
 
@@ -95,7 +97,7 @@ When generating, select only the references each specific screenshot will use. M
 
 Preferred reference image paths:
 
-1. If the image is already available at an HTTPS URL, call `shots` with `assets.import_url`.
+1. If the image is already available at an HTTPS URL, call `shots` with `media.import_url`.
 2. If the image is a local file and the client/runtime can perform multipart HTTP uploads, use the bundled helper:
 
    ```bash
@@ -115,9 +117,41 @@ The helper requires only Node.js — no R2 credentials, API keys, or environment
 | `kind` | No | Defaults to `reference`; accepts `app_screenshot`, `inspo`, `app_store_screenshot`, `icon`, or `reference` |
 | `locale` | No | App Store locale tag |
 
-The endpoint returns `{ assetId, cdnUrl }`. Use returned `assetId` in `referenceAssetIds` when generating.
+The endpoint returns `{ mediaId, url }`. Use returned `mediaId` in `referenceMediaIds` when generating.
 
 If an upload fails, stop and report the upload error. Do not proceed to generation while treating required local references as unavailable unless the user explicitly approves continuing without them.
+
+## Public Gallery Inspiration
+
+Use public gallery inspiration when the user asks for a style like a known App Store app or sends a competitor/inspiration App Store URL.
+
+Workflow:
+
+1. Resolve the user's own app first with Project Config. The inspiration app is never the target app unless the user explicitly says it is.
+2. Call `gallery.ensure_app` with the inspiration App Store URL or numeric app id. This returns a public gallery app, `publicGalleryUrl`, and screenshot ids, importing it first if needed. Show the user the `publicGalleryUrl` so they can open the inspiration page.
+3. Call `gallery.get_app` with the returned `slug`, `galleryAppId`, or `appStoreId` and inspect the screenshots.
+4. Ask how many screenshots the user wants if they did not specify a count.
+5. Present the screenshot plan table. Include an `Inspiration screenshot` column with the chosen `galleryScreenshotId` for each row.
+6. After approval, call `generate_screenshot` once per row. Pass the most relevant `galleryInspirationScreenshotId` from `gallery.get_app` along with the normal app prompt and any real app UI references.
+
+Generation rule:
+
+- Use gallery inspiration for style, color, composition, typography, campaign pacing, and tone.
+- Do not copy the inspiration app UI, claims, branding, screenshots, or user interface.
+- Do not imply the inspiration app is the user's app.
+- Public gallery screenshots are not uploaded through `media.import_url`; pass `galleryInspirationScreenshotId` directly to `generate_screenshot`.
+
+Example command flow:
+
+```json
+{ "command": "gallery.ensure_app", "args": { "input": "https://apps.apple.com/us/app/pull-ai-dating-app-photos/id6757320039", "screenshotLimit": 8 } }
+```
+
+Then:
+
+```json
+{ "command": "gallery.get_app", "args": { "appStoreId": 6757320039, "screenshotLimit": 8 } }
+```
 
 ## Required Setup
 
@@ -194,9 +228,10 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 
 | Intent | Detection | Execution |
 | --- | --- | --- |
-| Create | "generate", "create", an App Store URL, or no existing job | Resolve or create an app, build a strategy prompt, then call `generate_screenshot` |
+| Inspiration | "like", "inspired by", "similar to", "style of", "copy the style", or a competitor App Store URL | Resolve the user's own app, call `gallery.ensure_app`, inspect with `gallery.get_app`, then generate with `galleryInspirationScreenshotId` after approval |
+| Create | "generate", "create", the user's own App Store URL, or no existing job | Resolve or create an app, build a strategy prompt, then call `generate_screenshot` |
 | App Icons | "icon", "app icon", "generate icon", "ASO icon" | Resolve or create an app, brainstorm with `generate_icon_moodboard`, then produce finals with `generate_icon` |
-| Scrape | "scrape", "fetch metadata", "import listing" | Call `apps.import` when durable app context is needed; call `appstore.lookup` for transient lookup |
+| Scrape | "scrape", "fetch metadata", "import listing" for the user's app | Call `apps.import` when durable app context is needed; call `appstore.lookup` for transient lookup |
 | Revise | "revise", "change", "fix", "redo", or a screenshot id | Build targeted feedback, then call `screenshots.revise` |
 | Translate | "translate", "localize", or a locale name | Build localized copy, then call `screenshots.translate` |
 | Keyword Research | "keywords", "keyword research", "ASO", "metadata", "optimize listing" | Import/load app, run keyword research process, store results via `apps.update_research` + `apps.update_listing` |
@@ -283,10 +318,10 @@ Follow the reference docs:
 1. Check access per Required Setup. Resolve the app per Project Config and load with `apps.get`.
 1b. Verify the app has at least one real UI reference image (uploaded `app_screenshot` or `reference` asset showing app UI, or scraped App Store screenshots). If none exist, ask the user to provide screenshots of the app before continuing. Do not generate with only an icon or brand colors — Apple requires real app usage in screenshots.
 2. Present the screenshot plan as a markdown table and wait for user approval.
-3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceAssetIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Maximum 4 reference images per generation call.
+3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceMediaIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Maximum 4 reference images per generation call. If the plan uses public gallery inspiration, also pass `galleryInspirationScreenshotId`.
 4. Poll per Polling. When complete, present a markdown gallery. Build the review URL per [reference/create.md](reference/create.md) and use your embedded browser plugin to open it so the user can review the screenshots inside the app.
 
-Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `assets.import_url` for HTTPS image URLs and `/api/upload` for local files.
+Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `media.import_url` for HTTPS image URLs and `/api/upload` for local files.
 
 ## App Icon Generation Flow
 

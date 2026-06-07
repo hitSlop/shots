@@ -30,7 +30,7 @@ Call `shots` with `screenshots.translate` using the source screenshot id and tar
 ```markdown
 | # | Preview | Screenshot ID | URL |
 | --- | --- | --- | --- |
-| 1 | ![](cdn-url-1) | scr_abc123 | cdn-url-1 |
+| 1 | ![](image-url-1) | scr_abc123 | image-url-1 |
 
 [Open in Shots Studio →](https://shots.run/studio?app={appId}&tab=generations)
 ```

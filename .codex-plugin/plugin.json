@@ -1,7 +1,7 @@
 {
   "name": "shots",
   "version": "0.1.0",
-  "description": "Generate App Store screenshots, app icons, and localized listing copy from natural language through hosted Shots MCP tools.",
+  "description": "Generate App Store screenshots, app icons, screenshot localization, ASO listing copy, and App Store inspiration workflows through hosted Shots MCP tools.",
   "author": {
     "name": "hitSlop",
     "url": "https://hitslop.com"
@@ -22,14 +22,19 @@
     "android",
     "app-store-optimization",
     "mcp",
-    "codex-plugin"
+    "codex-plugin",
+    "keyword-research",
+    "screenshot-localization",
+    "app-store-screenshot-audit",
+    "app-store-inspiration",
+    "inspiration-gallery"
   ],
   "mcpServers": "./.mcp.json",
   "skills": "./skills/",
   "interface": {
     "displayName": "Shots",
-    "shortDescription": "App Store screenshot and icon generator",
-    "longDescription": "Generate App Store screenshots and app icons from natural language. Describe your screenshots in a prompt or import an App Store URL, then generate, revise, translate, and ship publish-ready assets for iPhone, iPad, Android, and Apple Watch. Includes ASO listing copy generation, 50+ locale localization, deep category research, and app icon moodboarding — all from your coding agent.",
+    "shortDescription": "Agent-native App Store creative workflow",
+    "longDescription": "Generate App Store screenshots, app icons, screenshot localization, and ASO listing copy from natural language. Describe your screenshots in a prompt, import your own App Store URL, or use another App Store listing as public gallery inspiration, then generate, revise, translate, and ship publish-ready assets for iPhone, iPad, Android, and Apple Watch. Includes ASO keyword ideas, listing copy generation, 50+ locale localization, deep category research, screenshot audits, inspiration gallery workflows, and app icon moodboarding from your coding agent.",
     "developerName": "hitSlop",
     "category": "Design",
     "capabilities": [
@@ -42,6 +47,7 @@
     "defaultPrompt": [
       "Generate App Store screenshots",
       "Scrape my App Store listing",
+      "Make screenshots like another App Store app",
       "Revise my latest screenshots",
       "Translate my screenshots to Japanese",
       "Generate app icon candidates",

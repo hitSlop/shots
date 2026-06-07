@@ -4,6 +4,8 @@ Fetch App Store metadata and public screenshot URLs to seed strategy. This flow 
 
 ## Steps
 
+If the user asks for screenshots like, inspired by, similar to, or in the style of an App Store URL, this is not the scrape flow. Use `gallery.ensure_app` and `gallery.get_app` from SKILL.md Public Gallery Inspiration instead.
+
 ### 1. Resolve The App
 
 Accept an App Store URL or app id. If neither is available, ask for one.

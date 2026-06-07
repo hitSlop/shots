@@ -19,7 +19,7 @@ Optional:
 
 - `creative_direction`
 - `styles` — style directions to explore
-- `referenceAssetIds`
+- `referenceMediaIds`
 - `referenceScreenshotIds`
 
 ### `generate_icon`
@@ -32,7 +32,7 @@ Optional:
 - `symbol` — main symbol/object for the icon
 - `background` — background treatment
 - `creative_direction`
-- `referenceAssetIds`
+- `referenceMediaIds`
 - `referenceScreenshotIds`
 
 ## Critical Source Artwork Rules

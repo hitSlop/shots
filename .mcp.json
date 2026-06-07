@@ -2,7 +2,7 @@
   "mcpServers": {
     "shots": {
       "type": "http",
-      "url": "https://shots.run/mcp"
+      "url": "https://shots.run/api/mcp"
     }
   }
 }
