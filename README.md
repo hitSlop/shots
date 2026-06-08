@@ -88,6 +88,19 @@ The plugin provides:
 
 Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection.
 
+### Codex OAuth troubleshooting
+
+If Codex says Shots is not logged in after a successful browser login, remove and reinstall the MCP entry so Codex picks up the OAuth resource metadata:
+
+```
+codex mcp remove shots
+codex plugin add shots@shots
+codex mcp login shots
+codex mcp get shots
+```
+
+`codex mcp get shots` should show `oauth_resource: https://shots.run/api/mcp`.
+
 ## Requirements
 
 - An active [Shots subscription](https://shots.run/pricing)
