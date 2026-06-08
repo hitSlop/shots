@@ -29,6 +29,14 @@
     "app-store-inspiration",
     "inspiration-gallery"
   ],
+  "auth": {
+    "type": "oauth",
+    "authorizationUrl": "https://shots.run/oauth2/authorize",
+    "tokenUrl": "https://shots.run/oauth2/token",
+    "registrationUrl": "https://shots.run/oauth2/register",
+    "scope": "openid profile email offline_access",
+    "pkce": true
+  },
   "mcpServers": "./.mcp.json",
   "skills": "./skills/",
   "interface": {

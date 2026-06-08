@@ -62,7 +62,7 @@ Search rule:
 ## Polling
 
 - **`generate_screenshot` / `generate_icon_moodboard` / `generate_icon`:** Wait 60 seconds before the first `jobs.get` poll, then every 15 seconds.
-- **`screenshots.revise` / `screenshots.translate`:** Wait 60 seconds before the first poll, then every 15 seconds.
+- **`screenshots.revise` / `screenshots.translate`:** Wait 15 seconds before the first poll, then every 10 seconds.
 
 Do not poll more often than every 10 seconds for any job type.
 
@@ -93,7 +93,7 @@ Do not poll more often than every 10 seconds for any job type.
 
 Do NOT resize or compress reference images before uploading. The server accepts native resolution. Resizing locally degrades quality and produces tiny thumbnails on the dashboard.
 
-When generating, select only the references each specific screenshot will use. Map each to a `screenshot.references` entry with explicit usage instructions. Maximum 8 reference images per generation call. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference — not the Week and Month view screenshots.
+When generating, select only the references each specific screenshot will use. Map each to a `screenshot.references` entry with explicit usage instructions. Maximum 4 reference images per generation call. For example, if a screenshot shows the Day view, pass only the app icon (for palette) and the Day view screenshot reference, not the Week and Month view screenshots.
 
 Preferred reference image paths:
 
@@ -211,7 +211,7 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 
 | Code | Meaning | Recovery |
 | --- | --- | --- |
-| `billing_access_required` | No active subscription (free trial expired) | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"`, `"pro"`, or `"unlimited"`. |
+| `billing_access_required` | No active subscription (free trial expired) | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"`, `"pro"`, or `"max"`. |
 | `insufficient_credits` | Not enough design credits for the action | Tell the user the `requiredCredits`, `creditsBalance`, and `shortfall`. Offer to buy a boost pack via `billing` with `action: "boost"` and `pack: "small"` (20 credits), `"medium"` (50 credits), or `"large"` (125 credits). Or offer a plan upgrade via `action: "checkout"`. |
 | `app_limit_reached` | User has hit the app limit for their plan | Tell the user they've reached their app limit. Offer to upgrade via `billing` with `action: "checkout"`. |
 | `rate_limited` | Too many requests — temporary cooldown | Wait `retryAfter` seconds, then retry. Do not start a duplicate job. |
