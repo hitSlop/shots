@@ -1,6 +1,6 @@
 {
   "name": "shots",
-  "version": "0.1.0",
+  "version": "0.1.0+codex.20260608-213911",
   "description": "Generate App Store screenshots, app icons, screenshot localization, ASO listing copy, and App Store inspiration workflows through hosted Shots MCP tools.",
   "author": {
     "name": "hitSlop",

@@ -90,7 +90,7 @@ Authentication uses MCP OAuth. On first use, your editor will open a browser win
 
 ### Codex OAuth troubleshooting
 
-If Codex says Shots is not logged in after a successful browser login, remove and reinstall the MCP entry so Codex picks up the OAuth resource metadata:
+If Codex says Shots is not logged in after a successful browser login, remove and reinstall the plugin so Codex refreshes the MCP server configuration and rediscovers the OAuth metadata from Shots:
 
 ```
 codex mcp remove shots
@@ -98,8 +98,6 @@ codex plugin add shots@shots
 codex mcp login shots
 codex mcp get shots
 ```
-
-`codex mcp get shots` should show `oauth_resource: https://shots.run/api/mcp`.
 
 ## Requirements
 
