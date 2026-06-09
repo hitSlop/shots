@@ -86,11 +86,11 @@ The plugin provides:
 - **Skill definitions** (`skills/`) — teach agents the Shots workflow, prompting rules, and tool usage
 - **Editor manifests** — metadata for Codex, Claude Code, Cursor, and Gemini CLI
 
-Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection.
+Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. Linking only signs in; screenshot and icon tools check design credits when you use them.
 
 ### Codex OAuth troubleshooting
 
-If Codex says Shots is not logged in after a successful browser login, remove and reinstall the plugin so Codex refreshes the MCP server configuration and rediscovers the OAuth metadata from Shots:
+If Codex says Shots is not logged in after a successful browser login, or it appears to be using the older WorkOS OAuth flow, remove and reinstall the plugin so Codex refreshes the MCP server configuration and rediscovers the Shots OAuth metadata:
 
 ```
 codex mcp remove shots
@@ -101,7 +101,8 @@ codex mcp get shots
 
 ## Requirements
 
-- An active [Shots subscription](https://shots.run/pricing)
+- A [Shots account](https://shots.run)
+- Design credits for screenshot, icon, revision, and translation tools
 - An editor that supports MCP plugins (Codex, Claude Code, Cursor, or Gemini CLI)
 
 ## Keywords
