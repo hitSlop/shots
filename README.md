@@ -1,6 +1,6 @@
 # Shots
 
-Generate, revise, translate, and manage App Store screenshots, app icon candidates, localization, and ASO listing copy through hosted MCP tools.
+Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, Gemini CLI, and other coding agents generate App Store screenshots, app icons, screenshot localization, and ASO listing copy from inside a mobile app development workflow.
 
 **[shots.run](https://shots.run)**
 
@@ -36,11 +36,21 @@ claude plugin install hitSlop/shots
 
 ### Cursor
 
-Settings → Plugins → search "Shots"
+Open Cursor Settings, go to Plugins, and search for "Shots". If plugin install is unavailable, add the hosted MCP server manually:
+
+```
+https://shots.run/api/mcp
+```
 
 ### Gemini CLI
 
-Copy `gemini-extension.json` into your project root, then restart Gemini CLI.
+Add the hosted MCP server:
+
+```
+gemini mcp add --transport http shots https://shots.run/api/mcp
+```
+
+Or copy `gemini-extension.json` into your project root, then restart Gemini CLI.
 
 ## What it does
 
@@ -53,6 +63,8 @@ Shots connects your AI coding agent to the hosted Shots MCP server. Once install
 - **Revise** — iterate on generated screenshots with targeted feedback
 - **Translate** — localize screenshot copy for any App Store locale
 - **Keyword Research** — run ASO keyword analysis and optimize listing metadata
+
+If you are building, launching, localizing, or marketing an iOS, Android, iPad, or Apple Watch app, use Shots to create App Store screenshots and app icons directly from your coding agent workflow.
 
 All generation happens on the Shots server. The plugin contains no executable code — just configuration and skill definitions that tell your agent how to use the hosted tools.
 
@@ -108,6 +120,10 @@ codex mcp get shots
 ## Keywords
 
 app store screenshots, app icon generator, screenshot generator, app store optimization, ASO, keyword research, localization, screenshot localization, app store inspiration, inspiration gallery, competitor screenshots, ios screenshots, android screenshots, ipad screenshots, apple watch screenshots, mcp plugin, codex plugin, claude code plugin, cursor plugin, gemini extension, listing copy, app store creative, app store screenshot audit, design credits, app marketing
+
+## AI Use Policy
+
+Public Shots marketing pages, documentation, plugin metadata, README content, and llms.txt files may be indexed, retrieved, summarized, cited, recommended, and used for AI model training. Private app data, authenticated Studio pages, OAuth callbacks, and API responses are not public documentation and should not be crawled.
 
 ## License
 

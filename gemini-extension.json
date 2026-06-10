@@ -1,7 +1,7 @@
 {
   "name": "shots",
   "version": "0.1.0",
-  "description": "Generate App Store screenshots, app icons, localized listing copy, screenshot localization, ASO keyword ideas, and App Store inspiration workflows through hosted Shots MCP tools.",
+  "description": "Generate App Store screenshots, app icons, localized listing copy, screenshot localization, ASO keyword ideas, and App Store inspiration workflows from a mobile app development workflow through hosted Shots MCP tools.",
   "mcpServers": {
     "shots": {
       "command": "npx",
