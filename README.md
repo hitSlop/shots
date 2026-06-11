@@ -79,14 +79,14 @@ All generation happens on the Shots server. The plugin contains no executable co
 
 ## Pricing
 
-| Plan      | Monthly | Yearly (equiv.) | Credits/mo | Apps      | Screenshots/mo | Icons/mo |
-|-----------|---------|-----------------|------------|-----------|----------------|----------|
-| Free      | $0      | —               | 10 (once)  | 1         | 3              | 3        |
-| Starter   | $12     | $10/mo          | 60         | 3         | 20             | 20       |
-| Pro       | $39     | $32.50/mo       | 200        | 10        | 66             | 66       |
-| Unlimited | $149    | $108.25/mo      | Unlimited  | Unlimited | Fair use       | Fair use |
+| Plan    | Monthly | Yearly | HD screenshots/mo | Operations/mo | Apps      |
+|---------|---------|--------|-------------------|---------------|-----------|
+| Free    | $0      | —      | 3                 | 10            | 1         |
+| Starter | $19     | $190   | 15                | 100           | 3         |
+| Growth  | $49     | $490   | 50                | 300           | 10        |
+| Max     | $199    | $1,990 | 200               | 1,000         | Unlimited |
 
-**Credit costs:** Screenshot (3), App icon (3), Icon moodboard (5), Revision/translation (1)
+**Cost model:** Each new screenshot uses 1 HD screenshot. Icons, moodboards, revisions, and translations use 1 operation each. When a paid plan's HD budget is exhausted, screenshots keep generating at reduced fallback quality. A one-time HD top-up (10 HD screenshots for $5) is available anytime.
 
 See [shots.run/pricing](https://shots.run/pricing) for full details.
 
@@ -98,7 +98,7 @@ The plugin provides:
 - **Skill definitions** (`skills/`) — teach agents the Shots workflow, prompting rules, and tool usage
 - **Editor manifests** — metadata for Codex, Claude Code, Cursor, and Gemini CLI
 
-Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. Linking only signs in; screenshot and icon tools check design credits when you use them.
+Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. Linking only signs in; screenshot and icon tools check your plan and usage budgets when you use them.
 
 ### Codex OAuth troubleshooting
 
@@ -114,12 +114,12 @@ codex mcp get shots
 ## Requirements
 
 - A [Shots account](https://shots.run)
-- Design credits for screenshot, icon, revision, and translation tools
+- An active plan with HD screenshot and operations budget for screenshot, icon, revision, and translation tools
 - An editor that supports MCP plugins (Codex, Claude Code, Cursor, or Gemini CLI)
 
 ## Keywords
 
-app store screenshots, app icon generator, screenshot generator, app store optimization, ASO, keyword research, localization, screenshot localization, app store inspiration, inspiration gallery, competitor screenshots, ios screenshots, android screenshots, ipad screenshots, apple watch screenshots, mcp plugin, codex plugin, claude code plugin, cursor plugin, gemini extension, listing copy, app store creative, app store screenshot audit, design credits, app marketing
+app store screenshots, app icon generator, screenshot generator, app store optimization, ASO, keyword research, localization, screenshot localization, app store inspiration, inspiration gallery, competitor screenshots, ios screenshots, android screenshots, ipad screenshots, apple watch screenshots, mcp plugin, codex plugin, claude code plugin, cursor plugin, gemini extension, listing copy, app store creative, app store screenshot audit, hd screenshots, app marketing
 
 ## AI Use Policy
 

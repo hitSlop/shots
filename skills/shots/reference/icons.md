@@ -4,10 +4,10 @@ Use the two-step icon flow: `generate_icon_moodboard` to brainstorm, then `gener
 
 ## What The Tools Do
 
-- **`generate_icon_moodboard`** creates a 2048×2048 moodboard image with ~20 numbered icon concepts (5 credits). Present the moodboard to the user and ask them to pick favorites by number.
-- **`generate_icon`** generates one individual 1024×1024 PNG icon per call (3 credits each). Call it once per chosen concept from the moodboard.
+- **`generate_icon_moodboard`** creates a 2048×2048 moodboard image with ~20 numbered icon concepts (1 operation). Present the moodboard to the user and ask them to pick favorites by number.
+- **`generate_icon`** generates one individual 1024×1024 PNG icon per call (1 operation each). Call it once per chosen concept from the moodboard.
 
-Both steps cost design credits, so plan first and get approval.
+Both steps are metered operations, so plan first and get approval.
 
 ## Required Inputs
 

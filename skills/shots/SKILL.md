@@ -26,10 +26,10 @@ Use the compact command-mode MCP surface by default:
 | --- | --- |
 | `shots` | Run one command with `{ command, args }` |
 | `shots_batch` | Run up to 10 independent commands in one roundtrip |
-| `generate_screenshot` | Generate one App Store screenshot per call (3 credits) |
-| `generate_icon_moodboard` | Brainstorm ~20 icon concepts (5 credits) |
-| `generate_icon` | Generate one 1024×1024 app icon (3 credits) |
-| `billing` | Create checkout URLs, open the billing portal, or buy credit boosts |
+| `generate_screenshot` | Generate one App Store screenshot per call (1 HD screenshot; paid plans fall back to 1 operation at reduced quality when the HD budget is exhausted) |
+| `generate_icon_moodboard` | Brainstorm ~20 icon concepts (1 operation) |
+| `generate_icon` | Generate one 1024×1024 app icon (1 operation) |
+| `billing` | Create plan checkout URLs, open the billing portal, or buy an HD top-up |
 
 Command discovery is part of the API. Use `shots` with:
 
@@ -49,7 +49,7 @@ Common commands:
 | `media.import_url` | Import HTTPS reference images into R2 |
 | `search.app_images` | Full-text search uploaded app screenshots, inspo, and brand references by generated description |
 | `jobs.list`, `jobs.get` | List and poll generation jobs |
-| `screenshots.list`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated screenshots |
+| `screenshots.list`, `screenshots.listing`, `screenshots.get`, `screenshots.revise`, `screenshots.translate` | Manage generated and selected store screenshots |
 | `icons.list`, `icons.get`, `icons.set_current`, `icons.delete` | Manage generated app icon candidates |
 | `gallery.browse`, `gallery.search_apps`, `gallery.search_similar`, `gallery.get_app`, `gallery.ensure_app` | Find or import public gallery inspiration |
 
@@ -83,9 +83,11 @@ Do not poll more often than every 10 seconds for any job type.
 
 2d. **Resolve public inspiration separately from the user's app.** If the user says they want screenshots like, inspired by, similar to, or in the style of another App Store URL, treat that URL as inspiration, not as the user's app. Call `gallery.ensure_app` with the inspiration URL; if it already exists in the gallery, it returns the existing app, otherwise it imports the listing and screenshots into the public gallery. Then call `gallery.get_app` and inspect the returned screenshots. Do not call `apps.import` for the inspiration listing unless the user clearly says it is their own app.
 
-3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. Headlines are conversion hooks: write 3-6 word benefit, relief, identity, curiosity, or transformation promises, not feature labels. Use the "Screenshot Title Strategy" in [reference/strategy.md](reference/strategy.md) before filling the table. If context is thin, propose 5-10 panel options first and let the user choose.
+2e. **Check existing English campaign screenshots.** Before planning new screenshot generation, call `screenshots.listing` with the app id, target platform, and `locale: "en-US"` to find selected/promoted store screenshots. If none exist, call `screenshots.list` with `locale: "en-US"` for recent generated screenshots. Prefer selected/promoted screenshots as style references; use recent generated screenshots only as fallback. If any existing screenshot is found, use at least one relevant screenshot as a `referenceMediaIds` entry for each new generation call, alongside the real app UI reference needed for product accuracy.
 
-4. **Build the prompts and generate.** Use the approved table, research context, reference images, public gallery inspiration, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
+3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. During first-time app setup only, if the user wants screenshots but does not specify a count, suggest starting with 3 screenshots. Do not re-suggest 3 for later generation requests; ask for or infer the count from the user's request, and honor an explicit count exactly. Headlines are conversion hooks: write 3-6 word benefit, relief, identity, curiosity, or transformation promises, not feature labels. Use the "Screenshot Title Strategy" in [reference/strategy.md](reference/strategy.md) before filling the table. If context is thin, propose 5-10 panel options first and let the user choose.
+
+4. **Build the prompts and generate.** Use the approved table, research context, real app UI references, existing English campaign screenshots, public gallery inspiration, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
 
 5. **Present results and offer next steps.** Show the screenshots or icons, link to Studio, offer to revise, generate more, localize, or set the current icon. For icons, use `generate_icon_moodboard` to brainstorm concepts, then `generate_icon` for individual finals.
 
@@ -158,7 +160,7 @@ Then:
 1. Call `shots` with `usage.get`.
 2. If the call fails with an auth error, the MCP OAuth flow needs to be completed by the client.
 3. If the response has no active subscription, tell the user they need an active Shots plan before generation. Offer to call `billing` with `action: "checkout"` only after they confirm.
-4. Do not proceed to `generate_screenshot`, `generate_icon_moodboard`, or `generate_icon` until the account is active and has enough design credits.
+4. Do not proceed to `generate_screenshot`, `generate_icon_moodboard`, or `generate_icon` until the account has an active plan. Paid plans are never blocked on screenshots — when the monthly HD budget is exhausted, screenshots generate at reduced fallback quality instead. The free plan is blocked once its HD budget is used up.
 
 ## Project Config
 
@@ -196,12 +198,10 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 | --- | --- | --- |
 | `ok` | `false` | Always false for errors |
 | `code` | string | One of the error codes below |
-| `message` | string | Human-readable error description |
-| `nextAction` | string | Machine hint: `subscribe`, `buy_credits`, `upgrade`, `retry`, or `wait` |
+| `error` / `message` | string | Human-readable error description (same text in both fields) |
+| `actionLabel` | string | Short label for the recommended action |
+| `nextAction` | string | Machine hint: `subscribe`, `buy_credits`, `degrade_quality`, `upgrade`, `retry`, or `wait` |
 | `suggestion` | string | Plain-English recovery instruction — follow this |
-| `requiredCredits` | number | Credits the action would have cost |
-| `creditsBalance` | number \| null | Current credit balance |
-| `shortfall` | number \| null | Credits needed beyond the balance |
 | `plan` | string | User's current plan id |
 | `billingUrl` | string | Direct URL to the billing dashboard |
 | `upgradeUrl` | string | Direct URL to the upgrade page |
@@ -211,18 +211,20 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 
 | Code | Meaning | Recovery |
 | --- | --- | --- |
-| `billing_access_required` | No active subscription (free trial expired) | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"`, `"pro"`, or `"max"`. |
-| `insufficient_credits` | Not enough design credits for the action | Tell the user the `requiredCredits`, `creditsBalance`, and `shortfall`. Offer to buy a boost pack via `billing` with `action: "boost"` and `pack: "small"` (20 credits), `"medium"` (50 credits), or `"large"` (125 credits). Or offer a plan upgrade via `action: "checkout"`. |
+| `billing_access_required` | No active subscription | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"`, `"growth"`, or `"max"` (optional `interval: "monthly"` or `"yearly"`, defaults to monthly). |
+| `insufficient_credits` / `hd_budget_exhausted` | Monthly HD screenshot budget is used up | On paid plans, screenshots continue at fallback quality automatically. Offer an HD top-up via `billing` with `action: "topup"`, or a plan upgrade via `action: "checkout"`. On the free plan, generation is blocked — offer to subscribe. |
 | `app_limit_reached` | User has hit the app limit for their plan | Tell the user they've reached their app limit. Offer to upgrade via `billing` with `action: "checkout"`. |
+| `locale_locked` | Translation locale not included in the user's plan | Offer to upgrade via `billing` with `action: "checkout"`, or pick a locale available on their plan. |
 | `rate_limited` | Too many requests — temporary cooldown | Wait `retryAfter` seconds, then retry. Do not start a duplicate job. |
 | `billing_unavailable` | Billing service is temporarily down | Tell the user billing is temporarily unavailable. Do not retry automatically. |
 
 ### Recovery rules
 
-- Always ask the user before spending money — never auto-purchase a plan or boost pack.
+- Always ask the user before spending money — never auto-purchase a plan or top-up.
+- `billing` tool actions: `checkout` (subscription; `plan`: `starter` \| `growth` \| `max`, `interval`: `monthly` \| `yearly`), `portal` (manage billing), and `topup` (one-time HD screenshot pack). All return a `checkoutUrl`/`portalUrl` the user must open in a browser.
 - Do not retry a failed billable action until the user resolves the billing issue.
 - Follow the `suggestion` field in the error payload — it contains the exact recovery instruction.
-- After the user completes checkout or buys a boost, call `usage.get` to verify the account is active and has sufficient credits before retrying the original action.
+- After the user completes checkout or a top-up, call `usage.get` to verify the account is active before retrying the original action.
 
 ## Intent Router
 
@@ -317,11 +319,12 @@ Follow the reference docs:
 
 1. Check access per Required Setup. Resolve the app per Project Config and load with `apps.get`.
 1b. Verify the app has at least one real UI reference image (uploaded `app_screenshot` or `reference` asset showing app UI, or scraped App Store screenshots). If none exist, ask the user to provide screenshots of the app before continuing. Do not generate with only an icon or brand colors — Apple requires real app usage in screenshots.
+1c. Check for existing English campaign screenshots before planning: call `screenshots.listing` with `appId`, target `platform`, and `locale: "en-US"`; if it returns none, call `screenshots.list` with `appId`, `locale: "en-US"`, and a small limit such as 12. If any exist, choose the most relevant selected/promoted screenshot first, otherwise the most relevant recent generated screenshot, and include it as a style reference in `referenceMediaIds`.
 2. Present the screenshot plan as a markdown table and wait for user approval.
-3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceMediaIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the app icon for brand palette, plus the specific screen being shown). Maximum 4 reference images per generation call. If the plan uses public gallery inspiration, also pass `galleryInspirationScreenshotId`.
+3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceMediaIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the real app UI screenshot for product accuracy, plus one existing English campaign screenshot for style consistency). Maximum 4 reference images per generation call. If the plan uses public gallery inspiration, also pass `galleryInspirationScreenshotId`.
 4. Poll per Polling. When complete, present a markdown gallery. Build the review URL per [reference/create.md](reference/create.md) and use your embedded browser plugin to open it so the user can review the screenshots inside the app.
 
-Saved assets and prior screenshots returned by `apps.get` should inform the prompt and visual direction. Prefer `media.import_url` for HTTPS image URLs and `/api/upload` for local files.
+Saved assets and prior screenshots from `screenshots.listing` / `screenshots.list` should inform the prompt and visual direction. When a prior screenshot has a saved prompt, use that prompt as reference context for palette, typography, composition, background language, and overall campaign vibe. Prefer `media.import_url` for HTTPS image URLs and `/api/upload` for local files.
 
 ## App Icon Generation Flow
 
@@ -329,8 +332,8 @@ Use [reference/icons.md](reference/icons.md) when the user asks for app icons, A
 
 Key rules:
 
-- **Step 1 — Moodboard:** Call `generate_icon_moodboard` to produce a 2048×2048 moodboard with ~20 numbered icon concepts (5 credits). Present the moodboard and ask the user to pick favorites by number.
-- **Step 2 — Finals:** Call `generate_icon` once per chosen concept to produce an individual 1024×1024 PNG icon (3 credits each).
+- **Step 1 — Moodboard:** Call `generate_icon_moodboard` to produce a 2048×2048 moodboard with ~20 numbered icon concepts (1 operation). Present the moodboard and ask the user to pick favorites by number.
+- **Step 2 — Finals:** Call `generate_icon` once per chosen concept to produce an individual 1024×1024 PNG icon (1 operation each).
 - Treat both steps as paid generation: check usage, plan directions, and get approval before calling either tool.
 - Prompt for square, full-bleed, upload-ready Xcode/App Store source artwork. Apple/Xcode applies rounded corner masks later.
 - Do not ask for rounded icon tiles, preview cards, frames, outer backgrounds, black corner voids, text, labels, or watermarks.

@@ -21,6 +21,8 @@ Create App Store screenshots that read clearly after server-side compositing and
 - optimize for browse-feed stopping power before full-size polish
 - treat panel 1 like it may be the only panel the user really notices
 - existing screenshots are visual reference, not copy reference
+- selected/promoted English screenshots are the preferred campaign style reference otherwise use your best judgement based on what you know about the project and the style of the app inside the repo by analyzing the main screens and theme files and what would fit best for an app of its kind
+- prior screenshot prompts should inform palette, typography, composition, background language, and device treatment when available
 - create exactly one prompt per approved screenshot
 - preserve crop safety: every panel must stand alone after cropping
 
@@ -367,11 +369,14 @@ When reference images are available, call them out explicitly in the prompt:
 ```text
 Reference image usage:
 - Use reference image 1 for the real app UI layout and visual hierarchy.
-- Use reference image 2 for brand color and icon style.
-- Use reference image 3 only as mood/inspiration, not literal UI.
+- Use reference image 2 for the existing English campaign style: palette, typography, composition, device treatment, background language, and overall vibe.
+- Use reference image 3 for brand color and icon style.
+- Use reference image 4 only as mood/inspiration, not literal UI.
 ```
 
 Never say only "use references"; specify what each reference should influence.
+
+When selected/promoted or saved English screenshots exist, include at least one as a style reference in `referenceMediaIds`. Keep the real app UI screenshot as the product-accuracy reference. Existing generated screenshots keep the campaign consistent; they do not replace real app UI references, and their old headline/subtitle copy should not be reused unless the user explicitly asks.
 
 ## Platform Notes
 
