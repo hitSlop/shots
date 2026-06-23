@@ -26,10 +26,10 @@ Use the compact command-mode MCP surface by default:
 | --- | --- |
 | `shots` | Run one command with `{ command, args }` |
 | `shots_batch` | Run up to 10 independent commands in one roundtrip |
-| `generate_screenshot` | Generate one App Store screenshot per call (1 HD screenshot; paid plans fall back to 1 operation at reduced quality when the HD budget is exhausted) |
-| `generate_icon_moodboard` | Brainstorm ~20 icon concepts (1 operation) |
-| `generate_icon` | Generate one 1024×1024 app icon (1 operation) |
-| `billing` | Create plan checkout URLs, open the billing portal, or buy an HD top-up |
+| `generate_screenshot` | Generate one App Store screenshot per call (3 generation credits) |
+| `generate_icon_moodboard` | Brainstorm ~20 icon concepts (5 generation credits) |
+| `generate_icon` | Generate one 1024×1024 app icon (3 generation credits) |
+| `billing` | Create plan checkout URLs, open the billing portal, or buy a generation credit top-up |
 
 Command discovery is part of the API. Use `shots` with:
 
@@ -43,7 +43,7 @@ Common commands:
 
 | Command | Use |
 | --- | --- |
-| `usage.get` | Check account status and screenshot availability |
+| `usage.get` | Check account status and generation credit availability |
 | `apps.list`, `apps.get`, `apps.upsert`, `apps.import` | Resolve, load, create, or import app context |
 | `apps.update_research`, `apps.update_listing` | Persist strategy and App Store metadata |
 | `media.import_url` | Import HTTPS reference images into R2 |
@@ -68,9 +68,9 @@ Do not poll more often than every 10 seconds for any job type.
 
 ## Typical Session
 
-1. **Collect context upfront.** Check for `.shots/app.json` in the project root. If found, read the `appId` and call `apps.get` to load the app — skip onboarding. If not found, call `apps.list`; if apps exist, show a numbered list and ask the user to link one or create a new one. If they pick one, write `.shots/app.json` and call `apps.get`. If they choose "new" or have no apps, proceed with normal onboarding (see Project Config below). Always ask the user to confirm the app name and what it does before creating an app record. Never auto-detect the app name from local files.
+1. **Collect context upfront.** Check for `.shots/app.json` in the project root. If found, read the `appId` and call `apps.get` to load the app. Skip onboarding. If not found, call `apps.list`; if apps exist, show a numbered list and ask the user to link one or create a new one. If they pick one, write `.shots/app.json` and call `apps.get`. If they choose "new" or have no apps, proceed with normal onboarding (see Project Config below). Always ask the user to confirm the app name and what it does before creating an app record. Never auto-detect the app name from local files.
 
-2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` to store the App Experience section as its primary content — branding & aesthetic details (colors, typography, shape language), core problem & solution, critical user flows (step-by-step with screens involved), critical screen descriptions (layout, UI elements, data, emotional payload), and user achievement framing. This structured detail is what makes generated screenshot prompts accurate rather than generic.
+2. **Store everything you learn.** Save structured data to Convex via `apps.upsert`, `apps.update_research`, and `apps.update_listing`. Use `researchMarkdown` to store the App Experience section as its primary content: branding and aesthetic details (colors, typography, shape language), core problem and solution, critical user flows (step-by-step with screens involved), critical screen descriptions (layout, UI elements, data, emotional payload), and user achievement framing. This structured detail is what makes generated screenshot prompts accurate rather than generic.
 
 2b. **Discover and upload the app icon.** If `apps.import` was used (App Store URL provided), the icon is imported automatically. Otherwise, search the local project for the app icon per the "App Icon Discovery" section below and upload it with the bundled helper using `--kind icon`. This gives the generation pipeline a real icon to reference in screenshots.
 
@@ -78,16 +78,16 @@ Do not poll more often than every 10 seconds for any job type.
    - Search the local project for screenshots or preview images (e.g. `screenshots/`, `fastlane/screenshots/`, `assets/`, `docs/`, or `*.png`/`*.jpg` files showing app UI).
    - If found locally, upload them with the bundled helper using `--kind app_screenshot`.
    - If no real app UI screenshots are available anywhere, tell the user:
-     "Apple requires App Store screenshots to show real app usage. Before generating, please provide screenshots of your app — either upload them, share URLs, or point me to a local directory containing app screenshots. I need at least one real screen from the app to use as a reference so the generated screenshots show accurate UI."
-   - Do NOT proceed to generation without at least one real app UI reference. The app icon and brand colors alone are not sufficient — Apple will reject screenshots with fictional UI.
+     "Apple requires App Store screenshots to show real app usage. Before I generate anything, please upload app screenshots, share URLs, or point me to a local screenshot directory. I need at least one real app screen so the generated screenshots show accurate UI."
+   - Do NOT proceed to generation without at least one real app UI reference. The app icon and brand colors alone are not sufficient because Apple will reject screenshots with fictional UI.
 
 2d. **Resolve public inspiration separately from the user's app.** If the user says they want screenshots like, inspired by, similar to, or in the style of another App Store URL, treat that URL as inspiration, not as the user's app. Call `gallery.ensure_app` with the inspiration URL; if it already exists in the gallery, it returns the existing app, otherwise it imports the listing and screenshots into the public gallery. Then call `gallery.get_app` and inspect the returned screenshots. Do not call `apps.import` for the inspiration listing unless the user clearly says it is their own app.
 
 2e. **Check existing English campaign screenshots.** Before planning new screenshot generation, call `screenshots.listing` with the app id, target platform, and `locale: "en-US"` to find selected/promoted store screenshots. If none exist, call `screenshots.list` with `locale: "en-US"` for recent generated screenshots. Prefer selected/promoted screenshots as style references; use recent generated screenshots only as fallback. If any existing screenshot is found, use at least one relevant screenshot as a `referenceMediaIds` entry for each new generation call, alongside the real app UI reference needed for product accuracy.
 
-3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. During first-time app setup only, if the user wants screenshots but does not specify a count, suggest starting with 3 screenshots. Do not re-suggest 3 for later generation requests; ask for or infer the count from the user's request, and honor an explicit count exactly. Headlines are conversion hooks: write 3-6 word benefit, relief, identity, curiosity, or transformation promises, not feature labels. Use the "Screenshot Title Strategy" in [reference/strategy.md](reference/strategy.md) before filling the table. If context is thin, propose 5-10 panel options first and let the user choose.
+3. **Plan before generation.** Before calling `generate_screenshot`, present a markdown table with one row per requested screenshot and get user approval or targeted edits. Include `#`, `headline`, `subtitle`, `image/UI direction`, `reference assets`, and `purpose`. During first-time app setup only, if the user wants screenshots but does not specify a count, suggest starting with 3 screenshots. Do not re-suggest 3 for later generation requests; ask for or infer the count from the user's request, and honor an explicit count exactly. Screenshots are ads, not documentation: each row needs a caption-first conversion hook and a clear panel job. Use this default pacing unless the user requests otherwise: #1 main benefit, #2 differentiator, #3 supported trust signal, #4-6 core features in action, #7-8 newness or advanced workflows. Headlines are conversion hooks: write 3-6 word benefit, relief, identity, curiosity, or transformation promises, not feature labels. Use the "Screenshot Title Strategy" in [reference/strategy.md](reference/strategy.md) before filling the table. If context is thin, propose 5-10 panel options first and let the user choose.
 
-4. **Build the prompts and generate.** Use the approved table, research context, real app UI references, existing English campaign screenshots, public gallery inspiration, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row — each call queues one job.
+4. **Build the prompts and generate.** Use the approved table, research context, real app UI references, existing English campaign screenshots, public gallery inspiration, and listing copy to build one crop-safe prompt per screenshot. Call `generate_screenshot` once per approved row. Each call queues one job.
 
 5. **Present results and offer next steps.** Show the screenshots or icons, link to Studio, offer to revise, generate more, localize, or set the current icon. For icons, use `generate_icon_moodboard` to brainstorm concepts, then `generate_icon` for individual finals.
 
@@ -108,7 +108,7 @@ Preferred reference image paths:
 
    Add `--locale en-US` for locale-specific assets and `--kind icon` for app icons. The helper calls `POST https://shots.run/api/upload` by default; set `SHOTS_BASE_URL` or pass `--base-url` for another deployment.
 
-The helper requires only Node.js — no R2 credentials, API keys, or environment variables are needed locally. `/api/upload` is intentionally open and unauthenticated; it only needs the target `appId` and enforces server-side upload safety checks. Do NOT skip uploads because of missing R2 or cloud storage configuration.
+The helper requires only Node.js. No R2 credentials, API keys, or environment variables are needed locally. `/api/upload` is intentionally open and unauthenticated; it only needs the target `appId` and enforces server-side upload safety checks. Do NOT skip uploads because of missing R2 or cloud storage configuration.
 
 `/api/upload` is open and unauthenticated. Multipart fields:
 
@@ -159,8 +159,8 @@ Then:
 
 1. Call `shots` with `usage.get`.
 2. If the call fails with an auth error, the MCP OAuth flow needs to be completed by the client.
-3. If the response has no active subscription, tell the user they need an active Shots plan before generation. Offer to call `billing` with `action: "checkout"` only after they confirm.
-4. Do not proceed to `generate_screenshot`, `generate_icon_moodboard`, or `generate_icon` until the account has an active plan. Paid plans are never blocked on screenshots — when the monthly HD budget is exhausted, screenshots generate at reduced fallback quality instead. The free plan is blocked once its HD budget is used up.
+3. If the response says generation is unavailable, follow the returned `suggestion`. Offer to call `billing` only after the user confirms.
+4. Do not proceed to `generate_screenshot`, `generate_icon_moodboard`, `generate_icon`, `screenshots.revise`, or `screenshots.translate` unless `usage.get` shows enough generation credits for the requested action.
 
 ## Project Config
 
@@ -173,9 +173,9 @@ On session start, check for `.shots/app.json` in the project root.
   - If they pick one, write `.shots/app.json` with that appId, call `apps.get`, and skip onboarding.
   - If they decline or have no apps, proceed with normal "Typical Session" onboarding.
   - **Before creating any app record, you MUST ask the user for:**
-    1. App name (required — never infer from local files or plugin metadata)
+    1. App name (required; never infer from local files or plugin metadata)
     2. What the app does (required)
-    3. App Store URL (if published — enables metadata import via `apps.import`)
+    3. App Store URL (if published; enables metadata import via `apps.import`)
     4. Target platform (iphone/ipad/android/watch)
   - Do NOT proceed to `apps.upsert` or `apps.import` until the user has confirmed these details.
 - **After creating a new app** (via `apps.upsert` or `apps.import`), write `.shots/app.json`:
@@ -200,8 +200,8 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 | `code` | string | One of the error codes below |
 | `error` / `message` | string | Human-readable error description (same text in both fields) |
 | `actionLabel` | string | Short label for the recommended action |
-| `nextAction` | string | Machine hint: `subscribe`, `buy_credits`, `degrade_quality`, `upgrade`, `retry`, or `wait` |
-| `suggestion` | string | Plain-English recovery instruction — follow this |
+| `nextAction` | string | Machine hint: `subscribe`, `buy_credits`, `upgrade`, `retry`, or `wait` |
+| `suggestion` | string | Plain-English recovery instruction. Follow this. |
 | `plan` | string | User's current plan id |
 | `billingUrl` | string | Direct URL to the billing dashboard |
 | `upgradeUrl` | string | Direct URL to the upgrade page |
@@ -211,19 +211,18 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 
 | Code | Meaning | Recovery |
 | --- | --- | --- |
-| `billing_access_required` | No active subscription | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"`, `"growth"`, or `"max"` (optional `interval: "monthly"` or `"yearly"`, defaults to monthly). |
-| `insufficient_credits` / `hd_budget_exhausted` | Monthly HD screenshot budget is used up | On paid plans, screenshots continue at fallback quality automatically. Offer an HD top-up via `billing` with `action: "topup"`, or a plan upgrade via `action: "checkout"`. On the free plan, generation is blocked — offer to subscribe. |
+| `billing_access_required` | No active billing access | Ask the user if they'd like to subscribe. If yes, call `billing` with `action: "checkout"` and `plan: "starter"` or `"growth"` (optional `interval: "monthly"` or `"yearly"`, defaults to monthly). |
+| `insufficient_credits` | Not enough generation credits | Offer a credit top-up via `billing` with `action: "topup"` and `pack: "mini"`, `"standard"`, or `"studio"`, or a plan upgrade via `action: "checkout"`. |
 | `app_limit_reached` | User has hit the app limit for their plan | Tell the user they've reached their app limit. Offer to upgrade via `billing` with `action: "checkout"`. |
-| `locale_locked` | Translation locale not included in the user's plan | Offer to upgrade via `billing` with `action: "checkout"`, or pick a locale available on their plan. |
-| `rate_limited` | Too many requests — temporary cooldown | Wait `retryAfter` seconds, then retry. Do not start a duplicate job. |
+| `rate_limited` | Too many requests. Temporary cooldown. | Wait `retryAfter` seconds, then retry. Do not start a duplicate job. |
 | `billing_unavailable` | Billing service is temporarily down | Tell the user billing is temporarily unavailable. Do not retry automatically. |
 
 ### Recovery rules
 
-- Always ask the user before spending money — never auto-purchase a plan or top-up.
-- `billing` tool actions: `checkout` (subscription; `plan`: `starter` \| `growth` \| `max`, `interval`: `monthly` \| `yearly`), `portal` (manage billing), and `topup` (one-time HD screenshot pack). All return a `checkoutUrl`/`portalUrl` the user must open in a browser.
+- Always ask the user before spending money. Never auto-purchase a plan or top-up.
+- `billing` tool actions: `checkout` (subscription; `plan`: `starter` \| `growth`, `interval`: `monthly` \| `yearly`), `portal` (manage billing), and `topup` (one-time generation credit pack; `pack`: `mini` \| `standard` \| `studio`). All return a `checkoutUrl`/`portalUrl` the user must open in a browser.
 - Do not retry a failed billable action until the user resolves the billing issue.
-- Follow the `suggestion` field in the error payload — it contains the exact recovery instruction.
+- Follow the `suggestion` field in the error payload. It contains the exact recovery instruction.
 - After the user completes checkout or a top-up, call `usage.get` to verify the account is active before retrying the original action.
 
 ## Intent Router
@@ -238,7 +237,7 @@ Always create `.shots/` if missing. Add `.shots/` to `.gitignore` if one exists 
 | Translate | "translate", "localize", or a locale name | Build localized copy, then call `screenshots.translate` |
 | Keyword Research | "keywords", "keyword research", "ASO", "metadata", "optimize listing" | Import/load app, run keyword research process, store results via `apps.update_research` + `apps.update_listing` |
 | View | "view", "open", "show latest" | Call `jobs.list`, `jobs.get`, `screenshots.list`, or `apps.get`; open returned CDN URLs |
-| Account | "usage", "plan", "subscription", "screenshots", "account" | Call `usage.get` |
+| Account | "usage", "credits", "plan", "subscription", "screenshots", "account" | Call `usage.get` |
 | Upgrade | "upgrade", "subscribe", "buy" | Confirm intent, then call `billing` checkout |
 
 ## Research Workflow
@@ -249,17 +248,17 @@ Before generating, build a concise strategy from:
 2. Local README/docs/source files if the current workspace is an app repo
 3. User-provided audience, feature, visual, or brand constraints
 
-"Local README/docs/source files" means the user's app project files, not the Shots plugin's own documentation. If the working directory contains Shots plugin files (`.claude-plugin/`, `skills/shots/`, etc.), skip those — they describe the tool, not the target app.
+"Local README/docs/source files" means the user's app project files, not the Shots plugin's own documentation. If the working directory contains Shots plugin files (`.claude-plugin/`, `skills/shots/`, etc.), skip those. They describe the tool, not the target app.
 
 ### App Experience Pass
 
 After gathering basic product context, build the App Experience section from [reference/strategy.md](reference/strategy.md):
 
 - **When in a project repo:** Explore screen/view components (SwiftUI views, React components, Activity layouts), navigation structure (routers, tab bars, nav stacks), design tokens and theme files (color constants, typography scales, spacing), and preview fixtures or storybook stories. Extract branding details, map critical user flows step-by-step, and describe each marketable screen in detail (layout, elements, data, states).
-- **When the app is published:** Analyze imported App Store screenshots from `apps.import` to describe each screen in detail — what UI elements are visible, what data is shown, what layout structure is used, and what emotional payload each screen carries.
+- **When the app is published:** Analyze imported App Store screenshots from `apps.import` to describe each screen in detail: what UI elements are visible, what data is shown, what layout structure is used, and what emotional payload each screen carries.
 - **Always:** Capture the core problem/solution, the "aha moment", and the user achievement framing (identity shift, capability gained, pain removed).
 
-Store the full App Experience as structured markdown in `researchMarkdown` via `apps.update_research`. This is the primary content for that field — not freeform notes, but detailed screen-level descriptions that feed directly into accurate `device.screen` prompts during generation.
+Store the full App Experience as structured markdown in `researchMarkdown` via `apps.update_research`. This is the primary content for that field. Use detailed screen-level descriptions that feed directly into accurate `device.screen` prompts during generation, not freeform notes.
 
 Write the resulting strategy back with `apps.update_research` so future agents and Studio see the same source of truth. Keep durable generated state in Convex by using the MCP tools.
 
@@ -290,18 +289,21 @@ When the user asks for keyword research, ASO optimization, or metadata work:
 
 1. Import or load the app via `apps.import` or `apps.get`.
 2. Run the keyword research process from [reference/strategy.md](reference/strategy.md) (Seed Expansion, Evaluation, Opportunity Scoring, Grouping).
-3. Store `keywordStrategy` (primaryKeywords, secondaryKeywords, longTailKeywords, keywordField, scored opportunities) via `apps.update_research`.
-4. Generate optimized listing copy (title, subtitle, description, keywords) and store via `apps.update_listing`.
+3. Use the ASO operating loop from [reference/strategy.md](reference/strategy.md): brainstorm, App Store autocomplete-style language when available, competitor audit, score, distribute with zero overlap, and keep reserve keywords.
+4. Store `keywordStrategy` (primaryKeywords, secondaryKeywords, longTailKeywords, keywordField, scored opportunities) via `apps.update_research`.
+5. Generate listing copy (title, subtitle, description, keywords) and store via `apps.update_listing`.
 
 Metadata rules to enforce when generating listing copy:
 
-- Never repeat keywords across title, subtitle, and keyword field — Apple indexes each field separately.
-- Singular forms only in keyword field — Apple indexes both singular and plural.
-- No spaces after commas in keyword field — saves characters.
+- Never repeat keywords across title, subtitle, and keyword field. Apple indexes each field separately.
+- Use singular forms only in keyword field. Apple indexes both singular and plural.
+- Do not use spaces after commas in keyword field. This saves characters.
 - Do not include the app name, category name, "app", or "free" in keyword field.
+- Aggressive ASO setting: direct competitor brand names may be considered only for the hidden keyword field. Never use competitor names in visible title, subtitle, description, screenshot copy, or claims.
 - Character limits: Title 30, Subtitle 30, Keyword Field 100 (iOS); Title 30, Short Description 80 (Android).
 - Generate 3 title and 3 subtitle variants with character counts.
 - Output a Keyword Coverage Matrix showing where each keyword lives (title vs subtitle vs keyword field).
+- For non-primary locales, research locale-native keyword behavior instead of direct-translating the English keyword set.
 
 ## Prompt Rules
 
@@ -318,13 +320,13 @@ Follow the reference docs:
 ## Generation Flow
 
 1. Check access per Required Setup. Resolve the app per Project Config and load with `apps.get`.
-1b. Verify the app has at least one real UI reference image (uploaded `app_screenshot` or `reference` asset showing app UI, or scraped App Store screenshots). If none exist, ask the user to provide screenshots of the app before continuing. Do not generate with only an icon or brand colors — Apple requires real app usage in screenshots.
+1b. Verify the app has at least one real UI reference image (uploaded `app_screenshot` or `reference` asset showing app UI, or scraped App Store screenshots). If none exist, ask the user to provide screenshots of the app before continuing. Do not generate with only an icon or brand colors because Apple requires real app usage in screenshots.
 1c. Check for existing English campaign screenshots before planning: call `screenshots.listing` with `appId`, target `platform`, and `locale: "en-US"`; if it returns none, call `screenshots.list` with `appId`, `locale: "en-US"`, and a small limit such as 12. If any exist, choose the most relevant selected/promoted screenshot first, otherwise the most relevant recent generated screenshot, and include it as a style reference in `referenceMediaIds`.
 2. Present the screenshot plan as a markdown table and wait for user approval.
-3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceMediaIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset — pick the 1-4 most relevant references (e.g., the real app UI screenshot for product accuracy, plus one existing English campaign screenshot for style consistency). Maximum 4 reference images per generation call. If the plan uses public gallery inspiration, also pass `galleryInspirationScreenshotId`.
+3. Call `generate_screenshot` once per approved screenshot, passing a complete `prompt` (JSON or natural language). The server appends dimensions, constraints, and reference image metadata. Each call queues one job. Only pass `referenceMediaIds` for images the screenshot actually needs as visual reference. Do NOT pass every available asset. Pick the 1-4 most relevant references (e.g., the real app UI screenshot for product accuracy, plus one existing English campaign screenshot for style consistency). Maximum 4 reference images per generation call. If the plan uses public gallery inspiration, also pass `galleryInspirationScreenshotId`.
 4. Poll per Polling. When complete, present a markdown gallery. Build the review URL per [reference/create.md](reference/create.md) and use your embedded browser plugin to open it so the user can review the screenshots inside the app.
 
-Saved assets and prior screenshots from `screenshots.listing` / `screenshots.list` should inform the prompt and visual direction. When a prior screenshot has a saved prompt, use that prompt as reference context for palette, typography, composition, background language, and overall campaign vibe. Prefer `media.import_url` for HTTPS image URLs and `/api/upload` for local files.
+Saved assets and prior screenshots from `screenshots.listing` / `screenshots.list` should inform the prompt and visual direction. When a prior screenshot has a saved prompt, use that prompt as reference context for palette, typography, composition, background language, and overall campaign feel. Prefer `media.import_url` for HTTPS image URLs and `/api/upload` for local files.
 
 ## App Icon Generation Flow
 
@@ -332,8 +334,8 @@ Use [reference/icons.md](reference/icons.md) when the user asks for app icons, A
 
 Key rules:
 
-- **Step 1 — Moodboard:** Call `generate_icon_moodboard` to produce a 2048×2048 moodboard with ~20 numbered icon concepts (1 operation). Present the moodboard and ask the user to pick favorites by number.
-- **Step 2 — Finals:** Call `generate_icon` once per chosen concept to produce an individual 1024×1024 PNG icon (1 operation each).
+- **Step 1: Moodboard.** Call `generate_icon_moodboard` to produce a 2048×2048 moodboard with ~20 numbered icon concepts (5 generation credits). Present the moodboard and ask the user to pick favorites by number.
+- **Step 2: Finals.** Call `generate_icon` once per chosen concept to produce an individual 1024×1024 PNG icon (3 generation credits each).
 - Treat both steps as paid generation: check usage, plan directions, and get approval before calling either tool.
 - Prompt for square, full-bleed, upload-ready Xcode/App Store source artwork. Apple/Xcode applies rounded corner masks later.
 - Do not ask for rounded icon tiles, preview cards, frames, outer backgrounds, black corner voids, text, labels, or watermarks.

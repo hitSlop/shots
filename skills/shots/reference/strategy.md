@@ -149,6 +149,7 @@ Run this process when the user asks for keyword research, ASO optimization, or m
 Generate 30-50 keyword candidates from:
 
 - **App description and features** — core functionality terms
+- **App Store autocomplete-style language** — suggestions users actually type when discoverable from the App Store or public research
 - **Competitor titles, subtitles, and descriptions** — terms they rank for
 - **Problem-based terms** — how users describe the pain, not the solution (e.g. "can't sleep" not "sleep tracker")
 - **Synonyms and related terms** — alternate phrasings for the same intent
@@ -194,6 +195,7 @@ Pack `keywordField` to use all 100 characters (iOS):
 - **Never repeat** words already in title or subtitle
 - **Singular forms only** — Apple indexes both singular and plural
 - **Exclude**: app name, category name, "app", "free"
+- **Aggressive ASO setting**: competitor brand names may be used only in the hidden keyword field when the competitor is direct and the brand is a single keyword token. Never use competitor names in visible title, subtitle, description, screenshot copy, or claims.
 - Order by opportunity score descending
 - Verify the final string is ≤ 100 characters
 
@@ -207,6 +209,17 @@ When competitor apps are known (from `competitorAnalysis.competitors`), produce:
 
 Store gap findings in `competitorAnalysis.competitors[].keywordGaps` and surface the top opportunities in `keywordStrategy.opportunities[].notes`.
 
+### 7. ASO Operating Loop
+
+Use this lightweight loop when the user wants a full ASO pass:
+
+1. Brainstorm seed terms from features, verbs, nouns, problems, and outcomes.
+2. Check App Store autocomplete-style language when available.
+3. Audit 5-10 competitors for title, subtitle, screenshot captions, review language, pricing, ratings, and proof signals.
+4. Score keywords by volume, relevance, difficulty, and download intent.
+5. Distribute winners with zero word overlap: strongest term in title, expansion terms in subtitle, remaining terms in hidden keywords.
+6. Keep 15-20 reserve keywords for the next 4-8 week iteration.
+
 ## Metadata Rules
 
 Apply these constraints when generating App Store listing copy:
@@ -216,12 +229,14 @@ Apply these constraints when generating App Store listing copy:
 - `[Brand] - [Primary Keyword]` or `[Brand]: [Benefit Phrase]`
 - Lead with brand if the app is well-known; lead with keyword if not
 - iOS and Android: 30 character limit
+- Use close to all 30 characters when natural, but never pad with filler words like "app", "free", "best", or "the"
 
 ### Subtitle
 
 - 30 character limit (iOS); 80 character short description (Android)
 - Use secondary keywords not already in the title
 - Focus on a benefit or use case, not a feature list
+- Use compact readable separators like `&` and `,` when they save space without making the subtitle feel stuffed
 
 ### Keyword Coverage Matrix
 
@@ -250,6 +265,50 @@ Generate 3 title options and 3 subtitle options, each with:
 When generating listing copy for non-primary locales: **do NOT translate English keywords.** Research what local users actually search for. Each locale needs independent keyword research because users search differently:
 
 - English "budget tracker" → German "Haushaltsbuch" → Japanese "家計簿"
+
+Additional App Store locales are extra keyword surfaces even when the app UI is English-only. For bootstrapped apps, prioritize 3-5 locales with meaningful market fit, then research locale-native keyword behavior instead of copying the English keyword set.
+
+## Preview Video, Ratings, And Paid Support
+
+### Preview Video
+
+When a user asks for a complete launch plan, include preview video guidance:
+
+- Lead with the strongest product moment in the first 3 seconds.
+- Design for muted autoplay with text overlays.
+- Show real app usage, not a logo intro or generic sizzle reel.
+- Keep the video concise, usually 15-30 seconds.
+
+### Ratings
+
+Ratings are visible in search results and affect conversion. Recommend:
+
+- Trigger Apple's native review prompt only after a clear success moment.
+- Never ask on first launch, after a crash, or during user frustration.
+- Respond to negative reviews and mine repeated complaints for product and keyword insight.
+- Mention important fixes in release notes when review themes have been addressed.
+
+### Paid + Organic Flywheel
+
+For new apps, organic ASO may need initial download data. When relevant, suggest a small Apple Search Ads test:
+
+- Target the same keyword clusters used in organic metadata.
+- Use paid conversion data to identify terms that actually install, not just terms that rank.
+- Feed proven terms back into title, subtitle, screenshots, and hidden keywords.
+- Scale paid spend down only as organic rankings and conversion improve.
+
+### Iteration Loop
+
+Every 2-4 weeks, review:
+
+- Keyword ranking movement
+- Search impressions
+- Tap-through rate
+- App Store conversion rate
+- Organic vs paid install split
+- Review language and repeated objections
+
+Swap keywords that show no movement after two cycles, but keep proven terms stable.
 
 ## Research And Listing Schema
 
@@ -318,6 +377,18 @@ Screenshots should form a cohesive Value -> Flow -> Trust narrative:
 1. Value: lead with the outcome or problem solved.
 2. Flow: show the solution in action with concrete product UI.
 3. Trust: build confidence with proof, ratings, privacy, awards, or user count.
+
+Screenshots are ads, not documentation. Each panel needs a caption and a job:
+
+| Screenshot | Job |
+| --- | --- |
+| #1 | Main benefit; the strongest search-result hook |
+| #2 | Differentiator vs alternatives |
+| #3 | Trust signal, only when supported by app context |
+| #4-6 | Core features in action, framed as problems solved |
+| #7-8 | New features, updates, integrations, or advanced workflows |
+
+Do not upload plain UI captures as the campaign. Use real UI, but frame it with a clear caption and a conversion reason.
 
 ## Screenshot Title Strategy
 
@@ -399,3 +470,15 @@ Rules:
 - avoid `and` in headlines when possible
 - headline must be a user benefit or emotional hook, not the feature name
 - use the before -> after examples above as rewrite patterns
+
+## First Week ASO Checklist
+
+Use this sequence for a new app or pre-launch cleanup:
+
+| Day | Work |
+| --- | --- |
+| Mon | Audit current title, subtitle, keyword field, screenshots, ratings, and proof signals |
+| Tue | Research 5-10 competitors and collect 50+ keyword candidates |
+| Wed | Score keywords and draft title, subtitle, and hidden keyword field with zero overlap |
+| Thu | Rebuild screenshot plan using the caption-first panel framework; brief a preview video if needed |
+| Fri | Add or verify the rating prompt success moment, save listing metadata, and schedule the next ranking check |

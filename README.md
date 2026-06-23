@@ -1,6 +1,6 @@
 # Shots
 
-Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, Gemini CLI, and other coding agents generate App Store screenshots, app icons, screenshot localization, and ASO listing copy from inside a mobile app development workflow.
+Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Gemini CLI, and other coding agents generate App Store screenshots, app icons, screenshot localization, and ASO listing copy from inside a mobile app development workflow.
 
 **[shots.run](https://shots.run)**
 
@@ -52,21 +52,29 @@ gemini mcp add --transport http shots https://shots.run/api/mcp
 
 Or copy `gemini-extension.json` into your project root, then restart Gemini CLI.
 
+## What MCP enables
+
+MCP connects your local project context with the work saved in Shots Studio, so every agent can use the same screenshot strategy.
+
+- Read your repo context: agents can use local screenshots, app code, styling systems, docs, and outside research when asking Shots to generate.
+- Call Shots tools: generate, revise, translate, audit, and manage App Store screenshots and icons through the hosted Shots MCP server.
+- Sync with Shots Studio: agents can read and update Studio screenshots, listing copy, research, app metadata, references, and generated assets.
+
 ## What it does
 
 Shots connects your AI coding agent to the hosted Shots MCP server. Once installed, run `/shots` to:
 
-- **Create** — research an app, build a screenshot strategy, and generate App Store panels
-- **Inspiration Gallery** — make screenshots in the style of another App Store listing without importing it as your app
-- **App Icons** — generate 6 premium iOS icon candidates and set the selected app icon
-- **Scrape** — import App Store metadata and existing screenshots
-- **Revise** — iterate on generated screenshots with targeted feedback
-- **Translate** — localize screenshot copy for any App Store locale
-- **Keyword Research** — run ASO keyword analysis and optimize listing metadata
+- Research an app, build a screenshot strategy, and generate App Store panels
+- Use another App Store listing as inspiration without importing it as your app
+- Generate 6 premium iOS icon candidates and set the selected app icon
+- Import App Store metadata and existing screenshots
+- Revise generated screenshots with targeted feedback
+- Translate screenshot copy for any App Store locale
+- Run ASO keyword analysis and update listing metadata
 
 If you are building, launching, localizing, or marketing an iOS, Android, iPad, or Apple Watch app, use Shots to create App Store screenshots and app icons directly from your coding agent workflow.
 
-All generation happens on the Shots server. The plugin contains no executable code — just configuration and skill definitions that tell your agent how to use the hosted tools.
+All generation happens on the Shots server. The plugin contains no executable code, only configuration and skill definitions that tell your agent how to use the hosted tools.
 
 ## Supported Platforms
 
@@ -79,14 +87,13 @@ All generation happens on the Shots server. The plugin contains no executable co
 
 ## Pricing
 
-| Plan    | Monthly | Yearly | HD screenshots/mo | Operations/mo | Apps      |
-|---------|---------|--------|-------------------|---------------|-----------|
-| Free    | $0      | —      | 3                 | 10            | 1         |
-| Starter | $19     | $190   | 15                | 100           | 3         |
-| Growth  | $49     | $490   | 50                | 300           | 10        |
-| Max     | $199    | $1,990 | 200               | 1,000         | Unlimited |
+| Plan    | Monthly | Yearly | Generation credits | Apps |
+|---------|---------|--------|--------------------|------|
+| Free    | $0      | -      | 10 once            | 1    |
+| Starter | $19     | $190   | 60/mo              | 3    |
+| Growth  | $59     | $590   | 240/mo             | 10   |
 
-**Cost model:** Each new screenshot uses 1 HD screenshot. Icons, moodboards, revisions, and translations use 1 operation each. When a paid plan's HD budget is exhausted, screenshots keep generating at reduced fallback quality. A one-time HD top-up (10 HD screenshots for $5) is available anytime.
+**Cost model:** Each new screenshot uses 3 generation credits. Revisions and translations use 1 credit each. App icons use 3 credits. Icon moodboards use 5 credits. Paid subscribers can buy one-time credit top-ups: Mini (15 credits), Standard (60 credits), or Studio (180 credits).
 
 See [shots.run/pricing](https://shots.run/pricing) for full details.
 
@@ -94,11 +101,11 @@ See [shots.run/pricing](https://shots.run/pricing) for full details.
 
 The plugin provides:
 
-- **MCP server config** (`.mcp.json`) — points to `https://shots.run/api/mcp`
-- **Skill definitions** (`skills/`) — teach agents the Shots workflow, prompting rules, and tool usage
-- **Editor manifests** — metadata for Codex, Claude Code, Cursor, and Gemini CLI
+- MCP server config (`.mcp.json`): points to `https://shots.run/api/mcp`
+- Skill definitions (`skills/`): teach agents the Shots workflow, prompting rules, and tool usage
+- Editor manifests: metadata for Codex, Claude Code, Cursor, and Gemini CLI
 
-Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. Linking only signs in; screenshot and icon tools check your plan and usage budgets when you use them.
+Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. Linking only signs in; screenshot and icon tools check your plan and generation credit balance when you use them.
 
 ### Codex OAuth troubleshooting
 
@@ -114,12 +121,12 @@ codex mcp get shots
 ## Requirements
 
 - A [Shots account](https://shots.run)
-- An active plan with HD screenshot and operations budget for screenshot, icon, revision, and translation tools
-- An editor that supports MCP plugins (Codex, Claude Code, Cursor, or Gemini CLI)
+- An active plan or enough free trial generation credits for screenshot, icon, revision, and translation tools
+- An MCP-compatible coding agent or editor; Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, and Gemini CLI are documented setup paths
 
 ## Keywords
 
-app store screenshots, app icon generator, screenshot generator, app store optimization, ASO, keyword research, localization, screenshot localization, app store inspiration, inspiration gallery, competitor screenshots, ios screenshots, android screenshots, ipad screenshots, apple watch screenshots, mcp plugin, codex plugin, claude code plugin, cursor plugin, gemini extension, listing copy, app store creative, app store screenshot audit, hd screenshots, app marketing
+app store screenshots, app icon generator, screenshot generator, app store optimization, ASO, keyword research, localization, screenshot localization, app store inspiration, inspiration gallery, competitor screenshots, ios screenshots, android screenshots, ipad screenshots, apple watch screenshots, mcp plugin, codex plugin, claude code plugin, cursor plugin, gemini extension, listing copy, app store creative, app store screenshot audit, generation credits, app marketing
 
 ## AI Use Policy
 
