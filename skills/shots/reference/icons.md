@@ -1,168 +1,129 @@
 # App Icon Generation
 
-Use the two-step icon flow: `generate_icon_moodboard` to brainstorm, then `generate_icon` to produce finals. These are not generic image tools and are not rounded App Store preview generators.
+Use the two-step hosted icon flow:
 
-## What The Tools Do
+1. `generate_icon_moodboard` creates a 2048x2048 moodboard with about 20 numbered
+   concepts. Cost: 5 generation credits.
+2. `generate_icon` creates one 1024x1024 source artwork icon per call. Cost: 3
+   generation credits.
 
-- **`generate_icon_moodboard`** creates a 2048×2048 moodboard image with ~20 numbered icon concepts (1 operation). Present the moodboard to the user and ask them to pick favorites by number.
-- **`generate_icon`** generates one individual 1024×1024 PNG icon per call (1 operation each). Call it once per chosen concept from the moodboard.
+Ask before spending credits. Present the moodboard and let the user pick concept
+numbers before generating finals.
 
-Both steps are metered operations, so plan first and get approval.
+## Required Direction
 
-## Required Inputs
+Before the moodboard, lock:
 
-### `generate_icon_moodboard`
+- app name and category
+- core promise
+- audience
+- brand colors or mood
+- icons or visual references available
+- styles to explore
 
-- `appId` (required)
+For final icons, ask for or infer:
 
-Optional:
+- chosen moodboard concept number
+- symbol or object
+- background treatment
+- style notes to preserve
 
-- `creative_direction`
-- `styles` — style directions to explore
-- `referenceMediaIds`
-- `referenceScreenshotIds`
+## Source Artwork Rules
 
-### `generate_icon`
+Prompt for square, full-bleed, upload-ready source artwork:
 
-- `appId` (required)
+- 1024x1024 PNG final output
+- full color and texture to every edge
+- no rounded-corner mask
+- no App Store preview tile
+- no outer background or presentation card
+- no text, labels, watermark, badge, or fake notification
+- no black corner voids
 
-Optional:
+Apple and Xcode apply rounded masks later. The generated source should be a full
+square asset.
 
-- `style` — chosen style from moodboard
-- `symbol` — main symbol/object for the icon
-- `background` — background treatment
-- `creative_direction`
-- `referenceMediaIds`
-- `referenceScreenshotIds`
+## Moodboard Plan
 
-## Critical Source Artwork Rules
-
-Prompt for square source artwork that can be uploaded directly as the 1024x1024 master icon asset. The generated image should fill the entire square tile edge to edge.
-
-Required:
-
-- square 1024x1024 source artwork
-- full-bleed color, lighting, texture, and composition to every edge
-- one clear focal symbol only
-- readable silhouette at small sizes
-- strong foreground/background separation
-- vibrant, high-contrast palette
-- polished finish with subtle depth, highlights, and shadows
-
-Banned:
-
-- rounded corners
-- rounded-square masks
-- App Store preview tiles
-- icon mockup frames
-- cards or framed containers
-- outer backgrounds around the icon
-- black corner voids
-- visible tile edges
-- text, letters, numbers, labels, badges, logos, watermarks, or App Store chrome
-
-Apple, Xcode, App Store, iOS, iPadOS, and watchOS apply platform corner masks later. Do not ask the model to create those masks.
-
-## Planning Table
-
-Before calling `generate_icon_moodboard`, present a direction table and wait for approval. This guides what the moodboard explores:
+Use a small planning table before the moodboard:
 
 ```markdown
-| # | Style | Main symbol | Background | Notes |
-| --- | --- | --- | --- | --- |
-| 1 | Glossy hero object |  |  | High-conversion premium candidate |
-| 2 | Playful clay 3D |  |  | Softer, friendlier candidate |
-| 3 | Glassmorphism glyph |  |  | Light, luminous, modern candidate |
-| 4 | Bold geometric emblem |  |  | More graphic and logo-like |
-| 5 | Cute mascot-like |  |  | Expressive but still simple |
-| 6 | Luxury metallic/plastic |  |  | Mature premium candidate |
+| Direction | Symbol | Style | Why it fits |
+| --- | --- | --- | --- |
+| 1 |  |  |  |
+| 2 |  |  |  |
+| 3 |  |  |  |
 ```
 
-Keep the directions meaningfully different. The moodboard will explore ~20 variations. After the user reviews the moodboard and picks favorites by number, call `generate_icon` for each chosen concept.
+Good directions:
 
-## Prompting Pattern
+- one clear symbol or visual metaphor
+- recognizable at small size
+- distinct silhouette
+- tied to the app's actual value
+- fits the app's category norms without disappearing into them
 
-Use this source-artwork language in `creative_direction`:
+Avoid:
 
-```text
-Create square, upload-ready source artwork for iOS app icon master assets. Full-bleed edge-to-edge artwork, no rounded corners, no rounded-square tile, no icon mockup frame, no outer background, no text. Apple/Xcode will apply platform corner masks later.
-```
-
-Then add the app-specific symbol and style direction. Prefer "source artwork", "full-bleed square", and "edge-to-edge" over "iOS app icon", which can make the model draw rounded preview tiles.
+- generic gradients with no symbol
+- complex scenes
+- tiny UI screenshots inside the icon
+- multiple unrelated objects
+- unsupported mascots or brand claims
 
 ## Style Families
 
-Choose the best fit for the app. The moodboard can explore several at once; individual icons should commit to one.
+- Character/mascot: education, kids, habit, playful consumer apps
+- Dimensional 3D: finance, productivity, creator tools, premium utilities
+- Minimal geometric: developer tools, B2B, infrastructure, focused utilities
+- Editorial/luxury: fashion, beauty, lifestyle, premium services
+- Soft wellness: meditation, family, journaling, health
+- Kinetic sport: fitness, events, action apps
 
-- **Glossy 3D / premium dimensional** — polished objects with depth, highlights, and subtle shadows
-- **Clay / cute mascot / kawaii** — friendly characters or objects with soft rounded forms and simple faces
-- **Flat geometric / minimal** — abstract shapes, clean lines, bold color blocks
-- **Glassmorphism** — frosted glass layers, translucency, soft light diffusion
-- **Luxury metallic** — gold, silver, or chrome finishes with rich dark backgrounds
-- **Bold emblem** — strong shield/badge/crest shapes with confident symbol
-- **Gradient abstract** — fluid color gradients with organic or geometric forms
-
-The cute character/mascot style is a dominant trend in the App Store. A friendly character with simple dot eyes, small mouth, rounded silhouette, and playful personality can be very effective for approachable consumer apps.
-
-## Generate
-
-### Step 1: Moodboard
+## Example Moodboard Prompt
 
 ```json
 {
   "appId": "APP_ID",
-  "creative_direction": "Create square, upload-ready source artwork for iOS app icon master assets. Full-bleed edge-to-edge artwork, no rounded corners, no rounded-square tile, no icon mockup frame, no outer background, no text. Apple/Xcode will apply platform corner masks later. Premium, polished, high-contrast, readable at small App Store sizes. Explore glossy, clay 3D, glassmorphism, geometric, mascot, and metallic styles around a camera lens with sparkle.",
-  "styles": ["glossy hero object", "playful clay 3D", "glassmorphism glyph", "bold geometric emblem", "cute mascot-like", "luxury metallic/plastic"]
+  "creative_direction": "Explore app icon concepts for a calm meal-planning app. The icon should communicate dinner clarity, household warmth, and practical organization without using text. Favor simple shapes, pantry/plate/calendar metaphors, warm olive and golden accents, and strong silhouettes that read at small size.",
+  "styles": ["calm warm utility", "minimal geometric", "soft dimensional"]
 }
 ```
 
-Poll per SKILL.md Polling. When complete, present the moodboard and ask the user to pick favorites by number (e.g. "3, 7, 14").
+## Example Final Icon Prompts
 
-### Step 2: Individual Icon
-
-Call `generate_icon` once per chosen concept. Poll per SKILL.md Polling.
-
-#### Example A — Cute mascot/character icon (language learning app)
+Cute mascot:
 
 ```json
 {
   "appId": "APP_ID",
-  "style": "clay/cute mascot",
-  "symbol": "A chubby round owl facing forward, bright teal body with a sunny yellow belly patch, two large circular dot eyes with tiny white highlights, small triangular coral beak, tiny stubby wings held slightly out. Expression is warm and encouraging. The owl should look like a soft clay or vinyl toy — tactile and huggable. No outlines, rely on form and shadow for definition. The character fills 70-80% of the canvas.",
-  "background": "Smooth radial gradient from bright teal (#4ECDC4) at center to slightly deeper teal (#3DBDB5) at edges, keeping focus on the character",
-  "creative_direction": "Create square, upload-ready source artwork for iOS app icon master assets. Full-bleed edge-to-edge artwork, no rounded corners, no rounded-square tile, no icon mockup frame, no outer background, no text. Apple/Xcode will apply platform corner masks later. Kawaii mascot style — the owl should feel like a lovable companion, not a realistic bird. 3D clay-render with soft ambient occlusion and gentle top-down lighting. Personality-driven with minimal detail, maximum charm. Keep the silhouette instantly recognizable even at 29×29 pt."
+  "style": "friendly rounded mascot from moodboard concept 7",
+  "symbol": "smiling owl holding a small flashcard",
+  "background": "bright warm blue full-bleed background with subtle radial depth",
+  "creative_direction": "Upload-ready 1024x1024 square app icon source artwork. No text, no rounded mask, no preview card."
 }
 ```
 
-#### Example B — Premium dimensional 3D icon (finance app)
+Premium dimensional:
 
 ```json
 {
   "appId": "APP_ID",
-  "style": "premium dimensional / glossy 3D",
-  "symbol": "A miniature vault door viewed at a slight 3/4 angle, brushed dark steel surface with a circular combination dial in the center. The dial has a softly glowing green (#0F9D58) ring around it. Subtle golden highlight catch on the top edge. Two small bolt heads on either side of the dial.",
-  "background": "Deep navy (#1A1A2E) to dark steel blue (#16213E) linear gradient from top-left to bottom-right, with a very faint radial green glow emanating from behind the vault door",
-  "creative_direction": "Create square, upload-ready source artwork for iOS app icon master assets. Full-bleed edge-to-edge artwork, no rounded corners, no rounded-square tile, no icon mockup frame, no outer background, no text. Apple/Xcode will apply platform corner masks later. Photorealistic 3D render with studio lighting, metallic materials, and subtle environment reflections. The vault door should feel solid and premium — like a real object you could touch. Avoid flat or cartoonish rendering. The green glow should be subtle, suggesting security and access without being flashy."
+  "style": "premium dimensional 3D from moodboard concept 3",
+  "symbol": "abstract upward bar chart folded into a shield",
+  "background": "deep navy full-bleed background with soft teal rim light",
+  "creative_direction": "Confident finance icon, simple silhouette, polished material, no text, no outer frame, no rounded-corner preview."
 }
 ```
 
-#### Example C — Minimal geometric/flat icon (developer tool)
+Minimal geometric:
 
 ```json
 {
   "appId": "APP_ID",
-  "style": "flat geometric / minimal",
-  "symbol": "Two angled bracket shapes (like code brackets < >) rendered as bold geometric bars in electric blue (#89B4FA), centered on the canvas. The brackets are slightly rounded at their terminals. A small cursor-line shape between them, same blue, thinner weight.",
-  "background": "Solid dark charcoal (#1E1E2E) filling the full canvas edge to edge — no gradients, no texture, pure flat matte",
-  "creative_direction": "Create square, upload-ready source artwork for iOS app icon master assets. Full-bleed edge-to-edge artwork, no rounded corners, no rounded-square tile, no icon mockup frame, no outer background, no text. Apple/Xcode will apply platform corner masks later. Flat vector with no gradients on the symbol, single accent color against a dark matte background. The icon reads as 'code' instantly at any size. Electric blue on dark charcoal gives maximum contrast. At 29×29 pt the brackets and cursor should still be crisp and identifiable."
+  "style": "minimal geometric from moodboard concept 12",
+  "symbol": "interlocking brackets forming a lightning bolt",
+  "background": "full-bleed charcoal square with one electric green accent",
+  "creative_direction": "Developer-tool icon, crisp vector-like geometry, high contrast, no text, no border, no preview tile."
 }
 ```
-
-## Present Results
-
-When the job completes:
-
-1. Call `icons.list` with the `appId`.
-2. Present a markdown gallery with preview, asset id, and CDN URL.
-3. Ask which candidate should be current.
-4. Call `icons.set_current` only after the user chooses.

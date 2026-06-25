@@ -1,44 +1,36 @@
-# Shots Revision Flow
+# Screenshot Revision
 
-Revise a hosted screenshot with targeted change instructions.
+Use `screenshots.revise` when the user wants targeted changes to an existing
+hosted screenshot.
 
-## Steps
+## Resolve
 
-### 1. Resolve The Base Screenshot
+- Ask for a screenshot id if missing.
+- If the user gives a job id, call `jobs.get`, confirm it is complete, and use
+  the generated screenshot id.
 
-Ask for a screenshot id if the user did not provide one. If the user provides a job id instead, call `jobs.get`, confirm that it is complete, and choose the relevant generated screenshot id.
+## Capture Feedback
 
-### 2. Capture Feedback
+Ask only for missing details that affect the edit:
 
-Ask for precise revision feedback:
-
-- which panel
 - what should change
-- what should stay the same
-- whether the positioning, audience, or visual theme changed
+- what must stay the same
+- whether audience, positioning, or visual theme changed
+- whether extra references should guide the revision
 
-### 3. Rebuild The Prompt
+## Prompt Guidance
 
-Use [prompting.md](prompting.md). Keep the original strategy unless the user is explicitly changing it. Append a clear revision block:
+Keep the approved campaign stable unless the user is explicitly changing it.
+Use the revision block in [prompting.md](prompting.md):
 
 - `Change`
 - `Preserve`
 - `Constraints`
 
-### 4. Generate
+Keep feedback concise and concrete. Prefer "make the headline 20% larger and
+move the device lower" over "make it pop."
 
-Call `shots` with `screenshots.revise` using the screenshot id and concise feedback. Poll per SKILL.md Polling.
+## Present
 
-### 5. Present Output
-
-Present the revised panels in a markdown gallery with screenshot ids:
-
-```markdown
-| # | Preview | Screenshot ID | URL |
-| --- | --- | --- | --- |
-| 1 | ![](image-url-1) | scr_abc123 | image-url-1 |
-
-[Open in Shots Studio →](https://shots.run/studio?app={appId}&tab=generations)
-```
-
-Replace the placeholder URLs, ids, and `{appId}` with actual values from the job result. Then ask whether the user wants another targeted pass.
+After completion, show screenshot id, CDN URL, and the review link returned or
+described by the hosted MCP instructions.

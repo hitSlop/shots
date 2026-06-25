@@ -57,7 +57,7 @@ Or copy `gemini-extension.json` into your project root, then restart Gemini CLI.
 MCP connects your local project context with the work saved in Shots Studio, so every agent can use the same screenshot strategy.
 
 - Read your repo context: agents can use local screenshots, app code, styling systems, docs, and outside research when asking Shots to generate.
-- Call Shots tools: generate, revise, translate, audit, and manage App Store screenshots and icons through the hosted Shots MCP server.
+- Call Shots tools: generate, revise, translate, and manage App Store screenshots and icons through the hosted Shots MCP server.
 - Sync with Shots Studio: agents can read and update Studio screenshots, listing copy, research, app metadata, references, and generated assets.
 
 ## What it does
@@ -66,7 +66,7 @@ Shots connects your AI coding agent to the hosted Shots MCP server. Once install
 
 - Research an app, build a screenshot strategy, and generate App Store panels
 - Use another App Store listing as inspiration without importing it as your app
-- Generate 6 premium iOS icon candidates and set the selected app icon
+- Brainstorm app icon concepts and generate selected final icon candidates
 - Import App Store metadata and existing screenshots
 - Revise generated screenshots with targeted feedback
 - Translate screenshot copy for any App Store locale
@@ -74,7 +74,7 @@ Shots connects your AI coding agent to the hosted Shots MCP server. Once install
 
 If you are building, launching, localizing, or marketing an iOS, Android, iPad, or Apple Watch app, use Shots to create App Store screenshots and app icons directly from your coding agent workflow.
 
-All generation happens on the Shots server. The plugin contains no executable code, only configuration and skill definitions that tell your agent how to use the hosted tools.
+All generation happens on the Shots server. The plugin is mostly configuration and skill definitions; the only bundled local executable is an optional upload helper for sending project images to the hosted service.
 
 ## Supported Platforms
 
@@ -93,7 +93,7 @@ All generation happens on the Shots server. The plugin contains no executable co
 | Starter | $19     | $190   | 60/mo              | 3    |
 | Growth  | $59     | $590   | 240/mo             | 10   |
 
-**Cost model:** Each new screenshot uses 3 generation credits. Revisions and translations use 1 credit each. App icons use 3 credits. Icon moodboards use 5 credits. Paid subscribers can buy one-time credit top-ups: Mini (15 credits), Standard (60 credits), or Studio (180 credits).
+**Cost model:** Each new screenshot uses 3 generation credits. Revisions and translations use 1 credit each. App icons use 3 credits. Icon moodboards use 5 credits. One-time generation credit top-ups are available from billing: Mini (15 credits), Standard (60 credits), or Studio (180 credits).
 
 See [shots.run/pricing](https://shots.run/pricing) for full details.
 

@@ -1,7 +1,7 @@
 {
   "name": "shots",
   "version": "0.1.0",
-  "description": "Generate App Store screenshots, app icons, screenshot localization, ASO listing copy, and App Store inspiration workflows from a mobile app development workflow through hosted Shots MCP tools.",
+  "description": "Generate App Store screenshots, app icons, screenshot localization, listing copy, and public inspiration workflows through hosted Shots MCP tools.",
   "author": {
     "name": "hitSlop",
     "url": "https://hitslop.com"
@@ -33,7 +33,7 @@
   "interface": {
     "displayName": "Shots",
     "shortDescription": "Agent-native App Store creative workflow",
-    "longDescription": "Generate App Store screenshots, app icons, screenshot localization, and ASO listing copy from natural language inside your mobile app development workflow. Describe your screenshots in a prompt, import your own App Store URL, or use another App Store listing as public gallery inspiration, then generate, revise, translate, and ship publish-ready assets for iPhone, iPad, Android, and Apple Watch. Includes ASO keyword ideas, listing copy generation, 50+ locale localization, deep category research, screenshot audits, inspiration gallery workflows, and app icon moodboarding.",
+    "longDescription": "Generate App Store screenshots, app icons, screenshot localization, and listing copy from inside your mobile app development workflow. Import your own App Store URL, use another listing as public gallery inspiration, upload local app references, then generate, revise, translate, and review assets for iPhone, iPad, Android, and Apple Watch. Includes screenshot strategy guidance, app icon moodboarding, keyword ideas, and hosted Shots Studio sync.",
     "brandColor": "#0F969C",
     "composerIcon": "./assets/logo.png",
     "logo": "./assets/logo.png"

@@ -1,41 +1,20 @@
-# Shots App Store Lookup
+# App Store Lookup
 
-Fetch App Store metadata and public screenshot URLs to seed strategy. This flow does not generate images.
+Use App Store lookup when the user wants metadata or public screenshots from
+their own listing without generating images.
 
-## Steps
+If the user asks for screenshots like another App Store URL, this is inspiration,
+not lookup. Use public gallery commands and do not import that listing as the
+user's app unless they explicitly say it is theirs.
 
-If the user asks for screenshots like, inspired by, similar to, or in the style of an App Store URL, this is not the scrape flow. Use `gallery.ensure_app` and `gallery.get_app` from SKILL.md Public Gallery Inspiration instead.
+## Flow
 
-### 1. Resolve The App
-
-Accept an App Store URL or app id. If neither is available, ask for one.
-
-### 2. Lookup Listing
-
-Call `shots` with `appstore.lookup` using the app id or URL, the user's country code if specified, and the target locale if known.
-
-### 3. Summarize
-
-Report:
-
-- app name
-- developer
-- version
-- rating and review count
-- genres
-- screenshot source and device breakdown
-
-### 4. Save Listing Copy
-
-When durable app context exists, draft the App Store listing object and call `apps.update_listing` with the target locale:
-
-- keep the imported title unless a stronger title is obvious
-- add one selected subtitle
-- preserve or lightly tighten the public description
-- generate 8-20 keywords from the category, feature set, and audience
-- generate 3-6 title suggestions and 3-6 subtitle suggestions
-- generate 1-3 description alternatives when the user asks for metadata work
-
-### 5. Offer Generation
-
-Ask whether the user wants to continue into [create.md](create.md). If yes, use the lookup result as the App Store source for the creation strategy.
+1. Accept an App Store URL or app id. Ask for one only if missing.
+2. Use `appstore.lookup` for transient metadata or `apps.import` when durable app
+   context should be created.
+3. Summarize app name, developer, version, rating/review count, genres, and
+   screenshot/device coverage.
+4. If the user wants listing copy work, draft title, subtitle, description,
+   keywords, and suggestions using [strategy.md](strategy.md), then save with
+   `apps.update_listing`.
+5. Offer to continue into screenshot creation with [create.md](create.md).
