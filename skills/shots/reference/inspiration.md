@@ -25,15 +25,15 @@ tries to work around gallery limits, call `feedback.report` with
 `category: "unsupported_workflow"` or `category: "feature_request"` and briefly
 tell the user you notified the Shots team.
 
-## Prompt Formats
+## Prompt Format
 
-The screenshot generation system accepts prompts in **two formats**:
+Write screenshot prompts as complete plain text. The server automatically
+appends dimensions, constraints, and reference metadata. Use only the sections
+the concept needs, and do not force device/headline fields when the reference is
+visual-first or text-free.
 
-### Natural Language (Recommended)
-Write a complete descriptive prompt as plain text. The server automatically appends dimensions, constraints, and reference metadata. Most examples in this document use natural language format.
-
-**Example 1: Detailed Natural Language**
-```
+**Example 1: Detailed Prompt**
+```text
 Create one 1264x2736 App Store screenshot for "Pulse: Fitness Tracking".
 
 Campaign goal: Drive downloads by showcasing immersive, data-rich workout tracking.
@@ -53,65 +53,12 @@ Panel content:
 - Breakout: ECG waveform bleeds from device edge into background with fade
 ```
 
-**Example 2: Concise Natural Language**
-```
+**Example 2: Concise Prompt**
+```text
 Create a 1264x2736 screenshot for dating app "Spark".
 
 Hero panel with headline "Real Connections, Zero Games" on dark navy (#0A1828) background. iPhone 15 Pro centered showing match feed with profile cards. Warm coral accent color (#FF6B5A). Three floating profile cards burst from device right side at slight angles with drop shadows. Clean premium aesthetic.
 ```
-
-### JSON Format (Advanced)
-Provide a structured JSON object. The server merges in required fields (`task`, `reference_images`, `constraints`).
-
-**Example 1: Full Campaign Structure**
-```json
-{
-  "campaign": {
-    "goal": "Drive downloads by showcasing a visually stunning wardrobe organizer",
-    "audience": "Fashion-forward women aged 20-35",
-    "core_promise": "Your entire wardrobe, styled and ready — every single day"
-  },
-  "visual_direction": {
-    "style_family": "Editorial warm-luxury",
-    "palette": {
-      "primary": "#C9A97A",
-      "secondary": "#F5EFE6",
-      "accent": "#D4614A"
-    }
-  },
-  "typography": {
-    "headline": "36-42pt bold serif, near-black #1C1410",
-    "subtitle": "16-18pt medium sans-serif, warm brown #7A6A5A"
-  },
-  "panel": {
-    "headline": "Your Wardrobe,\nAlways Ready.",
-    "subtitle": "Every piece you own, organized beautifully.",
-    "device": {
-      "model": "iPhone 16 Pro",
-      "frame": "natural titanium",
-      "screen": "Masonry-grid wardrobe view with 12 clothing items in rounded cards",
-      "tilt": "3° left"
-    },
-    "layout": "Device centered-left, headline top-right, floating outfit card overlapping",
-    "background": "Warm linen cream (#F5EFE6) with terracotta gradient"
-  }
-}
-```
-
-**Example 2: Minimal JSON**
-```json
-{
-  "app": "TaskFlow - Productivity",
-  "headline": "Focus on What Matters",
-  "subtitle": "Smart prioritization that adapts to your day.",
-  "style": "Clean minimal gradient",
-  "palette": ["#667EEA", "#764BA2", "#F5F7FA"],
-  "device": "iPhone 16 Pro showing task list with priority badges",
-  "background": "Purple-to-blue gradient with soft glow"
-}
-```
-
-Either format works — use whichever feels more natural for your workflow. Natural language is more flexible; JSON provides structure for complex campaigns.
 
 ## Visual Style Families
 
@@ -148,7 +95,45 @@ Either format works — use whichever feels more natural for your workflow. Natu
 
 ---
 
-### 2. Editorial Warm-Luxury (Fashion)
+### 2. Maximal Social Pop (Photo / Feedback)
+**App pattern:** Picky-style photo choice, AI feedback, friend voting, social confidence
+
+**Palette:**
+- Primary: bright sky blue / white flash lighting
+- Secondary: glossy hot pink and magenta shadows
+- Accent: mint green, purple glass, black UI pills
+- Text: black or white, very high contrast
+
+**Motifs:**
+- Oversized bubble or condensed display headlines
+- Cropped stop signs, traffic lights, or other "decision" symbols
+- Hand-held printed photo cards, tilted stacks, filename labels
+- Glassy pink/purple hearts, cloud mist, sparkle highlights
+- Floating chat bubbles, segmented controls, avatar rows, voting chips
+- Product-proof stickers such as score badges, "Fixed" cards, or AI edit bars
+
+**Mood:** Loud, glossy, young, social, conversational, premium chaos
+
+**Prompting Pattern:**
+Describe the composition as a back-to-front layer stack: background, large text,
+hero photo/phone object, UI proof overlays, foreground stickers. Every sticker,
+heart, avatar, chat bubble, and label needs a product or emotional job. This
+style works best when the prompt is specific about layer order and text
+hierarchy rather than simply asking for "lots of fun elements."
+
+**Example Headlines:**
+- "STOP GUESSING"
+- "KNOW YOUR BEST SHOT BEFORE YOU POST"
+- "GET FLOODED WITH REAL VOTES"
+- "CHAT YOUR WAY TO FIRE"
+
+**When to Use:** Social, photo/video, dating, AI feedback, creator tools, youth
+culture, friend-voting flows, and apps where conversation or social proof is the
+product.
+
+---
+
+### 3. Editorial Warm-Luxury (Fashion)
 **App:** Closet — AI Wardrobe Organizer
 **Palette:**
 - Primary: `#C9A97A` (warm gold)
@@ -190,7 +175,7 @@ Either format works — use whichever feels more natural for your workflow. Natu
 
 ---
 
-### 3. Dark Cinematic (Fitness)
+### 4. Dark Cinematic (Fitness)
 **App:** Pulse — Fitness Tracking
 **Palette:**
 - Primary: `#0A0A0F` (near-black)
@@ -539,9 +524,10 @@ background: "radial gradient from teal to deep blue"
 
 ---
 
-## Prompting Tips (Natural Language Format)
+## Prompting Tips
 
-These tips apply to natural language prompts. For JSON prompts, structure these elements as nested objects instead of prose.
+Write prompts as complete plain text. Use markdown-style sections when they help
+the brief scan, but do not force every screenshot into the same structure.
 
 1. **Use complete palette specs with hex codes** — don't say "warm colors," say `#C9A97A` and `#F5EFE6`
 2. **Specify exact device model and tilt** — "iPhone 16 Pro, natural titanium frame, 3° left tilt"

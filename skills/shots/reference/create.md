@@ -59,7 +59,7 @@ share the same context.
 Show a table and wait for approval before generation.
 
 ```markdown
-| # | Headline | Subtitle | Image/UI direction | Reference assets | Purpose |
+| # | Panel type | Visible text | Image/UI direction | Reference assets | Purpose |
 | --- | --- | --- | --- | --- | --- |
 | 1 |  |  |  |  |  |
 | 2 |  |  |  |  |  |
@@ -71,11 +71,16 @@ Planning rules:
 - Honor an explicit screenshot count exactly.
 - During first-time setup only, suggest 3 screenshots when the user wants
   screenshots but gives no count.
-- Headline first: 3-6 word benefit, relief, identity, curiosity, or
-  transformation promise.
+- Match the panel type to the app and references: text-free object hero,
+  poster-style headline, device UI proof, editorial collage, feature grid,
+  founder/testimonial, or full-bleed product scene.
+- Headline first when the panel uses copy: 3-6 word benefit, relief, identity,
+  curiosity, or transformation promise.
+- No-copy panels are valid when the reference and concept are visual-first.
 - Avoid feature labels like "AI Dashboard" unless the user asks for literal
   feature naming.
-- Each row needs a specific UI moment, not generic "show the app" direction.
+- Each row needs a specific UI moment, object, scene, collage, or proof point,
+  not generic "show the app" direction.
 - The `Reference assets` column must name the real UI reference and any style or
   public inspiration reference used by that row.
 
@@ -86,24 +91,38 @@ generate.
 
 For each approved row:
 
-- Build a complete prompt using [prompting.md](prompting.md).
+- Build a complete plain-text prompt using [prompting.md](prompting.md).
 - Pass only the references that row actually needs, up to the server's max.
 - Include `galleryInspirationScreenshotId` only when that row uses public
   gallery inspiration. Gallery inspiration is style-only and still costs 3
   generation credits.
 - Use existing English campaign screenshots for style continuity, not old copy.
 
-Example:
+Prompt example:
 
-```json
-{
-  "appId": "APP_ID",
-  "platform": "iphone",
-  "referenceMediaIds": ["MEDIA_ID_REAL_UI", "MEDIA_ID_STYLE"],
-  "galleryInspirationScreenshotId": "GALLERY_SCREENSHOT_ID",
-  "prompt": "{\"task\":\"Create one App Store screenshot for \\\"MyApp\\\".\",\"campaign\":{\"goal\":\"Drive installs from App Store search\",\"audience\":\"Busy parents planning meals\",\"core_promise\":\"Dinner decisions feel automatic\",\"differentiator\":\"Meal plans adapt to pantry items and schedule changes\"},\"typography\":{\"headline_style\":\"Large bold white sans-serif, high contrast, thumbnail-readable.\",\"subtitle_style\":\"Smaller warm white regular weight.\",\"text_accuracy\":\"Render all quoted text verbatim.\"},\"visual_direction\":{\"style_family\":\"calm-warm\",\"mood\":\"organized, practical, reassuring\",\"palette\":{\"primary\":\"#243B35\",\"accent\":\"#FFB84D\",\"text\":\"#FFFFFF\"}},\"screenshot\":{\"headline\":\"Know Dinner by 5\",\"subtitle\":\"Plans that adapt when life changes\",\"role\":\"hero benefit\",\"layout\":\"headline top, iPhone centered below, warm kitchen-toned background\",\"device\":{\"model\":\"iPhone 15 Pro\",\"screen\":\"Weekly meal plan screen with Monday selected, three recipe cards, pantry match badges, and a yellow Swap Dinner button\"},\"background\":\"soft olive-to-cream gradient with subtle grocery-list texture\",\"negative_constraints\":\"No App Store badges, no fake chrome, no clipped text, no fictional UI unrelated to references\"}}"
-}
+```text
+Create one App Store screenshot for "MyApp".
+
+Campaign job: hero benefit for busy parents planning meals.
+Visible text: "Know Dinner by 5" and smaller subtitle "Plans that adapt when life changes".
+
+Composition: warm olive-to-cream background. Large headline at top. Center an
+iPhone 16 Pro below with a weekly meal plan screen: Monday selected, three
+recipe cards, pantry match badges, and a yellow Swap Dinner button. Add one
+small pantry card breakout on the right reading "Use tonight" with tomato,
+pasta, and basil icons.
+
+Reference usage:
+- Reference 1: real app UI layout and meal card hierarchy.
+- Reference 2: existing campaign palette and typography scale.
+
+Avoid App Store badges, fake chrome, clipped text, and fictional UI unrelated
+to the references.
 ```
+
+Call `generate_screenshot` with the app id, platform, this prompt text, the
+approved reference ids, and the gallery inspiration id only if the panel uses
+one.
 
 After jobs complete, present screenshot ids, CDN URLs, and the review URL the
 server instructions describe. If the user approves final winners for the store
