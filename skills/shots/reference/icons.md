@@ -10,6 +10,10 @@ Use the two-step hosted icon flow:
 Ask before spending credits. Present the moodboard and let the user pick concept
 numbers before generating finals.
 
+Icon candidate commands use media-derived access. Use `icons.get`,
+`icons.set_current`, and `icons.delete` with the icon `mediaId`; do not pass an
+`appId` for those candidate-specific operations.
+
 ## Required Direction
 
 Before the moodboard, lock:

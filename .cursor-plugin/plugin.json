@@ -2,7 +2,7 @@
   "name": "shots",
   "displayName": "Shots",
   "version": "0.1.0",
-  "description": "Generate App Store screenshots, app icons, screenshot localization, listing copy, and public inspiration workflows through hosted Shots MCP tools.",
+  "description": "Ship App Store screenshots from Codex or another coding agent. Hosted MCP tools generate screenshots, icons, localization, and ASO copy from app context.",
   "author": { "name": "hitSlop" },
   "homepage": "https://shots.run",
   "repository": "https://github.com/hitSlop/shots",
@@ -29,6 +29,6 @@
     "app-store-inspiration",
     "inspiration-gallery"
   ],
-  "longDescription": "Generate App Store screenshots, app icons, screenshot localization, and listing copy from inside your mobile app development workflow. Import your own App Store URL, use another listing as public gallery inspiration, upload local app references, then generate, revise, translate, and review assets for iPhone, iPad, Android, and Apple Watch. Includes screenshot strategy guidance, app icon moodboarding, keyword ideas, and hosted Shots Studio sync.",
+  "longDescription": "Ship App Store screenshots in minutes from inside Codex or another coding agent. Shots reads your app repo, uploaded screenshots, App Store URL, saved Studio context, and public inspiration, then generates, revises, translates, and reviews screenshots for iPhone, iPad, Android, and Apple Watch. Includes app icon moodboards, final icon candidates, ASO listing copy, keyword ideas, and hosted Shots Studio sync.",
   "skills": "./skills/"
 }

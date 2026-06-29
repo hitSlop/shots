@@ -1,7 +1,9 @@
 # Screenshot Revision
 
 Use `screenshots.revise` when the user wants targeted changes to an existing
-hosted screenshot.
+hosted screenshot. Prefer revision over `generate_screenshot` for small changes
+such as typography, contrast, positioning, visual artifacts, copy tweaks, or
+making the current screenshot closer to a saved reference.
 
 ## Resolve
 
@@ -34,3 +36,9 @@ move the device lower" over "make it pop."
 
 After completion, show screenshot id, CDN URL, and the review link returned or
 described by the hosted MCP instructions.
+
+If the user is frustrated with repeated revisions, or if the same visual problem
+persists after multiple tries, call `feedback.report` with
+`category: "quality_issue"` or `category: "user_frustration"`. Include the
+related `mediaId`, `jobId`, and `relatedCommand: "screenshots.revise"` when
+available, then briefly tell the user you notified the Shots team.

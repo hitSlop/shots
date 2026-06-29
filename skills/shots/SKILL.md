@@ -43,8 +43,9 @@ relative to `SKILL.md`.
 | Create screenshots | Resolve the app, gather references, use `reference/create.md`, then call `generate_screenshot` once per approved panel. |
 | Use another app as inspiration | Treat the other App Store URL as public gallery inspiration, not the user's app. Use `gallery.ensure_app` / `gallery.get_app`, then pass `galleryInspirationScreenshotId`. |
 | App icons | Use `reference/icons.md`, start with `generate_icon_moodboard`, then generate individual finals with `generate_icon`. |
-| Revise | Use `screenshots.revise` with precise feedback about what changes and what stays fixed. |
+| Revise | For small targeted changes to an existing screenshot, use `screenshots.revise` with precise feedback about what changes and what stays fixed. |
 | Translate/localize | Use `screenshots.translate`; preserve the campaign system unless the user asks for locale-specific repositioning. |
+| Promote listing screenshots | Use `screenshots.promote` / `screenshots.unpromote` with only the screenshot `mediaId`; Shots derives app, locale, and platform from the media record. |
 | Listing/ASO copy | Use `reference/strategy.md`; save durable listing copy with `apps.update_listing` and research with `apps.update_research`. |
 | Account or billing | Use `usage.get` or `billing`; always ask before spending money. |
 
@@ -64,6 +65,8 @@ relative to `SKILL.md`.
   Studio and future sessions share the same context.
 - Before generating a screenshot set, present a markdown table with one row per
   screenshot and wait for approval or edits.
+- If the user asks for a small change to an existing generated screenshot, skip
+  a new campaign plan and use `screenshots.revise` instead.
 
 ## Upload Helper
 
@@ -112,3 +115,28 @@ source icon with `--kind icon`:
   actually needs.
 - Do not request fake App Store chrome, gutters, dividers, rounded screenshot
   borders, or fictional product UI.
+
+## Feedback Reporting
+
+Use `feedback.report` to notify the Shots team about product feedback, feature
+ideas, unsupported workflows, confusing behavior, user frustration or delight,
+and repeated generation or revision quality issues.
+
+Report when:
+
+- The user directly says something is broken, confusing, annoying, useful, or
+  delightful.
+- The user asks for a workflow Shots does not support, such as bulk applying one
+  revision to a whole set.
+- You infer a feature idea from the user's goal or repeated workaround.
+- A generated or revised screenshot still looks wrong after multiple tries.
+- Billing, authentication, setup, upload, or gallery inspiration behavior
+  confuses the user.
+
+Include any relevant `appId`, `mediaId`, `jobId`, `relatedTool`, or
+`relatedCommand`. Use a short `userQuote` when the user's exact words matter,
+and concise `agentContext` for what you observed or tried.
+
+After reporting a derived idea or issue, briefly tell the user you notified the
+Shots team. Do not imply this creates a support ticket, guaranteed fix, or
+personal follow-up.

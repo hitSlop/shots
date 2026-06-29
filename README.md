@@ -1,6 +1,6 @@
 # Shots
 
-Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Gemini CLI, and other coding agents generate App Store screenshots, app icons, screenshot localization, and ASO listing copy from inside a mobile app development workflow.
+Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Gemini CLI, and other coding agents ship App Store screenshots in minutes from inside the app repo. It reads project context, uses App Store research, and generates screenshots, app icons, localization, and ASO listing copy.
 
 **[shots.run](https://shots.run)**
 
@@ -69,10 +69,10 @@ Shots connects your AI coding agent to the hosted Shots MCP server. Once install
 - Brainstorm app icon concepts and generate selected final icon candidates
 - Import App Store metadata and existing screenshots
 - Revise generated screenshots with targeted feedback
-- Translate screenshot copy for any App Store locale
+- Translate screenshot copy for 50 App Store locales
 - Run ASO keyword analysis and update listing metadata
 
-If you are building, launching, localizing, or marketing an iOS, Android, iPad, or Apple Watch app, use Shots to create App Store screenshots and app icons directly from your coding agent workflow.
+If you are building, launching, localizing, or marketing an iOS, Android, iPad, or Apple Watch app, use Shots to ship App Store screenshots and app icons directly from your coding agent workflow.
 
 All generation happens on the Shots server. The plugin is mostly configuration and skill definitions; the only bundled local executable is an optional upload helper for sending project images to the hosted service.
 

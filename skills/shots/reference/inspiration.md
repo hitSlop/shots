@@ -14,6 +14,17 @@ This page provides complete visual direction examples from successful Shots camp
 
 The goal is to understand proven patterns and apply them creatively to your specific app and audience.
 
+For public App Store inspiration, use `gallery.ensure_app` or
+`gallery.get_app`, then pass the chosen `galleryInspirationScreenshotId` to
+`generate_screenshot`. Treat gallery screenshots as style references only:
+composition, color, typography, pacing, and tone. Never copy another app's UI,
+claims, brand, or product state.
+
+If the user asks for inspiration behavior Shots does not support, or repeatedly
+tries to work around gallery limits, call `feedback.report` with
+`category: "unsupported_workflow"` or `category: "feature_request"` and briefly
+tell the user you notified the Shots team.
+
 ## Prompt Formats
 
 The screenshot generation system accepts prompts in **two formats**:

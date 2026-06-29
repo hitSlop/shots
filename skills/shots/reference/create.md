@@ -19,6 +19,11 @@ Do not generate from only an icon, brand colors, or written app description.
 Apple requires screenshots to show real app usage, and invented UI risks a weak
 or unusable result.
 
+If the user wants a small targeted change to an existing generated screenshot,
+use `screenshots.revise` instead of starting a new `generate_screenshot` job.
+Examples: adjust headline size, improve contrast, move the device, remove a
+visual artifact, or make the current screenshot closer to an existing reference.
+
 ## Pre-Generation Checks
 
 - Load the app with `apps.get`.
@@ -84,7 +89,8 @@ For each approved row:
 - Build a complete prompt using [prompting.md](prompting.md).
 - Pass only the references that row actually needs, up to the server's max.
 - Include `galleryInspirationScreenshotId` only when that row uses public
-  gallery inspiration.
+  gallery inspiration. Gallery inspiration is style-only and still costs 3
+  generation credits.
 - Use existing English campaign screenshots for style continuity, not old copy.
 
 Example:
@@ -93,7 +99,6 @@ Example:
 {
   "appId": "APP_ID",
   "platform": "iphone",
-  "quality": "high",
   "referenceMediaIds": ["MEDIA_ID_REAL_UI", "MEDIA_ID_STYLE"],
   "galleryInspirationScreenshotId": "GALLERY_SCREENSHOT_ID",
   "prompt": "{\"task\":\"Create one App Store screenshot for \\\"MyApp\\\".\",\"campaign\":{\"goal\":\"Drive installs from App Store search\",\"audience\":\"Busy parents planning meals\",\"core_promise\":\"Dinner decisions feel automatic\",\"differentiator\":\"Meal plans adapt to pantry items and schedule changes\"},\"typography\":{\"headline_style\":\"Large bold white sans-serif, high contrast, thumbnail-readable.\",\"subtitle_style\":\"Smaller warm white regular weight.\",\"text_accuracy\":\"Render all quoted text verbatim.\"},\"visual_direction\":{\"style_family\":\"calm-warm\",\"mood\":\"organized, practical, reassuring\",\"palette\":{\"primary\":\"#243B35\",\"accent\":\"#FFB84D\",\"text\":\"#FFFFFF\"}},\"screenshot\":{\"headline\":\"Know Dinner by 5\",\"subtitle\":\"Plans that adapt when life changes\",\"role\":\"hero benefit\",\"layout\":\"headline top, iPhone centered below, warm kitchen-toned background\",\"device\":{\"model\":\"iPhone 15 Pro\",\"screen\":\"Weekly meal plan screen with Monday selected, three recipe cards, pantry match badges, and a yellow Swap Dinner button\"},\"background\":\"soft olive-to-cream gradient with subtle grocery-list texture\",\"negative_constraints\":\"No App Store badges, no fake chrome, no clipped text, no fictional UI unrelated to references\"}}"
@@ -101,4 +106,13 @@ Example:
 ```
 
 After jobs complete, present screenshot ids, CDN URLs, and the review URL the
-server instructions describe.
+server instructions describe. If the user approves final winners for the store
+listing, call `screenshots.promote` once per screenshot with only its `mediaId`.
+Use `screenshots.unpromote` with the same `mediaId` to remove a promoted
+screenshot. Do not pass app, locale, or platform to those commands; Shots
+derives the listing slot from the screenshot media record.
+
+If generation repeatedly produces clipped text, wrong product UI, broken layout,
+or other quality issues after multiple attempts, call `feedback.report` with
+`category: "quality_issue"` and include related `mediaId` or `jobId` when
+available.
