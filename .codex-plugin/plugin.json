@@ -1,6 +1,6 @@
 {
   "name": "shots",
-  "version": "0.1.0+codex.20260609023812",
+  "version": "0.1.0",
   "description": "Ship App Store screenshots from Codex or another coding agent. Hosted MCP tools generate screenshots, icons, localization, and ASO copy from app context.",
   "author": {
     "name": "hitSlop",
@@ -38,23 +38,21 @@
     "developerName": "hitSlop",
     "category": "Design",
     "capabilities": [
+      "Interactive",
       "Read",
-      "Write"
+      "Write",
+      "Research"
     ],
     "websiteURL": "https://shots.run",
     "privacyPolicyURL": "https://shots.run/privacy",
     "termsOfServiceURL": "https://shots.run/terms",
     "defaultPrompt": [
-      "Generate App Store screenshots",
-      "Scrape my App Store listing",
-      "Make screenshots like another App Store app",
-      "Revise my latest screenshots",
-      "Translate my screenshots to Japanese",
-      "Generate app icon candidates",
-      "Research keywords for my app category"
+      "Generate App Store screenshots for my app",
+      "Generate an app icon for my app",
+      "Translate my App Store screenshots into Spanish"
     ],
     "brandColor": "#0F969C",
-    "composerIcon": "./assets/logo.png",
+    "composerIcon": "./assets/icon.png",
     "logo": "./assets/logo.png"
   }
 }

@@ -1,6 +1,6 @@
 # Shots
 
-Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Gemini CLI, and other coding agents ship App Store screenshots in minutes from inside the app repo. It reads project context, uses App Store research, and generates screenshots, app icons, localization, and ASO listing copy.
+Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Devin, Zed, Gemini CLI, Amp, and other coding agents ship App Store screenshots in minutes from inside the app repo. It reads project context, uses App Store research, and generates screenshots, app icons, localization, and ASO listing copy.
 
 **[shots.run](https://shots.run)**
 
@@ -51,6 +51,16 @@ gemini mcp add --transport http shots https://shots.run/api/mcp
 ```
 
 Or copy `gemini-extension.json` into your project root, then restart Gemini CLI.
+
+### Devin, Zed, Amp, and other MCP clients
+
+Use the hosted MCP endpoint anywhere your client accepts remote HTTP MCP servers:
+
+```
+https://shots.run/api/mcp
+```
+
+For clients that only support command-based MCP servers, use `mcp-remote` with the hosted endpoint.
 
 ## What MCP enables
 
@@ -105,7 +115,7 @@ The plugin provides:
 - Skill definitions (`skills/`): teach agents the Shots workflow, prompting rules, and tool usage
 - Editor manifests: metadata for Codex, Claude Code, Cursor, and Gemini CLI
 
-Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. Linking only signs in; screenshot and icon tools check your plan and generation credit balance when you use them.
+Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. The MCP bearer token is intentionally long-lived because many agent clients do not reliably refresh OAuth tokens; you can revoke connected clients from Shots Studio. Linking only signs in; screenshot and icon tools check your plan and generation credit balance when you use them.
 
 ### Codex OAuth troubleshooting
 
@@ -122,7 +132,7 @@ codex mcp get shots
 
 - A [Shots account](https://shots.run)
 - An active plan or enough free trial generation credits for screenshot, icon, revision, and translation tools
-- An MCP-compatible coding agent or editor; Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, and Gemini CLI are documented setup paths
+- An MCP-compatible coding agent or editor; Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Devin, Zed, Gemini CLI, Amp, and generic MCP clients are documented setup paths
 
 ## Keywords
 
