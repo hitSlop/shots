@@ -356,23 +356,23 @@ Icon moodboards generate as a **2048x2048 contact sheet** with ~20 numbered conc
 Successful moodboards include:
 
 1. **Symbol Variety**
-   - Abstract geometric (circles, arcs, gradients)
-   - Literal (recognizable object representing the app)
-   - Letter-based (stylized initials or wordmarks)
-   - Hybrid (object + gradient background)
+   - Abstract geometric marks
+   - Literal objects that represent the app
+   - Mascot or character concepts when appropriate
+   - Hybrid object + abstract background concepts
 
 2. **Background Variety**
-   - Solid colors
-   - Gradients (linear, radial, angular)
-   - Textures
-   - Duotones
+   - Solid full-bleed color
+   - Radial, linear, or angular gradients
+   - Subtle texture or material fields
+   - High-contrast light/dark variants
 
 3. **Style Variety**
    - Flat/minimal
-   - Dimensional (shadows, highlights, 3D)
-   - Illustrated
-   - Photographic
-   - Line art
+   - Dimensional 3D with shadows and highlights
+   - Glass or translucent objects
+   - Clay/soft mascot forms
+   - Photorealistic object icons
 
 4. **Color Range**
    - Brand colors if specified
@@ -382,26 +382,36 @@ Successful moodboards include:
 
 ### Example Prompt Structure
 
-```
+Use `generate_icon_moodboard` tool fields, but keep `creative_direction` as a
+plain-text brief rather than JSON-shaped image instructions:
+
+```text
 Generate an icon moodboard for [App Name], a [category] app that [core function].
 
-Symbol exploration: Include variations of [primary symbol], [secondary symbol], and abstract representations of [core concept].
+Symbol exploration: include [primary symbol], [secondary symbol], and abstract
+representations of [core concept]. Avoid text or letter marks unless the user
+explicitly wants brand-mark exploration.
 
-Background directions: Try solid [brand color], gradients in [color range], and textured options.
+Background directions: try full-bleed [brand color], gradients in [color range],
+and subtle textured options.
 
-Style mix: Include flat minimalist options, dimensional/3D treatments, and illustrated approaches.
+Style mix: include flat minimalist options, dimensional/3D treatments, glass or
+translucent forms, and one photorealistic object direction when it fits.
 
 Audience: [target user] who values [key attributes].
 ```
 
 ### After Moodboard Review
 
-Once the user selects favorites (e.g., "I like #7, #12, and #19"), generate individual finals with `generate_icon` using specific direction:
+Once the user selects favorites (e.g., "I like #7, #12, and #19"), generate
+individual finals with `generate_icon` using specific direction:
 
-```
-style: "dimensional gradient with soft shadows, inspired by moodboard #7"
-symbol: "stylized wave arc"
-background: "radial gradient from teal to deep blue"
+```text
+style: dimensional gradient with soft shadows, inspired by moodboard #7
+symbol: stylized wave arc
+background: radial gradient from teal to deep blue
+creative_direction: one upload-ready 1024x1024 full-bleed square app icon
+source artwork; no text, no rounded mask, no preview tile
 ```
 
 ---

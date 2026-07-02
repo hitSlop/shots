@@ -35,7 +35,9 @@ prompt carries the same detail the old JSON structure tried to force:
 - back-to-front layer stack or clear canvas regions for dense modern comps
 - typography style, hierarchy, color, and text footprint
 - real UI state: screen name, selected tab, controls, data, cards, buttons
-- material, lighting, texture, shadows, and palette
+- material, lighting direction, texture, highlights, shadows, and palette
+- viewpoint, crop, scale, gaze, pose, and object interactions when people or
+  realistic objects appear
 - reference usage: what each image controls and what it must not control
 - negative constraints specific to the concept
 
@@ -60,9 +62,9 @@ templates:
   but keep it loose enough for the image model to render naturally.
 - Whitespace/crop-control brief: best when the model tends to overfill the
   canvas or cover important UI.
-- Compact JSON-style priority brief: acceptable when it clarifies hierarchy,
-  but write it as plain text inside the `prompt` string. Do not send a
-  structured object as the prompt value.
+- Compact priority brief: acceptable when it clarifies hierarchy, but write it
+  as plain text inside the `prompt` string. Do not send a structured object as
+  the prompt value.
 
 For high-fidelity recreations, combine two tactics: for example, a short
 creative brief plus `COPY LOCK`, or a layer stack plus a priority order. For
@@ -93,13 +95,36 @@ a headline, subtitle, device, or UI panel just because other examples use one.
 ## Text Rendering
 
 - Put exact visible copy in quotes.
-- Specify font style, weight, color, and hierarchy.
-- Spell unusual brand names when needed.
-- Keep headlines short enough to survive thumbnail browsing.
+- Render exact copy once, with no extra characters.
+- Specify font style, weight, size, color, placement, contrast, and hierarchy.
+- Spell unusual brand names letter-by-letter when needed.
+- Use short headline text; small text and dense layouts are less reliable.
 - Make headline text much larger than supporting text.
 - Keep critical text in the top two-thirds unless the reference intentionally
   uses another layout.
 - If no text belongs, write: `No readable overlay text anywhere.`
+
+## Photorealism And Material Detail
+
+For photorealistic scenes, objects, or people, say "photorealistic" directly.
+Then describe the image like a real capture:
+
+- viewpoint and crop: close-up, eye-level, top-down, three-quarter, full body
+- lighting: soft daylight from left, rim light, overhead studio highlight,
+  golden hour, low-key dark studio
+- real texture: skin pores, fabric weave, worn edges, ceramic glaze, metal
+  reflections, paper grain, mesh perforations
+- shadows and highlights: contact shadows, ambient occlusion, specular glints,
+  soft falloff, dark recesses
+- imperfections: tiny scuffs, wrinkles, uneven fibers, natural variation
+
+For people, specify body framing, scale, gaze, pose, and object interaction:
+"full body visible, feet included", "looking down at the open book", "hands
+naturally gripping the handlebars", or "child-sized relative to the table".
+
+For wide, cinematic, low-light, rain, neon, or atmospheric scenes, add extra
+scale, color, and environment detail so the model does not trade realism for
+mood.
 
 ## Device And Product Content
 
