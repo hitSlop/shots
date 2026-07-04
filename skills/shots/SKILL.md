@@ -56,6 +56,10 @@ relative to `SKILL.md`.
 - For a new app record, the agent must know the app name, what it does, App
   Store URL if published, and target platform before calling `apps.upsert` or
   `apps.import`.
+- Inspect local files, saved app context, and existing media before asking the
+  user, but do not guess when ambiguity changes the product or creative
+  direction. Ask for missing positioning, audience, real UI truth, style
+  preferences, or approval when needed.
 - Before screenshot generation, require at least one real app UI reference:
   uploaded `app_screenshot`, a `reference` image showing actual app UI, or
   scraped App Store screenshots. An icon, palette, or written description alone
@@ -65,6 +69,14 @@ relative to `SKILL.md`.
   Studio and future sessions share the same context.
 - Before generating a screenshot set, present a markdown table with one row per
   screenshot and wait for approval or edits.
+- Do not choose a public gallery app as inspiration from a vague request like
+  "try a new style" or "different style." Use gallery inspiration only when the
+  user names/provides an inspiration source or explicitly approves the exact
+  gallery app/screenshot in the plan. Gallery-inspiration generation should
+  stay on medium quality.
+- If the user asks for a new or different style without specifics, ask for
+  style preferences or propose 2-4 concrete directions and get approval before
+  generating.
 - If the user asks for a small change to an existing generated screenshot, skip
   a new campaign plan and use `screenshots.revise` instead.
 
@@ -113,6 +125,9 @@ source icon with `--kind icon`:
   states, and emotional payload.
 - Keep references selective. Pass only the images that a specific screenshot
   actually needs.
+- Prefer selected/promoted App Store screenshots for continuity. Do not pass
+  recent unpromoted generations as references unless the user selects them or
+  asks to continue from them.
 - Do not request fake App Store chrome, gutters, dividers, rounded screenshot
   borders, or fictional product UI.
 

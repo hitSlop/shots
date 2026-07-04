@@ -168,6 +168,10 @@ When asked for ASO or metadata, generate and save:
 - title suggestions
 - subtitle suggestions
 
+If the user asks to update or translate "copy" without narrowing the fields,
+include title, subtitle, keywords, and description by default. Ask only when the
+user explicitly limits the requested fields.
+
 Constraints:
 
 - iOS title: 30 characters
