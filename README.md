@@ -4,6 +4,12 @@ Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, Op
 
 **[shots.run](https://shots.run)**
 
+## Demo
+
+![Shots plugin generating App Store screenshots](./assets/demo.png)
+
+*Generate App Store screenshots directly from your coding agent. Review and refine with the Shots Studio integration.*
+
 ## Install
 
 ### Codex
