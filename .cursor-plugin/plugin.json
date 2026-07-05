@@ -3,7 +3,9 @@
   "displayName": "Shots",
   "version": "0.1.0",
   "description": "Ship App Store screenshots from Codex or another coding agent. Hosted MCP tools generate screenshots, icons, localization, and ASO copy from app context.",
-  "author": { "name": "hitSlop" },
+  "author": {
+    "name": "hitSlop"
+  },
   "homepage": "https://shots.run",
   "repository": "https://github.com/hitSlop/shots",
   "license": "MIT",

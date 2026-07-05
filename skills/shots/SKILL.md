@@ -100,9 +100,10 @@ intentionally open and unauthenticated; it only needs `appId` and enforces
 server-side upload safety checks. Do not skip local uploads because R2 or cloud
 credentials are unavailable.
 
-If an upload fails, stop and report the upload error. Do not generate while
-treating a required local reference as unavailable unless the user explicitly
-approves continuing without it.
+If an upload fails, stop and call `feedback.report` with `category: "bug"`,
+the HTTP status or error message in `details`, and `relatedTool: "upload-asset"`
+plus the `appId`. Do not generate while treating a required local reference as
+unavailable unless the user explicitly approves continuing without it.
 
 ## App Icon Discovery
 
@@ -135,7 +136,7 @@ source icon with `--kind icon`:
 
 Use `feedback.report` to notify the Shots team about product feedback, feature
 ideas, unsupported workflows, confusing behavior, user frustration or delight,
-and repeated generation or revision quality issues.
+repeated generation or revision quality issues, and tool or infrastructure errors.
 
 Report when:
 
@@ -147,6 +148,11 @@ Report when:
 - A generated or revised screenshot still looks wrong after multiple tries.
 - Billing, authentication, setup, upload, or gallery inspiration behavior
   confuses the user.
+- Any MCP tool call returns an unexpected error, including HTTP errors from the
+  upload helper, `isError: true` responses from Shots commands, or other
+  infrastructure failures. Use `category: "bug"` with `severity: "high"`,
+  include the error message or HTTP status in `details`, and set `relatedTool`
+  or `relatedCommand` to identify the failing operation.
 
 Include any relevant `appId`, `mediaId`, `jobId`, `relatedTool`, or
 `relatedCommand`. Use a short `userQuote` when the user's exact words matter,

@@ -5,7 +5,10 @@
   "mcpServers": {
     "shots": {
       "command": "npx",
-      "args": ["mcp-remote@latest", "https://shots.run/api/mcp"]
+      "args": [
+        "mcp-remote@latest",
+        "https://shots.run/api/mcp"
+      ]
     }
   }
 }
