@@ -8,11 +8,13 @@ This repo is packaged for Codex plugin discovery and hosted MCP server discovery
 | --- | --- | --- |
 | Codex repo marketplace | CLI and app install from `hitSlop/shots` | Ready |
 | Codex workspace sharing | Private workspace installs from Codex app | Manual share step |
-| Awesome Codex Plugins / HOL Registry | Public Codex plugin directory and trust score | Ready after CI passes |
-| Official MCP Registry | Public MCP server discovery as `run.shots/shots` | Ready after domain auth |
-| Glama / PulseMCP / Smithery | Third-party MCP discovery | Submit after MCP Registry publish |
-| `punkpeye/awesome-mcp-servers` | Community MCP list | Submit PR after registry publish |
-| GitHub topics | Organic discovery | Add in repository settings |
+| Awesome Codex Plugins / HOL Registry | Public Codex plugin directory and trust score | PR open: <https://github.com/hashgraph-online/awesome-codex-plugins/pull/277> |
+| Official MCP Registry | Public MCP server discovery as `run.shots/shots` | Published |
+| Glama | Third-party MCP discovery | Listed: <https://glama.ai/mcp/servers/hitSlop/shots> |
+| PulseMCP | Third-party MCP discovery | Pending index from official MCP Registry |
+| MCP.so | Third-party MCP discovery | Manual sign-in submission |
+| `punkpeye/awesome-mcp-servers` | Community MCP list | PR open: <https://github.com/punkpeye/awesome-mcp-servers/pull/9592> |
+| GitHub topics | Organic discovery | Added |
 
 ## Validation
 
@@ -51,13 +53,19 @@ Requirements are implemented in this repo:
 - `.codexignore`
 - `README.md`
 
-After the scanner passes on GitHub Actions, prepare a draft PR:
+After the scanner passes on GitHub Actions, prepare a PR:
 
 ```bash
 scripts/prepare-awesome-codex-pr.sh
 ```
 
 Before marking the PR ready for review, paste the passing HOL scanner run URL or score into the PR body.
+
+Current PR:
+
+```text
+https://github.com/hashgraph-online/awesome-codex-plugins/pull/277
+```
 
 ## MCP Registry
 
@@ -73,7 +81,7 @@ The hosted endpoint is:
 https://shots.run/api/mcp
 ```
 
-To publish through GitHub Actions:
+The hosted endpoint is published in the official registry. If it ever needs to be republished through GitHub Actions:
 
 1. Generate an Ed25519 keypair for MCP Registry domain authentication.
 2. Host the public proof at `https://shots.run/.well-known/mcp-registry-auth`.
@@ -81,6 +89,39 @@ To publish through GitHub Actions:
 4. Run the `MCP Registry` workflow with `publish=true`.
 
 The workflow validates `server.json` on every relevant PR and only publishes on manual dispatch.
+
+Official registry check:
+
+```bash
+curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=run.shots%2Fshots'
+```
+
+## MCP.so
+
+Submit manually at <https://mcp.so/submit> after signing in.
+
+Use:
+
+```text
+Type: MCP Server
+Name: Shots
+URL: https://github.com/hitSlop/shots
+```
+
+Server Config:
+
+```json
+{
+  "mcpServers": {
+    "shots": {
+      "type": "http",
+      "url": "https://shots.run/api/mcp"
+    }
+  }
+}
+```
+
+Unauthenticated API submissions return `{"code":-1,"message":"no auth, please login"}`.
 
 ## GitHub Topics
 

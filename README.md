@@ -78,11 +78,13 @@ Shots is packaged for public plugin and MCP discovery:
 
 - Codex plugin marketplace: `codex plugin marketplace add hitSlop/shots`
 - Codex plugin install: `codex plugin add shots@shots`
-- MCP Registry name: `run.shots/shots`
+- Official MCP Registry: [`run.shots/shots`](https://registry.modelcontextprotocol.io/v0.1/servers?search=run.shots%2Fshots)
 - MCP endpoint: `https://shots.run/api/mcp`
-- Awesome Codex Plugins entry: prepared under Tools & Integrations after the HOL scanner passes
+- Glama MCP listing: [`hitSlop/shots`](https://glama.ai/mcp/servers/hitSlop/shots)
+- Awesome Codex Plugins PR: [hashgraph-online/awesome-codex-plugins#277](https://github.com/hashgraph-online/awesome-codex-plugins/pull/277)
+- Awesome MCP Servers PR: [punkpeye/awesome-mcp-servers#9592](https://github.com/punkpeye/awesome-mcp-servers/pull/9592)
 
-The repository includes scanner CI, package metadata checks, and MCP Registry validation. Publishing `run.shots/shots` to the official MCP Registry requires domain verification for `shots.run` and a repository secret named `MCP_PUBLISHER_PRIVATE_KEY`.
+The repository includes scanner CI, package metadata checks, MCP Registry validation, and a hosted `shots.run` domain proof route for publishing `run.shots/shots`.
 
 ## What MCP enables
 
