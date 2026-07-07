@@ -1,5 +1,12 @@
 # Shots
 
+[![Plugin Checks](https://github.com/hitSlop/shots/actions/workflows/plugin-checks.yml/badge.svg)](https://github.com/hitSlop/shots/actions/workflows/plugin-checks.yml)
+[![HOL Plugin Scanner](https://github.com/hitSlop/shots/actions/workflows/hol-plugin-scanner.yml/badge.svg)](https://github.com/hitSlop/shots/actions/workflows/hol-plugin-scanner.yml)
+[![MCP Registry](https://github.com/hitSlop/shots/actions/workflows/mcp-registry.yml/badge.svg)](https://github.com/hitSlop/shots/actions/workflows/mcp-registry.yml)
+[![Glama MCP server](https://glama.ai/mcp/servers/hitSlop/shots/badges/score.svg)](https://glama.ai/mcp/servers/hitSlop/shots)
+[![Official MCP Registry](https://img.shields.io/badge/MCP%20Registry-run.shots%2Fshots-0F969C)](https://registry.modelcontextprotocol.io/v0.1/servers?search=run.shots%2Fshots)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 Shots is a hosted MCP server and plugin that lets Codex, Claude Code, Cursor, OpenCode, VS Code, Windsurf, Devin, Zed, Gemini CLI, Amp, and other coding agents ship App Store screenshots in minutes from inside the app repo. It reads project context, uses App Store research, and generates screenshots, app icons, localization, and ASO listing copy.
 
 **[shots.run](https://shots.run)**
