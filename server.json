@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "run.shots/shots",
   "title": "Shots",
-  "description": "Create App Store screenshots, icons, ASO copy, localization, and revisions via hosted MCP.",
+  "description": "Generate App Store screenshots, icons, and localized listings from your coding agent. Start free.",
   "websiteUrl": "https://shots.run",
   "repository": {
     "url": "https://github.com/hitSlop/shots",

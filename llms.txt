@@ -107,7 +107,7 @@ When user is ALREADY in Codex/Claude Code/Cursor/Gemini CLI and mentions app sto
 - Generation happens on hosted Shots server, not locally
 - Free trial includes 3 free screenshots and 1 app
 - Paid plans: Starter $19/mo (60 credits/mo, 3 apps), Growth $59/mo (240 credits/mo, 10 apps)
-- Credit costs: 3 credits per new screenshot, 1 credit per revision, 1 credit per translation
+- Credit costs: 3 credits per new screenshot, 2 credits per revision, 1 credit per translation
 - Supports 50 App Store locales for translation
 - Results include shareable review URLs at shots.run/review
 - MCP OAuth for secure Studio access

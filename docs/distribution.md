@@ -10,11 +10,23 @@ This repo is packaged for Codex plugin discovery and hosted MCP server discovery
 | Codex workspace sharing | Private workspace installs from Codex app | Manual share step |
 | Awesome Codex Plugins / HOL Registry | Public Codex plugin directory and trust score | PR open: <https://github.com/hashgraph-online/awesome-codex-plugins/pull/277> |
 | Official MCP Registry | Public MCP server discovery as `run.shots/shots` | Published |
-| Glama | Third-party MCP discovery | Listed: <https://glama.ai/mcp/servers/hitSlop/shots> |
-| PulseMCP | Third-party MCP discovery | Pending index from official MCP Registry |
-| MCP.so | Third-party MCP discovery | Manual sign-in submission |
+| Smithery | Third-party MCP gateway & discovery | Unblocked (OAuth redirect fix deployed) |
+| Glama | Third-party MCP discovery | Listed: <https://glama.ai/mcp/servers/hitSlop/shots> — was "Unhealthy", unblocked by OAuth redirect fix |
+| PulseMCP | Third-party MCP discovery (auto-indexes from official registry) | Pending |
+| MCP.so | Third-party MCP discovery | Manual sign-in submission at <https://mcp.so/submit> |
+| mcpservers.org | Third-party MCP discovery (wong2) | Submitted at <https://mcpservers.org/submit> |
 | `punkpeye/awesome-mcp-servers` | Community MCP list | PR open: <https://github.com/punkpeye/awesome-mcp-servers/pull/9592> |
 | GitHub topics | Organic discovery | Added |
+
+## OAuth Redirect URI Fix (for external MCP gateways)
+
+Smithery and Glama use their own HTTPS domains as OAuth redirect URIs (e.g. `https://shots--jordan-u190.run.tools/callback`). Before the fix, only loopback redirect URIs were allowed.
+
+After deploying the fix in `convex/mcpServer/oauthCodes.ts` and `apps/web/src/features/install/connect-page.tsx`:
+
+1. Register the gateway as an OAuth client in the `oauthClients` table with its `redirectUris`
+2. The backend validates HTTPS redirect URIs against the client's registered URIs
+3. PKCE S256 is still mandatory
 
 ## Validation
 
@@ -95,6 +107,88 @@ Official registry check:
 ```bash
 curl 'https://registry.modelcontextprotocol.io/v0.1/servers?search=run.shots%2Fshots'
 ```
+
+## MCP Directories & Registries
+
+### Tier 1 — MCP-specific directories
+
+| Directory | URL | Submission | Notes |
+| --- | --- | --- | --- |
+| Official MCP Registry | <https://registry.modelcontextprotocol.io/> | GitHub Actions workflow | Published as `run.shots/shots` |
+| Smithery | <https://smithery.ai> | Submit via site | Requires OAuth client with registered `redirectUris` |
+| Glama | <https://glama.ai/mcp> | Auto-detected from GitHub | Listed at <https://glama.ai/mcp/servers/hitSlop/shots> |
+| PulseMCP | <https://pulsemcp.com> | Auto-indexes from official registry | Pending |
+| MCP.so | <https://mcp.so> | <https://mcp.so/submit> (sign-in required) | Not yet submitted |
+| mcpservers.org | <https://mcpservers.org> | <https://mcpservers.org/submit> | Submitted |
+| LobeHub | <https://lobehub.com> | Submit via site | Not yet submitted |
+| ModelContextProtocol.info | <https://modelcontextprotocol.info/tools/registry/> | Submit via site | Not yet submitted |
+
+### Tier 2 — Awesome lists (MCP)
+
+| Repository | Status |
+| --- | --- |
+| `punkpeye/awesome-mcp-servers` | PR open: <https://github.com/punkpeye/awesome-mcp-servers/pull/9592> |
+| `appcypher/awesome-mcp-servers` | PR created: `Jonovono:awesome-mcp-servers-1:add-shots` |
+| `abordage/awesome-mcp` | PR created: `Jonovono:awesome-mcp:add-shots` |
+| `TensorBlock/awesome-mcp-servers` | PR created: `Jonovono:awesome-mcp-servers-2:add-shots` |
+| `mctrinh/awesome-mcp-servers` | Not yet submitted |
+| `wong2/awesome-mcp-servers` | Does NOT accept PRs — use mcpservers.org instead |
+
+### Tier 3 — Awesome lists (non-MCP)
+
+| Repository | Category | Status |
+| --- | --- | --- |
+| `hashgraph-online/awesome-codex-plugins` | Codex plugins | PR open: <https://github.com/hashgraph-online/awesome-codex-plugins/pull/277> |
+| `rafaecheve/Awesome-ASO` | ASO tools | PR created: `Jonovono:Awesome-ASO:add-shots` |
+| `sanketfirodiya/ios-marketing-resources` | iOS marketing | PR created: `Jonovono:ios-marketing-resources:add-shots` |
+| `Piebald-AI/awesome-gemini-cli-extensions` | Gemini CLI | PR created: `Jonovono:awesome-gemini-cli-extensions:add-shots` |
+| `hao-ji-xing/awesome-cursor` | Cursor MCPs | PR created: `Jonovono:awesome-cursor:add-shots` |
+
+### Tier 4 — AI agent skill marketplaces
+
+| Directory | URL | Notes |
+| --- | --- | --- |
+| Agensi | <https://www.agensi.io> | Security-scanned skills, 70/30 creator payments |
+| ClaudeSkills.info | <https://claudeskills.info> | 658+ free community skills |
+| Claude Code Marketplaces | <https://claudemarketplaces.com> | Aggregator of 2,500+ marketplaces |
+| AgentSkill.sh | <https://agentskill.sh> | 44K+ skills with security scanning |
+| Cross AI Tools | <https://crossaitools.com> | Multi-platform agent marketplace |
+| Rube by Composio | <https://rube.composio.dev> | Composio agent platform |
+| cursor.directory | <https://github.com/pontusab/cursor.directory> | Cursor rules/extensions directory |
+| `ComposioHQ/awesome-claude-plugins` | <https://github.com/ComposioHQ/awesome-claude-plugins> | GitHub awesome list |
+| `ComposioHQ/awesome-claude-skills` | <https://github.com/ComposioHQ/awesome-claude-skills> | GitHub awesome list |
+
+### Tier 5 — Product launch & general directories
+
+| Directory | URL |
+| --- | --- |
+| Product Hunt | <https://www.producthunt.com> |
+| DevHunt | <https://devhunt.org> |
+| Futurepedia | <https://futurepedia.io> |
+| There's An AI For That | <https://theresanaiforthat.com> |
+| AlternativeTo | <https://alternativeto.net> |
+| SaaSHub | <https://www.saashub.com> |
+| StartupBase | <https://startupbase.io> |
+| Launching Next | <https://launchingnext.com> |
+| G2 | <https://www.g2.com> |
+| Capterra | <https://www.capterra.com> |
+| GetApp | <https://www.getapp.com> |
+| TrustRadius | <https://www.trustradius.com> |
+| GoodFirms | <https://www.goodfirms.co> |
+| Software Advice | <https://www.softwareadvice.com> |
+| Crunchbase | <https://www.crunchbase.com> |
+
+### Tier 6 — Mobile & ASO directories
+
+| Directory | URL |
+| --- | --- |
+| AppRadar Blog | <https://appradar.com/blog> |
+| Checkaso | <https://checkaso.com> |
+| Mobile Action | <https://www.mobileaction.co> |
+| Toolfolio | <https://toolfolio.io> |
+| LaunchShots Blog | <https://www.launchshots.com/blog> |
+| AppDrift | <https://appdrift.co> |
+| NeoAds | <https://neoads.tech> |
 
 ## MCP.so
 
