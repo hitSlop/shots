@@ -4,6 +4,7 @@
   "description": "Ship App Store screenshots from Codex or another coding agent. Hosted MCP tools generate screenshots, icons, localization, and ASO copy from app context.",
   "author": {
     "name": "hitSlop",
+    "email": "security@hitslop.com",
     "url": "https://hitslop.com"
   },
   "homepage": "https://shots.run",
@@ -53,6 +54,9 @@
     ],
     "brandColor": "#0F969C",
     "composerIcon": "./assets/icon.png",
-    "logo": "./assets/logo.png"
+    "logo": "./assets/logo.png",
+    "screenshots": [
+      "./assets/demo.png"
+    ]
   }
 }

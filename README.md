@@ -34,6 +34,10 @@ Or install directly from the command line:
 codex plugin add shots@shots
 ```
 
+### Codex workspace sharing
+
+After installing Shots in the Codex app, open Plugins, go to Created by you, open Shots, and select Share. Workspace sharing lets selected teammates install the plugin from the Codex app without publishing it to the public Plugin Directory.
+
 ### Claude Code
 
 ```
@@ -67,6 +71,18 @@ https://shots.run/api/mcp
 ```
 
 For clients that only support command-based MCP servers, use `mcp-remote` with the hosted endpoint.
+
+## Discovery and registries
+
+Shots is packaged for public plugin and MCP discovery:
+
+- Codex plugin marketplace: `codex plugin marketplace add hitSlop/shots`
+- Codex plugin install: `codex plugin add shots@shots`
+- MCP Registry name: `run.shots/shots`
+- MCP endpoint: `https://shots.run/api/mcp`
+- Awesome Codex Plugins entry: prepared under Tools & Integrations after the HOL scanner passes
+
+The repository includes scanner CI, package metadata checks, and MCP Registry validation. Publishing `run.shots/shots` to the official MCP Registry requires domain verification for `shots.run` and a repository secret named `MCP_PUBLISHER_PRIVATE_KEY`.
 
 ## What MCP enables
 
@@ -119,6 +135,8 @@ The plugin provides:
 
 - MCP server config (`.mcp.json`): points to `https://shots.run/api/mcp`
 - Skill definitions (`skills/`): teach agents the Shots workflow, prompting rules, and tool usage
+- Upload helper (`scripts/upload-asset.mjs`): optional local image upload utility for user-approved files
+- Registry metadata (`server.json`): publishes the hosted MCP server as `run.shots/shots`
 - Editor manifests: metadata for Codex, Claude Code, Cursor, and Gemini CLI
 
 Authentication uses MCP OAuth. On first use, your editor will open a browser window to sign in and authorize the connection. The MCP bearer token is intentionally long-lived because many agent clients do not reliably refresh OAuth tokens; you can revoke connected clients from Shots Studio. Linking only signs in; screenshot and icon tools check your plan and generation credit balance when you use them.

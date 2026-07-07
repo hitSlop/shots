@@ -1,5 +1,6 @@
 ---
 name: shots
+version: 0.1.0
 description: >
   Generate, revise, translate, and manage App Store marketing screenshots and
   app icon candidates through the hosted Shots MCP tools. Use for App Store
@@ -8,6 +9,10 @@ description: >
   App Store screenshot inspiration. Do not use for generic image generation.
 user-invocable: true
 argument-hint: "[app store url, job id, locale, or description]"
+author:
+  name: hitSlop
+  url: https://hitslop.com
+license: MIT
 allowed-tools:
   - Bash(node *)
 ---
@@ -21,9 +26,6 @@ CDN URLs plus stable ids.
 The hosted MCP server instructions are the source of truth for tool names,
 arguments, billing recovery, polling cadence, app setup, and review URLs. Use
 `help.schema`, `help.examples`, and `help.search` before guessing command args.
-
-`{{scripts_path}}` is the `scripts/` directory next to this file. Resolve it
-relative to `SKILL.md`.
 
 ## Use The References
 
@@ -80,13 +82,16 @@ relative to `SKILL.md`.
 - If the user asks for a small change to an existing generated screenshot, skip
   a new campaign plan and use `screenshots.revise` instead.
 
-## Upload Helper
+## Local Upload Helper
 
 Use `media.import_url` for HTTPS images. For local files, use the bundled helper:
 
 ```bash
-node {{scripts_path}}/upload-asset.mjs --file ./path/to/image.png --app-id <appId> --kind reference
+node <plugin-root>/scripts/upload-asset.mjs --file ./path/to/image.png --app-id <appId> --kind reference
 ```
+
+Resolve `<plugin-root>` as the plugin root directory. From this `SKILL.md`, the
+helper is at `../../scripts/upload-asset.mjs`.
 
 Useful `kind` values:
 

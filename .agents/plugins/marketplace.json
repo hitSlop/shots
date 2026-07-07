@@ -7,8 +7,8 @@
     {
       "name": "shots",
       "source": {
-        "source": "url",
-        "url": "https://github.com/hitSlop/shots.git"
+        "source": "local",
+        "path": "./"
       },
       "policy": {
         "installation": "AVAILABLE",
