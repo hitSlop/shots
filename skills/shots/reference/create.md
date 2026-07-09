@@ -136,6 +136,7 @@ For each approved row:
   one small UI fragment unless the approved row is explicitly a device/UI proof.
   Do not let a product screenshot's existing poster layout override the chosen
   gallery composition.
+- For gallery-inspired rows, lock exact text slots and preserve the gallery's primary object category by default. Do not convert top objects into new metaphors or rewrite supplied copy into alternate claims unless the approved row explicitly asks for it.
 - Use selected/promoted English campaign screenshots for product and campaign
   continuity, not old copy. Avoid unpromoted generations unless the user picked
   them.

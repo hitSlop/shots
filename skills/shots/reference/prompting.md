@@ -151,6 +151,13 @@ Gallery inspiration controls the ad mechanism and composition. Product
 references control facts. If those conflict, do not let a product screenshot's
 centered phone poster overwrite a no-device gallery collage.
 
+Drift checks from recent GPT Image 2 tests:
+
+- Preserve the gallery primary object category by default. A traffic signal stays a traffic signal, a microphone stays a microphone, and a card stack stays a card stack unless the user explicitly changes it.
+- Lock exact text slots before inventing copy. Keep the reference slot count, placement, hierarchy, and typography footprint; replace only the words.
+- Do not improvise alternate claims such as "scrolling", "remembering", "clutter", "viral", or "AI" unless the user or app truth supplied them.
+- Preserve the gallery headline color/type treatment by default. Use app brand color mostly for proof chips, logos, metadata, or small UI fragments unless the user asks for a brand-color rewrite.
+
 ## Text Rendering
 
 - Put exact visible copy in quotes.

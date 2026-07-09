@@ -22,6 +22,8 @@ color, typography, pacing, and tone. Product references still control the real
 app UI and product facts. Never copy another app's UI, claims, brand, people,
 or product state.
 
+Preserve the gallery screenshot's primary object category and exact text-slot behavior by default. Do not turn a top decision object into a search icon, phone, logo, or abstract metaphor unless the user explicitly asks for that change.
+
 The strongest results come from a near-edit contract. Pick one screenshot and
 say what stays structurally intact, then say exactly what changes into the
 current app's truth. For example:
@@ -44,6 +46,7 @@ Replace only the content:
 Composition:
 No central phone frame if Image 1 has no central phone. Product screenshots are
 truth references, not layout references.
+Do not rewrite the locked copy into a nearby but different claim; exact text beats clever new wording.
 ```
 
 When writing the prompt for a gallery-inspired generation, include a compact
