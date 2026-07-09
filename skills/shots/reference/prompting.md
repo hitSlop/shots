@@ -59,6 +59,10 @@ Pick the structure that fits the screenshot. These are useful tactics, not
 templates:
 
 - Natural creative brief: best when the concept is open-ended and taste matters.
+- Gallery near-edit contract: best when a public gallery screenshot is attached.
+  Treat the gallery image as a composition/edit contract: state what changes,
+  what stays preserved, and what source content is replaced with the current
+  app's truth.
 - Back-to-front layer stack: best for dense collages, object heroes, stickers,
   cards, shadows, and overlapping UI.
 - Wireframe plus copy lock: best when exact visible text and panel structure
@@ -96,6 +100,56 @@ Avoid:
 
 If the best screenshot is text-free or no-device, say that directly. Do not add
 a headline, subtitle, device, or UI panel just because other examples use one.
+
+## Gallery Inspiration Prompting
+
+When using `galleryInspirationScreenshotId`, do not write "use this style" and
+hope the model chooses the right parts. Public gallery screenshots work best
+when the prompt reads like a targeted edit:
+
+```text
+Reference usage:
+- Image 1 / gallery inspiration: primary composition mechanism. Preserve its
+  tight crop, headline text slots, layer stack, printed-card overlap, lighting,
+  and foreground/background rhythm.
+- Product references: product truth only. Use them for real UI labels, brand
+  colors, controls, cards, and screen density. Do not let their phone layout or
+  background override Image 1.
+
+Change:
+Turn Image 1's ad into this app's campaign.
+
+Preserve from Image 1:
+- Same crop and top-to-bottom rhythm.
+- Same text-slot hierarchy.
+- Same object/card treatment and shadow behavior.
+
+Replace only the content:
+- Replace source app copy with "EXACT NEW COPY".
+- Replace source screenshots, people, UI, and claims with truthful content for
+  this app.
+
+Composition:
+No central phone frame unless the gallery image already uses one or the user
+explicitly asks for product UI proof. If product truth appears, make it chips,
+labels, cards, metadata, or a small UI fragment.
+```
+
+Useful variants:
+
+- OpenAI five-slot: `Scene`, `Subject`, `Important details`, `Use case`,
+  `Constraints`.
+- Strict layer stack: background, top object, main type, product proof,
+  foreground sticker.
+- Wireframe/copy lock: vertical zones with exact text placement and hierarchy.
+- Hybrid proof: preserve the gallery mechanism, add one small product UI
+  fragment that stays subordinate.
+- Object/material hero: `Change only X`; preserve crop, lighting, object
+  geometry, controls, and background.
+
+Gallery inspiration controls the ad mechanism and composition. Product
+references control facts. If those conflict, do not let a product screenshot's
+centered phone poster overwrite a no-device gallery collage.
 
 ## Text Rendering
 

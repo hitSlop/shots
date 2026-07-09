@@ -116,10 +116,26 @@ For each approved row:
 - Pass only the uploaded references that row actually needs, up to the server's
   max. `referenceMediaIds` must be Shots media IDs, not local paths or CDN URLs
   mentioned only in the prompt.
+- If a useful reference is local or user-provided in chat, upload it first and
+  pass the returned media ID. Do not describe a local file path in the prompt
+  and expect the image model to see it.
+- Include a short `Reference usage` section whenever references matter. Use
+  concrete visual facts, not vague "use this style" language: preserve the
+  gallery's layer stack, text slots, crop, object treatment, lighting, or card
+  overlap; use product references for real UI labels, controls, screenshots,
+  brand colors, and screen density.
 - Include `galleryInspirationScreenshotId` only when that row uses public
-  gallery inspiration approved by the user. Gallery inspiration is style-only
-  and still costs 3 generation credits. Keep gallery-inspiration generation on
-  medium quality.
+  gallery inspiration approved by the user. Gallery inspiration controls the
+  approved ad mechanism and composition; uploaded product references control
+  app UI truth. In the prompt, name 3-5 concrete gallery mechanics to preserve
+  and what changes into this app's truthful product content. It still costs 3
+  generation credits. Keep gallery-inspiration generation on medium quality.
+- For gallery-inspired rows, prefer a Change / Preserve / Replace-only prompt
+  shape. If the gallery screenshot has no central phone frame, default to no
+  central phone frame; show product truth as chips, labels, cards, metadata, or
+  one small UI fragment unless the approved row is explicitly a device/UI proof.
+  Do not let a product screenshot's existing poster layout override the chosen
+  gallery composition.
 - Use selected/promoted English campaign screenshots for product and campaign
   continuity, not old copy. Avoid unpromoted generations unless the user picked
   them.
@@ -139,8 +155,11 @@ small pantry card breakout on the right reading "Use tonight" with tomato,
 pasta, and basil icons.
 
 Reference usage:
-- Reference 1: real app UI layout and meal card hierarchy.
-- Reference 2: existing campaign palette and typography scale.
+- Gallery inspiration: preserve the angled phone composition, large top
+  headline slot, and three floating card breakouts; replace all source claims
+  and source UI with MyApp content.
+- Product reference 1: real app UI layout, meal card hierarchy, button shape,
+  and brand colors.
 
 Avoid App Store badges, fake chrome, clipped text, and fictional UI unrelated
 to the references.

@@ -16,9 +16,54 @@ The goal is to understand proven patterns and apply them creatively to your spec
 
 For public App Store inspiration, use `gallery.ensure_app` or
 `gallery.get_app`, then pass the chosen `galleryInspirationScreenshotId` to
-`generate_screenshot`. Treat gallery screenshots as style references only:
-composition, color, typography, pacing, and tone. Never copy another app's UI,
-claims, brand, or product state.
+`generate_screenshot`. Treat gallery screenshots as approved ad-mechanism and
+composition references: layer stack, text hierarchy, object treatment, crop,
+color, typography, pacing, and tone. Product references still control the real
+app UI and product facts. Never copy another app's UI, claims, brand, people,
+or product state.
+
+The strongest results come from a near-edit contract. Pick one screenshot and
+say what stays structurally intact, then say exactly what changes into the
+current app's truth. For example:
+
+```text
+Change:
+Turn Image 1's social-photo ad into this app's camera-roll discovery ad.
+
+Preserve from Image 1:
+- Same tight crop and crowded top-to-bottom rhythm.
+- Same top object, headline slots, bottom sticker, and printed-card collage.
+- Same cutout shadows, flash lighting, and foreground/background depth.
+
+Replace only the content:
+- Replace source app copy with "STOP HUNTING", "FOR THE RIGHT PHOTO", and
+  "find moments that matter".
+- Replace source people/UI/claims with truthful app moments, labels, metadata,
+  or small product-proof chips.
+
+Composition:
+No central phone frame if Image 1 has no central phone. Product screenshots are
+truth references, not layout references.
+```
+
+When writing the prompt for a gallery-inspired generation, include a compact
+`Reference usage` section:
+
+- Preserve: name 3-5 concrete mechanics from the gallery image, such as crop,
+  layer order, text-slot hierarchy, floating card overlap, object material,
+  lighting direction, or foreground/background rhythm.
+- Change: say what becomes the current app's truth, such as headline copy,
+  app UI, screenshots, product claims, people, device screen content, and brand
+  colors.
+- Ground: name the uploaded product references that control real UI labels,
+  controls, screen density, brand colors, and shipped-feeling details.
+- Conflict rule: if the gallery composition and product screenshot layout
+  disagree, preserve the gallery composition and show product truth only as
+  chips, labels, cards, metadata, or a deliberately small UI fragment.
+
+Avoid prompts that only say "use this style." The image model responds better
+when the prompt states exactly what should be preserved and exactly what should
+change.
 
 If the user asks for inspiration behavior Shots does not support, or repeatedly
 tries to work around gallery limits, call `feedback.report` with
