@@ -1,0 +1,50 @@
+{
+  "name": "shots",
+  "version": "0.1.0",
+  "description": "Ship store-ready App Store screenshots in minutes from your coding agent. Shots researches competing listings, then generates, revises, and translates screenshots and icons from your real app context.",
+  "author": {
+    "name": "hitSlop",
+    "url": "https://hitslop.com"
+  },
+  "homepage": "https://shots.run",
+  "repository": "https://github.com/hitSlop/shots",
+  "license": "MIT",
+  "keywords": [
+    "screenshots",
+    "app-store",
+    "app-icon",
+    "aso",
+    "marketing",
+    "localization",
+    "screenshot-generator",
+    "ios",
+    "android",
+    "app-store-optimization",
+    "mcp",
+    "listing-copy",
+    "keyword-research",
+    "screenshot-localization",
+    "app-store-screenshot-audit",
+    "app-store-inspiration",
+    "inspiration-gallery"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Shots",
+    "shortDescription": "App Store screenshots, icons, and localized listings — generated from your coding agent",
+    "longDescription": "Ship App Store screenshots in minutes without leaving your coding agent. Shots reads your app repo, uploaded screenshots, App Store URL, and saved Studio context, researches competing listings, then generates, revises, translates, and reviews screenshots for iPhone, iPad, Android, and Apple Watch. It also creates app icon moodboards, final icon candidates, ASO listing copy, and keyword ideas, all synced to hosted Shots Studio for review. Start with 3 free screenshots; no card required.",
+    "defaultPrompt": [
+      "Generate App Store screenshots for my iOS app using repo context",
+      "Create 5 iPhone screenshots inspired by this App Store URL: [paste URL]",
+      "Generate app icon concepts, then make one final 1024x1024 candidate",
+      "Translate my selected screenshots to French, German, Japanese, and Spanish",
+      "Audit my current App Store screenshots and propose improvements",
+      "Revise this screenshot: make the headline bigger and change background to blue",
+      "Import my App Store listing and generate localized screenshots"
+    ],
+    "brandColor": "#0F969C",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "shots",
+  "version": "0.1.0",
+  "description": "Ship store-ready App Store screenshots in minutes from your coding agent. Shots researches competing listings, then generates, revises, and translates screenshots and icons from your real app context.",
+  "mcpServers": {
+    "shots": {
+      "command": "npx",
+      "args": [
+        "mcp-remote@latest",
+        "https://shots.run/api/mcp"
+      ]
+    }
+  }
+}

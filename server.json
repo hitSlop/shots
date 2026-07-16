@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "run.shots/shots",
+  "title": "Shots",
+  "description": "Generate App Store screenshots, icons, and localized listings from your coding agent. Start free.",
+  "websiteUrl": "https://shots.run",
+  "repository": {
+    "url": "https://github.com/hitSlop/shots",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://shots.run/api/mcp"
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "codexPlugin": "shots",
+      "service": "https://shots.run"
+    }
+  }
+}

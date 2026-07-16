@@ -1,0 +1,58 @@
+name: MCP Registry
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - server.json
+      - .github/workflows/mcp-registry.yml
+  pull_request:
+    branches: [main, master]
+    paths:
+      - server.json
+      - .github/workflows/mcp-registry.yml
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish run.shots/shots to the official MCP Registry"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install mcp-publisher
+        run: |
+          set -euo pipefail
+          os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+          arch="$(uname -m)"
+          case "$arch" in
+            x86_64) arch="amd64" ;;
+            aarch64|arm64) arch="arm64" ;;
+          esac
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_${os}_${arch}.tar.gz" -o mcp-publisher.tar.gz
+          tar -xzf mcp-publisher.tar.gz mcp-publisher
+          chmod +x mcp-publisher
+
+      - name: Validate server.json
+        run: ./mcp-publisher validate server.json
+
+      - name: Publish to MCP Registry
+        if: github.event_name == 'workflow_dispatch' && inputs.publish == true
+        env:
+          MCP_PUBLISHER_PRIVATE_KEY: ${{ secrets.MCP_PUBLISHER_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${MCP_PUBLISHER_PRIVATE_KEY:-}" ]; then
+            echo "Set the MCP_PUBLISHER_PRIVATE_KEY repository secret before publishing."
+            exit 1
+          fi
+          ./mcp-publisher login http --domain shots.run --private-key "$MCP_PUBLISHER_PRIVATE_KEY"
+          ./mcp-publisher publish server.json
