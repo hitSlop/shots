@@ -569,6 +569,13 @@ quote not supplied by the user.
 - Android: use Pixel or Samsung framing when a phone is needed; do not mention
   iOS-only UI like Dynamic Island.
 - Watch: keep copy extremely short and prioritize big, high-contrast iconography.
+- TV (`tv`): generate one Apple TV/Android TV reusable asset on a full-bleed
+  16:9 landscape canvas, with large across-the-room typography, generous
+  edge-safe margins, and a clear remote-focus state. Show the real TV UI
+  directly on the canvas; do not wrap it in a physical television, phone, or
+  tablet frame.
+- Android TV apps need a separate 1280x720 Google Play TV banner. Do not imply
+  that a generated screenshot satisfies that banner requirement.
 
 ## Revision Block
 

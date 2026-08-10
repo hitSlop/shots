@@ -66,6 +66,10 @@ arguments, billing recovery, polling cadence, app setup, and review URLs. Use
   uploaded `app_screenshot`, a `reference` image showing actual app UI, or
   scraped App Store screenshots. An icon, palette, or written description alone
   is not enough.
+- Use platform `tv` for both Apple TV and Android TV. Generate one 1920x1080
+  landscape screenshot and reuse it in both stores. TV screenshots must use
+  real large-screen UI references. Android TV also requires a separate
+  1280x720 banner in Google Play; Shots does not generate that banner yet.
 - If the user provides local image files, or you discover useful local
   screenshots/assets in the repo, upload them first and use the returned media
   IDs. Do not put local paths in the prompt and assume the image model can see

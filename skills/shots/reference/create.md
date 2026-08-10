@@ -86,6 +86,10 @@ Show a table and wait for approval before generation.
 Planning rules:
 
 - Honor an explicit screenshot count exactly.
+- For TV (`tv`), plan one reusable Apple TV/Android TV 16:9 landscape
+  composition with ten-foot-readable copy, generous edge-safe margins, and a
+  visible remote-focus state. Show the TV UI directly on the canvas rather than
+  placing it inside a physical television or handheld device frame.
 - During first-time setup only, suggest 3 screenshots when the user wants
   screenshots but gives no count.
 - Match the panel type to the app and references: text-free object hero,

@@ -120,7 +120,7 @@ Shots connects your AI coding agent to the hosted Shots MCP server. Once install
 - Translate screenshot copy for 50 App Store locales
 - Run ASO keyword analysis and update listing metadata
 
-If you are building, launching, localizing, or marketing an iOS, Android, iPad, or Apple Watch app, use Shots to ship App Store screenshots and app icons directly from your coding agent workflow.
+If you are building, launching, localizing, or marketing an iOS, Android, iPad, Apple Watch, Apple TV, or Android TV app, use Shots to ship App Store screenshots and app icons directly from your coding agent workflow.
 
 All generation happens on the Shots server. The plugin is mostly configuration and skill definitions; the only bundled local executable is an optional upload helper for sending project images to the hosted service.
 
@@ -132,6 +132,11 @@ All generation happens on the Shots server. The plugin is mostly configuration a
 | iPad          | 2064 x 2752  | iPad App Store screenshots   |
 | Android Phone | 1080 x 1920  | Google Play Store            |
 | Apple Watch   | 416 x 496    | watchOS App Store            |
+| TV            | 1920 x 1080  | Apple TV and Android TV screenshots |
+
+Android TV apps also require a separate 1280 x 720 TV banner in Google Play.
+Shots generates one reusable TV screenshot for both stores, but does not
+generate that banner yet.
 
 ## Pricing
 
